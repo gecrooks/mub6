@@ -52,6 +52,8 @@ def certified_rates(beta, h):
                 e1[j, i, k] = cdual_mag(Hd[i][k].d[j])
     c1 = e1.sum(axis=1)                          # c1[j, k]
     BR = (2.0 / SQ6) * h * c1.sum(axis=0)        # (6,) per-column beta tax
+    # per-unit l2-distance drift rate per column (Cauchy-Schwarz over j)
+    BU = (2.0 / SQ6) * np.sqrt((c1 ** 2).sum(axis=0))
     GB = (2.0 / SQ6) * c1.sum(axis=0) * (hmag * SQ6 / 6.0 + 1.0)
     dJ = np.zeros((6, 6))
     for k in range(6):
@@ -60,9 +62,23 @@ def certified_rates(beta, h):
                 (1.0 / SQ6) * c1[j, k] * hmag / SQ6 + e1[j, l, k] / SQ6
                 for j in range(3))
     RJ = float(dJ.max()) * h
-    return dict(beta_rate_vec=BR, far_tax=float(BR.max()),
+    return dict(beta_rate_vec=BR, beta_unit_vec=BU, far_tax=float(BR.max()),
                 gb=float(GB.max()), RJ_extra=RJ, hmag=hmag,
                 c1=c1, s_drift=float((1.0 / SQ6) * h * c1.sum(axis=0).max()))
+
+
+def chain_certified_rates(beta, h, span, axis=0):
+    """Sup of the per-column unit drift rates BU over a chain segment
+    [beta_axis, beta_axis + span], via a train of h-sized sub-boxes
+    (each keeps tight h-scale constants; their max covers the span)."""
+    n_sub = max(1, int(np.ceil((span + 2 * h) / (2 * h))))
+    BU = np.zeros(6)
+    for i in range(n_sub):
+        c = list(beta)
+        c[axis] = beta[axis] + (2 * i) * h
+        r = certified_rates(tuple(c), h)
+        BU = np.maximum(BU, r["beta_unit_vec"])
+    return BU
 
 
 def main():

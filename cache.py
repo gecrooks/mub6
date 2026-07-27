@@ -63,7 +63,7 @@ def _per_root_stage(beta, h, roots, guards, coef0, coef1, per_root, D0pad,
     return ok, f"{n_conf} conflicts", rho_arr
 
 
-def _root_data_all(beta, h, roots, gb_rate):
+def _root_data_all(beta, h, roots, gb_rate, RJ_cert=None):
     """Q-tube data for every root (chain demo assumes no valley roots)."""
     H0 = karlsson_map(*beta)
     n = len(roots)
@@ -76,33 +76,49 @@ def _root_data_all(beta, h, roots, gb_rate):
         Sn = float(np.max(np.sum(np.abs(S), axis=1)))
         Rcurve = curve_residual(beta, th0, S, Q, h, quadratic=True)
         qoff = q_offset(Q, h)
-        Jdrift = sampled_J_drift(beta, th0, S, h)
+        RJx = RJ_cert if RJ_cert is not None \
+            else PAD * sampled_J_drift(beta, th0, S, h)
         coef1[i] = PAD * SQ3 * h * (HESS_ROW_TH * Sn + gb_rate)
         coef0[i] = PAD * Rcurve + PAD * defect * SQ3 * h \
             + coef1[i] * qoff.max()
         per_root[i] = dict(S=S, Q=Q, defect=defect, Sn=Sn, qoff=qoff,
                            rad_g=PAD * Rcurve + defect * SQ3 * h,
-                           RJ_extra=PAD * Jdrift)
+                           RJ_extra=RJx)
         _, J = _g_and_J(H0, th0)
         sig_min[i] = np.linalg.svd(J, compute_uv=False)[-1]
     return per_root, coef0, coef1, sig_min
 
 
-def anchored_tile(beta_a, h, verbose=True):
+def anchored_tile(beta_a, h, verbose=True, use_certified=False):
     """Full certified tile at the anchor, exclusion cache collected."""
     t0 = time.time()
     L_map = map_lipschitz(beta_a)
-    beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
-    beta_unit = PAD * 2.0 * np.sqrt(6.0) * L_map
-    far_tax = L_H_G * PAD * L_map * SQ3 * h
-    s_drift = 2.5 * PAD * L_map * SQ3 * h
+    RJ_cert = None
+    if use_certified:
+        from rates import certified_rates, chain_certified_rates
+        r = certified_rates(beta_a, h)
+        beta_rate = r["beta_rate_vec"]
+        # stored cache rates must hold over the whole chain span:
+        # sup over a train of h-sub-boxes along the chain axis
+        beta_unit = chain_certified_rates(beta_a, h, span=10 * h, axis=0)
+        far_tax = r["far_tax"]
+        s_drift = r["s_drift"]
+        gb_pre = r["gb"]
+        RJ_cert = r["RJ_extra"]
+    else:
+        beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
+        beta_unit = PAD * 2.0 * np.sqrt(6.0) * L_map
+        far_tax = L_H_G * PAD * L_map * SQ3 * h
+        s_drift = 2.5 * PAD * L_map * SQ3 * h
+        gb_pre = None
 
     H0 = karlsson_map(*beta_a)
     vecs = find_mu_vectors([H0], n_starts=4000, seed=99)
     roots = [polish_root(H0, np.angle(v * np.sqrt(6))[1:]) for v in vecs]
-    gb_rate = sampled_gb_drift(beta_a, roots)
+    gb_rate = gb_pre if gb_pre is not None \
+        else sampled_gb_drift(beta_a, roots)
     per_root, coef0, coef1, sig_min = _root_data_all(beta_a, h, roots,
-                                                     gb_rate)
+                                                     gb_rate, RJ_cert)
     if np.min(sig_min) < 0.012:
         raise RuntimeError("valley root present -- chain demo expects "
                            "Q-tube-only points")
@@ -141,7 +157,8 @@ def anchored_tile(beta_a, h, verbose=True):
               flush=True)
     return dict(beta_a=np.array(beta_a), h=h, roots=roots, guards=guards,
                 D0pad=D0pad, C=C, W=W, E=E, R=R, SC=SC, SW=SW,
-                gb_rate=gb_rate, L_map=L_map, anchor_seconds=dt)
+                gb_rate=gb_rate, L_map=L_map, anchor_seconds=dt,
+                use_certified=use_certified)
 
 
 def chain_step(state, beta_new, verbose=True):
@@ -149,9 +166,20 @@ def chain_step(state, beta_new, verbose=True):
     t0 = time.time()
     h = state["h"]
     L_map = state["L_map"]
-    beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
-    far_tax = L_H_G * PAD * L_map * SQ3 * h
-    s_drift = 2.5 * PAD * L_map * SQ3 * h
+    RJ_cert = None
+    if state.get("use_certified"):
+        from rates import certified_rates
+        r = certified_rates(beta_new, h)
+        beta_rate = r["beta_rate_vec"]
+        far_tax = r["far_tax"]
+        s_drift = r["s_drift"]
+        gb_rate = r["gb"]
+        RJ_cert = r["RJ_extra"]
+    else:
+        beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
+        far_tax = L_H_G * PAD * L_map * SQ3 * h
+        s_drift = 2.5 * PAD * L_map * SQ3 * h
+        gb_rate = state["gb_rate"]
 
     dist = float(np.linalg.norm(np.array(beta_new) - state["beta_a"]))
     ok_mask = state["E"] > state["R"] * dist * 1.05 + 1e-9
@@ -165,7 +193,7 @@ def chain_step(state, beta_new, verbose=True):
                  for r1, r0 in zip(roots1, state["roots"]))
 
     per_root, coef0, coef1, sig_min = _root_data_all(
-        beta_new, h, roots1, state["gb_rate"])
+        beta_new, h, roots1, gb_rate, RJ_cert)
     if np.min(sig_min) < 0.012:
         return dict(ok=False, reason="valley root emerged on chain")
 

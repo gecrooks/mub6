@@ -639,6 +639,28 @@ Wired into `certify_tile(use_certified=True)`:
   corner sampling, root sensitivities Sn/Q, overlap gradients — each
   with a designed certified replacement (Result 14 / roadmap R4).
 
+## Result 18 — the 3-D block re-certified on certified constants, faster
+
+The full Result-16 campaign re-ran with `use_certified=True` end to end
+(rates threaded through anchors, chain steps, and the cache): **112
+tiles, 16 anchors, 10.6 minutes — 40% faster than the empirical run —
+96/96 chain steps, zero re-anchors, zero failures**, same certified
+box (4.6e-3 x 3.0e-3 x 3.0e-3, 79x one tile).
+
+Why rigor made it FASTER: the certified per-column beta taxes are 2.7x
+tighter than the padded FD constants, shrinking sweeps and patches; and
+they exclude everything the frame-dependent root-slant taxes used to
+handle — the "+slant" re-sweep category dropped to ZERO boxes, so chain
+steps fell to 2.1-3.5 s. Soundness across the chain span is kept by
+sup-ing the per-column unit drift rates over a train of h-sized
+sub-boxes along the chain line (tight constants per sub-box, coverage
+by the max — `chain_certified_rates`).
+
+The campaign's flagship demonstration now runs on certified tax
+constants throughout. Remaining EMPIRICAL in the loop: curve-residual
+corner sampling, Sn/Q sensitivities, overlap gradients (roadmap R4
+tail), plus the libm-faithfulness assumption under everything.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

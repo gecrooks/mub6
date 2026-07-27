@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 
 
 def certify_block(beta0, h=4e-4, n_steps=6, n_phi=4, n_lam=4,
-                  step_fac=1.6, line_fac=1.8):
+                  step_fac=1.6, line_fac=1.8, use_certified=False):
     step = step_fac * h
     spacing = line_fac * h
     t0 = time.time()
@@ -27,7 +27,8 @@ def certify_block(beta0, h=4e-4, n_steps=6, n_phi=4, n_lam=4,
             base = (beta0[0], beta0[1] + ip * spacing,
                     beta0[2] + il * spacing)
             print(f"  line (phi+{ip}, lam+{il}):", flush=True)
-            state = anchored_tile(base, h, verbose=True)
+            state = anchored_tile(base, h, verbose=True,
+                                  use_certified=use_certified)
             anchors += 1
             tiles += 1
             k = 1
@@ -40,7 +41,8 @@ def certify_block(beta0, h=4e-4, n_steps=6, n_phi=4, n_lam=4,
                     continue
                 print(f"    re-anchoring at step {k} "
                       f"({res.get('reason')})", flush=True)
-                state = anchored_tile(target, h, verbose=True)
+                state = anchored_tile(target, h, verbose=True,
+                                      use_certified=use_certified)
                 anchors += 1
                 tiles += 1
                 k += 1
@@ -61,6 +63,9 @@ def certify_block(beta0, h=4e-4, n_steps=6, n_phi=4, n_lam=4,
 
 
 if __name__ == "__main__":
+    import sys
+    cert = "--certified" in sys.argv
     beta0 = (5.978503016422594, 4.007534549834652, 1.6327649325136653)
-    print(f"=== mini-campaign block at K6{np.round(beta0, 4)}, h=4e-4 ===")
-    certify_block(beta0)
+    print(f"=== mini-campaign block at K6{np.round(beta0, 4)}, h=4e-4"
+          f"{' [CERTIFIED TAXES]' if cert else ''} ===")
+    certify_block(beta0, use_certified=cert)

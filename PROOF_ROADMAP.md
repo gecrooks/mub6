@@ -284,6 +284,15 @@ R4. Rigor substrate — CORNERSTONE BUILT 2026-07-26 (Result 14):
     1e-11 ball; tile radius certified at 2.0e-6; SLOP replaced by a
     derived 1e-13 static bound (100x headroom, Krawczyk needs no
     accuracy from LAPACK).
+    SHARPENING (derived, unimplemented): the certified gb bound's |s|<=1
+    factor can use the zone-local |s_k| <= (1/sqrt6)(1 + sqrt5 D) valid
+    within l-inf distance D of a root (|grad_theta s_k|_2 <= sqrt6/6
+    exactly), if the per-root taxes' validity zone is shrunk to
+    D = 0.35 (beyond it the certified beta-tax excludes anyway): gb
+    7.8 -> ~6.0. Same |s|-localization sharpens the Hessian row bound
+    11/18 -> 0.577 (off-diagonals are exactly 1/18 — the mixed
+    theta-second-derivatives of s vanish since s is a sum of
+    single-phase terms). Net: coef1 down ~20%, slope walls up ~1.25x.
 R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
     a 4x4 grid of margin-cached chain-lines certified a full-dimension
     block (112 tiles, 16 anchors, 17.7 min, zero failures/re-anchors) —

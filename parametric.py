@@ -290,11 +290,12 @@ def zoned_sweep(H0, roots, coef0, coef1, guards, far_tax,
                 cacheable = np.zeros(len(C), dtype=bool)
             if cacheable.any():
                 sm = np.minimum(smod_w[rows_i, kb], 1.0)
+                bu = (np.asarray(beta_unit)[kb[cacheable]]
+                      if np.ndim(beta_unit) else beta_unit)
                 cache["C"].append(C[cacheable].astype(np.float32))
                 cache["W"].append(W[cacheable].astype(np.float32))
                 cache["E"].append(eb[cacheable].astype(np.float32))
-                cache["R"].append((beta_unit * sm[cacheable]
-                                   ).astype(np.float32))
+                cache["R"].append((bu * sm[cacheable]).astype(np.float32))
             rest = excl & ~cacheable
             if rest.any():
                 cache["SC"].append(C[rest].astype(np.float32))
