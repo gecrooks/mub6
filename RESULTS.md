@@ -695,6 +695,27 @@ With Result 12 (theta-interval mechanics) this completes Layer 3 for
 one of the three known infinite triple families; the remaining X6^(2)
 territory is the same walk over Szollosi's two-parameter chart.
 
+## Result 20 — the B-arc closed end to end (Bjorck to Bjorck)
+
+`endpoints.py` completed Result 19's arc:
+
+- **Bjorck's C certified**: 54 MU vectors, unique partner basis K
+  (triple defect 1.4e-9), sweep 842k boxes / 0.3 s / zero suspects at
+  ball radius 5e-9 — which contains the exact triple. Result 5's
+  multistart observation is now a certificate.
+- **Both endpoint segments walked with zero gaps** (rebuild-mode, 26
+  anchors each, ~4.5 min): coverage ground to theta = 1.1965 and
+  5.0858, with drift rates rising to ~15 at the last anchors — the
+  chart's sqrt-branch divergence, handled by delta ~ 6.6e-4.
+
+Combined statement: for every theta in [1.1965, 5.0858] — plus the
+endpoint Bjorck matrices themselves — no vector is MU to the triple
+{I, B(theta), K(theta)}. The two residual slivers at the branch points
+(total width < 1.8e-3, where the chart's rates diverge) are the honest
+boundary term; closing them rigorously wants the standard cure of
+reparametrizing by the branch variable (theta = theta_min + s^2), noted
+for the substrate pass.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

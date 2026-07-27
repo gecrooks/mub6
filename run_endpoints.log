@@ -1,0 +1,65 @@
+=== certified triple sweep at Bjorck's C ===
+  54 MU vectors, 1 basis(es)
+  triple defect: 1.36e-09
+  sweep: 841963 boxes, suspects 0 [0.3 s]
+  ==> CERTIFIED: no vector is MU to the Bjorck triple {I, C, K} (1e-9 balls).
+
+=== Layer-3 gap patch (rebuild mode) over [1.1965, 1.26] ===
+  theta 1.1972  nvec=60 nbases=1 rate=20.3 delta=3.25e-04 [0.2 min]
+  theta 1.1978  nvec=60 nbases=1 rate=16.6 delta=4.23e-04 [0.4 min]
+  theta 1.1985  nvec=60 nbases=1 rate=13.8 delta=5.49e-04 [0.6 min]
+  theta 1.1995  nvec=60 nbases=1 rate=11.7 delta=7.14e-04 [0.7 min]
+  theta 1.2007  nvec=60 nbases=1 rate=10.0 delta=9.28e-04 [0.9 min]
+  theta 1.2023  nvec=60 nbases=1 rate=8.6 delta=1.21e-03 [1.1 min]
+  theta 1.2038  nvec=60 nbases=1 rate=7.4 delta=7.84e-04 [1.4 min]
+  theta 1.2052  nvec=60 nbases=1 rate=6.9 delta=1.02e-03 [1.5 min]
+  theta 1.2069  nvec=60 nbases=1 rate=6.3 delta=1.33e-03 [1.7 min]
+  theta 1.2092  nvec=60 nbases=1 rate=5.8 delta=1.72e-03 [1.9 min]
+  theta 1.2114  nvec=60 nbases=1 rate=5.2 delta=1.12e-03 [2.1 min]
+  theta 1.2133  nvec=60 nbases=1 rate=4.9 delta=1.46e-03 [2.3 min]
+  theta 1.2158  nvec=60 nbases=1 rate=4.6 delta=1.89e-03 [2.4 min]
+  theta 1.2181  nvec=60 nbases=1 rate=4.3 delta=1.23e-03 [2.7 min]
+  theta 1.2203  nvec=60 nbases=1 rate=4.1 delta=1.60e-03 [2.8 min]
+  theta 1.2230  nvec=60 nbases=1 rate=3.9 delta=2.00e-03 [3.0 min]
+  theta 1.2266  nvec=60 nbases=1 rate=3.7 delta=2.00e-03 [3.3 min]
+  theta 1.2305  nvec=60 nbases=1 rate=3.4 delta=2.00e-03 [3.4 min]
+  theta 1.2344  nvec=60 nbases=1 rate=3.2 delta=2.00e-03 [3.6 min]
+  theta 1.2383  nvec=60 nbases=1 rate=3.1 delta=2.00e-03 [3.7 min]
+  theta 1.2422  nvec=60 nbases=1 rate=2.9 delta=2.00e-03 [3.9 min]
+  theta 1.2461  nvec=60 nbases=1 rate=2.8 delta=2.00e-03 [4.0 min]
+  theta 1.2500  nvec=60 nbases=1 rate=2.7 delta=2.00e-03 [4.2 min]
+  theta 1.2539  nvec=60 nbases=1 rate=2.6 delta=2.00e-03 [4.3 min]
+  theta 1.2578  nvec=60 nbases=1 rate=2.5 delta=2.00e-03 [4.5 min]
+  theta 1.2617  nvec=60 nbases=1 rate=2.4 delta=2.00e-03 [4.6 min]
+
+PATCH DONE: 26 anchors, 0 gaps, 4.6 min
+
+=== Layer-3 gap patch (rebuild mode) over [5.02, 5.0855] ===
+  theta 5.0210  nvec=60 nbases=1 rate=2.3 delta=6.50e-04 [0.1 min]
+  theta 5.0221  nvec=60 nbases=1 rate=2.3 delta=8.45e-04 [0.3 min]
+  theta 5.0236  nvec=60 nbases=1 rate=2.4 delta=1.10e-03 [0.4 min]
+  theta 5.0255  nvec=60 nbases=1 rate=2.4 delta=1.43e-03 [0.5 min]
+  theta 5.0280  nvec=60 nbases=1 rate=2.5 delta=1.86e-03 [0.6 min]
+  theta 5.0312  nvec=60 nbases=1 rate=2.5 delta=2.00e-03 [0.8 min]
+  theta 5.0349  nvec=60 nbases=1 rate=2.6 delta=2.00e-03 [0.9 min]
+  theta 5.0388  nvec=60 nbases=1 rate=2.7 delta=2.00e-03 [1.0 min]
+  theta 5.0427  nvec=60 nbases=1 rate=2.8 delta=2.00e-03 [1.2 min]
+  theta 5.0466  nvec=60 nbases=1 rate=3.0 delta=2.00e-03 [1.4 min]
+  theta 5.0505  nvec=60 nbases=1 rate=3.1 delta=2.00e-03 [1.5 min]
+  theta 5.0544  nvec=60 nbases=1 rate=3.3 delta=2.00e-03 [1.7 min]
+  theta 5.0583  nvec=60 nbases=1 rate=3.5 delta=2.00e-03 [1.8 min]
+  theta 5.0622  nvec=60 nbases=1 rate=3.8 delta=2.00e-03 [2.0 min]
+  theta 5.0651  nvec=60 nbases=1 rate=4.1 delta=1.30e-03 [2.2 min]
+  theta 5.0674  nvec=60 nbases=1 rate=4.3 delta=1.69e-03 [2.4 min]
+  theta 5.0703  nvec=60 nbases=1 rate=4.6 delta=2.00e-03 [2.6 min]
+  theta 5.0729  nvec=60 nbases=1 rate=5.1 delta=1.30e-03 [2.8 min]
+  theta 5.0752  nvec=60 nbases=1 rate=5.5 delta=1.69e-03 [3.0 min]
+  theta 5.0772  nvec=60 nbases=1 rate=6.1 delta=1.10e-03 [3.2 min]
+  theta 5.0791  nvec=60 nbases=1 rate=6.6 delta=1.43e-03 [3.4 min]
+  theta 5.0809  nvec=60 nbases=1 rate=7.6 delta=9.28e-04 [3.6 min]
+  theta 5.0825  nvec=60 nbases=1 rate=8.5 delta=1.21e-03 [3.8 min]
+  theta 5.0840  nvec=60 nbases=1 rate=10.4 delta=7.84e-04 [4.1 min]
+  theta 5.0850  nvec=60 nbases=1 rate=12.6 delta=5.10e-04 [4.3 min]
+  theta 5.0858  nvec=60 nbases=1 rate=15.0 delta=6.63e-04 [4.5 min]
+
+PATCH DONE: 26 anchors, 0 gaps, 4.5 min
