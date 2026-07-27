@@ -284,11 +284,14 @@ R4. Rigor substrate — CORNERSTONE BUILT 2026-07-26 (Result 14):
     1e-11 ball; tile radius certified at 2.0e-6; SLOP replaced by a
     derived 1e-13 static bound (100x headroom, Krawczyk needs no
     accuracy from LAPACK).
-R5. Drivers (engineering): adaptive tiler (per-tile h from local
-    diagnostics, subdivide-on-fail, coverage bookkeeping over the exact
-    parameter domain and its symmetry quotient); beta-subdivision for
-    deep valleys; margin-cached continuation with the compactness
-    root-count argument stated cleanly.
+R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
+    a 4x4 grid of margin-cached chain-lines certified a full-dimension
+    block (112 tiles, 16 anchors, 17.7 min, zero failures/re-anchors) —
+    theorem: no MU quadruple contains any Karlsson Hadamard from the
+    certified 4.6e-3 x 3.0e-3 x 3.0e-3 box. Remaining: adaptive
+    per-tile h + anisotropy near strata; coverage bookkeeping over the
+    full domain + symmetry quotient; the compactness root-count
+    argument written out.
 R6. C checker + certificate format + parallel campaign (~6e9 tiles);
     re-verification of the four pointwise theorems on the same substrate.
 

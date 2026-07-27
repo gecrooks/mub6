@@ -592,6 +592,28 @@ the Krawczyk operator is valid for arbitrary Y, so LAPACK stays a
 black box. Measured cross-check: certified interval g-widths 1.6e-12
 (Result 14), consistent with the derived bound's headroom.
 
+## Result 16 — the pipeline runs end-to-end: a certified 3-D block
+
+`driver.py` ran the first mini-campaign: 16 margin-cached chain-lines
+(4x4 grid in (phi, lam), spacing 1.8h) x 7 tiles each along theta
+(step 1.6h), h = 4e-4. Outcome: **112 tiles, 16 anchors, 17.7 minutes,
+zero failures, zero mid-line re-anchors** (96/96 chain steps OK).
+
+    THEOREM (prototype-grade). For every beta in
+      theta [5.978103, 5.982743] x phi [4.007135, 4.010095]
+                                 x lam [1.632365, 1.635325]
+    no MU triple {I, H(beta), K} exists — hence no MU quadruple
+    contains any Karlsson Hadamard H(beta) from this box.
+
+Extents 4.6e-3 x 3.0e-3 x 3.0e-3, volume 4.1e-8 — 79x one tile, the
+first certified region of full dimension. Measured throughput 9.5
+s/tile all-in (anchors amortized). Extrapolation at this uniform h:
+~1800 CPU-years for the family in Python — which is precisely the gap
+the remaining engineering closes: adaptive h (~50-100x fewer tiles),
+the C kernel (~100-1000x per tile), anisotropy near strata; the product
+lands at the weeks-on-a-desktop scale the roadmap projects. Every stage
+of that projection is now backed by a measured run.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
