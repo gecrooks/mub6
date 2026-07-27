@@ -1,0 +1,102 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gavincrooks/main/ap-AkWpWo1ZF4HK1q1dYVzxJw
+Building image im-6HH0YbNhfgpKgrd3YexTAb
+
+=> Step 0: FROM nvidia/cuda:12.4.0-devel-ubuntu22.04
+Getting image source signatures
+Copying blob sha256:3bd5db8307cf789162a5a096889ea97023d5795068bdd8f07a0b09b3615d17df
+Copying blob sha256:edd1dba56169c724e9377dafe9d6dd34c0ef9585109fa8366b4a3ee68e07fd25
+Copying blob sha256:bccd10f490ab0f3fba61b193d1b80af91b17ca9bdca9768a16ed05ce16552fcb
+Copying blob sha256:0ae42424cadfa646dc06982b0ed3d08688b628c43fc379782b3b5d2d578eb041
+Copying blob sha256:e06eb1b5c4cc0283389710e45402738c973f9c27a4cbdf90d53751723279e001
+Copying blob sha256:6005190795580507557f886a8cb09d07f48a293591caa5f686ae89e2f363a350
+Copying blob sha256:3af11d09e9cd1eb9c379f0a4071231e5a5642eb728b4b33bcb76be291f3c9488
+Copying blob sha256:73b7968785dcb3e277c8de18c033614246b9419edb40941a0fc66aed6c831edb
+Copying blob sha256:80150f70fb1e403d909539844a70fcb152ecfbd994a2c2c186dd71abb90be693
+Copying blob sha256:42896cdfd7b6a3e75be89e9fbc327a2dc8a1f56ab23a994553c28125ed85f528
+Copying blob sha256:7f308a7652768c0a964eb1720554421079b6a956110c7a12362380d2372fe82f
+Copying config sha256:d6b74566255fb8fb6e0ab61f2d2e7c3671b9f1233676ee374a104df2b43b2c04
+Writing manifest to image destination
+Unpacking OCI image
+   • unpacking rootfs ...     
+   • ... done                 
+   • unpacked image rootfs: /tmp/.tmpSeEas2
+Copied image in 4.69s
+
+=> Step 1: COPY /python/. /usr/local
+
+=> Step 2: RUN ln -s /usr/local/bin/python3 /usr/local/bin/python
+
+=> Step 3: ENV TERMINFO_DIRS=/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo
+Saving image...
+Image saved, took 3.86s
+
+Built image im-6HH0YbNhfgpKgrd3YexTAb in 73.34s
+
+
+Building image im-WxVSuvIstV2O5tt1wmGo9X
+
+=> Step 0: FROM base
+
+=> Step 1: RUN python -m pip install cupy-cuda12x numpy scipy
+Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+Collecting cupy-cuda12x
+  Downloading http://pypi-mirror.modal.local:5555/simple/cupy-cuda12x/cupy_cuda12x-14.1.1-cp312-cp312-manylinux2014_x86_64.whl.metadata (2.8 kB)
+Collecting numpy
+  Downloading http://pypi-mirror.modal.local:5555/simple/numpy/numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting scipy
+  Downloading http://pypi-mirror.modal.local:5555/simple/scipy/scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.3/62.3 kB 10.2 MB/s eta 0:00:00
+Collecting cuda-pathfinder==1.*,>=1.3.4 (from cupy-cuda12x)
+  Downloading http://pypi-mirror.modal.local:5555/simple/cuda-pathfinder/cuda_pathfinder-1.6.0-py3-none-any.whl.metadata (1.9 kB)
+Downloading http://pypi-mirror.modal.local:5555/simple/cupy-cuda12x/cupy_cuda12x-14.1.1-cp312-cp312-manylinux2014_x86_64.whl (133.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.5/133.5 MB 136.6 MB/s eta 0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/cuda-pathfinder/cuda_pathfinder-1.6.0-py3-none-any.whl (54 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 54.6/54.6 kB 159.6 MB/s eta 0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/numpy/numpy-2.5.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 161.3 MB/s eta 0:00:00
+Downloading http://pypi-mirror.modal.local:5555/simple/scipy/scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 162.6 MB/s eta 0:00:00
+Installing collected packages: numpy, cuda-pathfinder, scipy, cupy-cuda12x
+Successfully installed cuda-pathfinder-1.6.0 cupy-cuda12x-14.1.1 numpy-2.5.1 scipy-1.18.0
+
+[notice] A new release of pip is available: 23.3.2 -> 26.1.2
+[notice] To update, run: pip install --upgrade pip
+Saving image...
+Image saved, took 872.34ms
+
+Built image im-WxVSuvIstV2O5tt1wmGo9X in 17.46s
+
+
+✓ Created objects.
+├── 🔨 Created mount /Users/work/Work/ops/MUB6/modal_app.py
+├── 🔨 Created mount PythonPackage:gpusweep, PythonPackage:layer3, 
+│   PythonPackage:layer3_param, PythonPackage:layer3_x, PythonPackage:mub, 
+│   PythonPackage:szollosi, PythonPackage:parametric, PythonPackage:certify, 
+│   PythonPackage:fold, PythonPackage:karlsson, PythonPackage:interval, 
+│   PythonPackage:dual, PythonPackage:rates, PythonPackage:xcover, 
+│   PythonPackage:families, PythonPackage:degenerate
+├── 🔨 Created function bench.
+└── 🔨 Created function line.
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+delta | CPU boxes/time | GPU cold | GPU warm | suspects
+0.006 | 1411117 boxes 1.73s | 45.19s | 0.14s | cpu 0 gpu 0
+0.012 | 2455343 boxes 2.75s | 0.23s | 0.14s | cpu 0 gpu 0
+0.02 | 7932281 boxes 8.70s | 0.91s | 0.24s | cpu 0 gpu 0
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gavincrooks/main/ap-AkWpWo1ZF4HK1q1dYVzxJw

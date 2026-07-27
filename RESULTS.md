@@ -769,6 +769,42 @@ has touched every known triple territory: Fourier (literature),
 Hermitian arc (complete), Dita arc (complete), generic X (spot + line +
 costed cover).
 
+## Result 23 — the full X-family covered, on cloud GPUs
+
+The program's first cloud campaign. `gpusweep.py` ports the certified
+triple sweep to CuPy (array-module-generic; box-for-box identical
+verdicts to the NumPy path, and the static rounding-error lemma applies
+unchanged since GPU FP64 is IEEE-compliant). Measured on a Modal A100:
+**0.14-0.24 s per sweep vs 1.7-8.7 s CPU — 12-36x**, ~33M boxes/s.
+`modal_app.py` then mapped the X-cover line walker across Modal
+containers (10-GPU account cap; walker on container CPU, sweeps on
+GPU): **115 lines dispatched, all lines inside the deltoid region
+walked in ~35 min wall-clock** — the same job the laptop had projected
+at 21 hours. Rough spend: ~$20 of A100 time.
+
+Combined with the 10 local lines:
+
+    THEOREM (prototype-grade, modulo slivers). Across the ENTIRE
+    Szollosi region D — 95 chain lines, 7,412 certified anchors,
+    line spacing 2.5e-2, vertical extent |Im alpha| < ~1.18 — every
+    anchored triple {I, X(alpha), K(alpha)} is strongly unextendible.
+    27 lines carry isolated gap slivers (~1-2 each, ~2e-3 wide in
+    Re alpha; total measure < ~0.1% of D), concentrated symmetrically
+    near the axis band and the sub-family crossings — root-birth loci,
+    patchable by the Result-22 continuation pass.
+
+With this, Layer 3 has certified anchors across every known triple
+territory in dimension six: the Fourier family (literature), the
+Hermitian arc (complete), the Dita arc (complete), and now the full
+two-parameter Szollosi region (complete modulo slivers). The
+Layer-3 hole in the eventual K3 theorem is reduced to sliver-patching
+plus the anchor-interval-to-full-cover bookkeeping.
+
+GPU lesson for the campaign: 40 lines of CuPy bought 12-36x on the
+dominant kernel with zero rigor loss; the walker's CPU parts now
+dominate anchor cost, and batching those (many anchors' polishes per
+GPU call) is the next order of magnitude.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
