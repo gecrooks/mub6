@@ -472,22 +472,33 @@ def partition_certificate(O0, G, tubes, h, n_colors=5, verbose=True):
 # driver
 # ---------------------------------------------------------------------------
 
-def certify_tile(beta, h, verbose=True, fold_cut=0.03):
+def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     """Attempt the full tile certificate at half-width h. Roots whose own
     slope ceiling is within 2.5x of the requested h (or sigma_min <
     fold_cut outright) are certified by valley windows (fold.py) instead
-    of slanted Q-tubes."""
+    of slanted Q-tubes. use_certified=True swaps the EMPIRICAL FD/sampled
+    tax constants for the certified dual-AD rates of rates.py (remaining
+    EMPIRICAL after the swap: curve residual corner-sampling, root
+    sensitivities Sn/Q, overlap gradients)."""
     from fold import fold_overlap_rows, valley_certificate
 
     t0 = time.time()
     L_map = map_lipschitz(beta)
     L_H = PAD * L_map
-    far_tax = L_H_G * L_H * SQ3 * h
-    # per-component beta-tax rate: PAD * 2 * ||dh_k||_2 * |dbeta|_2, to be
-    # multiplied by the box-local |s_k| bound inside the sweep
-    beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
-    # trench-local tax for valley windows: |s_k| ~ 1/sqrt6 near MU points
-    valley_tax = beta_rate * (1.0 / np.sqrt(6.0) + 0.06)
+    cert_rates = None
+    if use_certified:
+        from rates import certified_rates
+        cert_rates = certified_rates(beta, h)
+        far_tax = cert_rates["far_tax"]
+        beta_rate = cert_rates["beta_rate_vec"]
+        valley_tax = cert_rates["far_tax"] * (1.0 / np.sqrt(6.0) + 0.06)
+    else:
+        far_tax = L_H_G * L_H * SQ3 * h
+        # per-component beta-tax rate: PAD * 2 * ||dh_k||_2 * |dbeta|_2,
+        # multiplied by the box-local |s_k| bound inside the sweep
+        beta_rate = PAD * 2.0 * np.sqrt(6.0) * L_map * SQ3 * h
+        # trench-local tax for valleys: |s_k| ~ 1/sqrt6 near MU points
+        valley_tax = beta_rate * (1.0 / np.sqrt(6.0) + 0.06)
 
     H0 = karlsson_map(*beta)
     vecs = find_mu_vectors([H0], n_starts=4000, seed=99)
@@ -496,8 +507,12 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03):
         print(f"  tile h={h:g}: {len(roots)} roots at center", flush=True)
 
     # per-root parametric data: S, Q, taxes, guards -- or fold windows
-    gb_rate = sampled_gb_drift(beta, roots)
-    s_drift = 2.5 * L_H * SQ3 * h
+    if cert_rates is not None:
+        gb_rate = cert_rates["gb"]
+        s_drift = cert_rates["s_drift"]
+    else:
+        gb_rate = sampled_gb_drift(beta, roots)
+        s_drift = 2.5 * L_H * SQ3 * h
     n = len(roots)
     per_root = [None] * n
     fold_certs = {}
@@ -538,12 +553,15 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03):
         Sn = float(np.max(np.sum(np.abs(S), axis=1)))
         Rcurve = curve_residual(beta, th0, S, Q, h, quadratic=True)
         qoff = q_offset(Q, h)
-        Jdrift = sampled_J_drift(beta, th0, S, h)
+        if cert_rates is not None:
+            RJx = cert_rates["RJ_extra"]
+        else:
+            RJx = PAD * sampled_J_drift(beta, th0, S, h)
         rad_g = PAD * Rcurve + defect * SQ3 * h
         coef1[i] = PAD * SQ3 * h * (HESS_ROW_TH * Sn + gb_rate)
         coef0[i] = PAD * Rcurve + PAD * defect * SQ3 * h + coef1[i] * qoff.max()
         per_root[i] = dict(S=S, Q=Q, defect=defect, Sn=Sn, qoff=qoff,
-                           rad_g=rad_g, RJ_extra=PAD * Jdrift)
+                           rad_g=rad_g, RJ_extra=RJx)
         tax_est = coef0[i] + coef1[i] * 0.6 + 4e-4
         gj = 1.8 * np.abs(Vt.T) @ (tax_est / sv)
         guards[i] = np.clip(gj + 0.01, 0.03, 0.5)

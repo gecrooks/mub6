@@ -1,0 +1,13 @@
+  tile h=0.0003: 48 roots at center
+    root 14: VALLEY T=0.35 sig=0.0278 edge=0.0094 rho_y=0.044 mono=True
+    root 25: VALLEY T=0.35 sig=0.0297 edge=0.0100 rho_y=0.044 mono=True
+    root 28: VALLEY T=0.35 sig=0.0291 edge=0.0097 rho_y=0.044 mono=True
+    root 41: VALLEY T=0.35 sig=0.0261 edge=0.0089 rho_y=0.043 mono=True
+    stage A: 3595 coarse boxes, 4 clusters (0 far from roots)
+    zoned sweep: 3843568 boxes, max guard 0.323, far tax 0.0020, folds 4 (phantoms 0)
+    44 tubes + 4 fold windows certified
+    pairs: 24 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [25 s]
+{'ok': True, 'h': 0.0003, 'n_roots': 48, 'n_folds': 4, 'n_conflicts': 24, 'seconds': 24.585404872894287}
+  tile h=0.001: 48 roots at center
+{'ok': False, 'h': 0.001, 'seconds': 4.678141832351685, 'reason': 'valley 0: y-shell margin -7.09e-03 <= 0'}

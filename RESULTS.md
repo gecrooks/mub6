@@ -614,6 +614,31 @@ the C kernel (~100-1000x per tile), anisotropy near strata; the product
 lands at the weeks-on-a-desktop scale the roadmap projects. Every stage
 of that projection is now backed by a measured run.
 
+## Result 17 — certified taxes wired into the live certificate
+
+`rates.py` derives every sweep-tax constant rigorously from the dual-AD
+map enclosures (derivations in the docstring): per-COLUMN beta taxes
+BR_k = (2/sqrt6) h sum_j ||dH_{.k}/db_j||_1 * |s_k|-local, the mixed-
+derivative gb bound for the slant-tax slope, the Krawczyk J-drift, and
+the |s| box-drift — no sampling, no PAD. Measured at the reference tile
+(h = 3e-4): **the certified beta/far taxes are 2.7x TIGHTER than the
+prototype's padded FD constants** (ratio 0.37 — the honest constants
+beat the guessed ones); only the gb bound is fatter (7.8 vs sampled
+0.3-0.7, being worst-case over all components; sharpenable with
+box-local |s|).
+
+Wired into `certify_tile(use_certified=True)`:
+- **h = 3e-4 CERTIFIED with fully certified taxes in 25 s** — faster
+  than the empirical run (sweep 3.8M boxes vs 5.0M). The fatter gb
+  re-routed four moderate roots into valley windows automatically; the
+  machinery composed correctly around the new constants (44 tubes + 4
+  valleys, 2-colored, no phantoms needed).
+- h = 1e-3 fails at a valley y-shell margin: the certified ceiling at
+  this point sits ~25% below the empirical wall, as the honest gb
+  dictates. Remaining EMPIRICAL after this wiring: curve-residual
+  corner sampling, root sensitivities Sn/Q, overlap gradients — each
+  with a designed certified replacement (Result 14 / roadmap R4).
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
