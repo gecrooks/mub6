@@ -88,11 +88,16 @@ def certified_triple_sweep(B, K, hslop=1e-9, wmin=2e-3, chunk=100_000,
         u = _uvec(C)
         sw = W.sum(axis=1)
         best = np.full(len(C), -np.inf)
+        SQ6 = 2.0 * np.sqrt(6.0)
         for Hc in stacks:
             s = u @ Hc
             g = np.abs(s) ** 2 - 1.0 / 6.0
-            L = 2.0 * np.minimum(np.abs(s) + sw[:, None] / 6.0, 1.0) / 6.0
-            marg = np.abs(g) - L * sw[:, None] - (SLOP + L_H_G * hslop)
+            smod_w = np.minimum(np.abs(s) + sw[:, None] / 6.0, 1.0)
+            L = 2.0 * smod_w / 6.0
+            # |s|-local ball slop: |dg_k| <= 2 sqrt6 |s_k| * hslop over the
+            # entrywise H-ball (vs the global L_H_G = 5 worst case)
+            marg = np.abs(g) - L * sw[:, None] \
+                - (SLOP + SQ6 * smod_w * hslop)
             best = np.maximum(best, marg.max(axis=1))
         excl = best > 0
         min_margin = min(min_margin,
