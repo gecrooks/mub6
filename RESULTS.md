@@ -737,6 +737,38 @@ territory is the generic 2-parameter X6^(2) interior, which needs the
 Szollosi-chart transcription (eq 7.14 + Zauner's circulant triple
 construction) and then this same walker in two dimensions.
 
+## Result 22 — the Szollosi chart, and Layer 3 into the generic X-interior
+
+`szollosi.py` transcribes eq 7.14 with the cubic-root rule ((x,y) roots
+of f_alpha, (u,v) of f_{-alpha}, alpha in the deltoid intersection D):
+**validated 40/40 sampled alpha at unitarity defect 5e-15**, one
+canonical root-pair choice throughout; rows 3-5 of the transcription are
+identically orthogonal to the flat row, a structural self-check. The
+last family chart of the program is implemented.
+
+`layer3_x.py` then took Layer 3 into the generic X-interior:
+- **8/8 spot certificates** at random interior alpha (60 MU vectors,
+  unique triple each, all certified unextendible);
+- **a chain line across D certified: 241 anchors, 33.7 min**, with 2
+  gap anchors at t ~ -0.2596 where even 40k multistarts find only
+  54/59 of the 60 vectors — a root-birth on the line collapsing the
+  K-columns' basins — **closed by continuation**: the neighbor's K
+  tracked across the gap verifies to 2e-16 and certifies (zero
+  suspects).
+
+Failure-mode symmetry worth recording: on the B-arc, TRACKING lost its
+branch at a special point and rebuild-mode saved coverage; on the
+X-line, REBUILD (enumeration) went blind at a root-birth and tracking
+saved it. The campaign walker must run both modes and cross-verify —
+each mode's blind spot is the other's strength.
+
+Full-D coverage at the measured anchor economics (~5.6e-3 spacing,
+8.4 s/anchor): ~1.1e5 anchors ~ 11 days of Python, ~3 h with the C
+kernel — a campaign line-item, now costed. With Results 19-22, Layer 3
+has touched every known triple territory: Fourier (literature),
+Hermitian arc (complete), Dita arc (complete), generic X (spot + line +
+costed cover).
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
