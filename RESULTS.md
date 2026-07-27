@@ -716,6 +716,27 @@ boundary term; closing them rigorously wants the standard cure of
 reparametrizing by the branch variable (theta = theta_min + s^2), noted
 for the substrate pass.
 
+## Result 21 — Layer 3 over the Dita arc (multi-triple anchors)
+
+`layer3_dita.py`: the same rebuild-mode walk over the Dita family's
+fundamental domain x in [-1/8, 1/8] — the second explicit slice of
+X6^(2), and the first with MULTIPLE triples per point: **118 anchors,
+up to 4 bases each (every basis certified per anchor), zero gaps,
+32.3 min**:
+
+    THEOREM (prototype-grade). For every x in the Dita arc, every MU
+    triple {I, D(x), K} is strongly unextendible.
+
+The walk crossed the maximally rich D(0) region (120 MU vectors)
+without special handling — the multi-basis loop simply certified each
+of the 4 surviving bases (the 10-basis structure lives only exactly at
+the special point, as with the Fourier family's 16 -> 8). With Results
+19/20 (the B-arc, Bjorck to Bjorck), both explicit 1-parameter slices
+of the Szollosi set are now family-complete; the remaining Layer-3
+territory is the generic 2-parameter X6^(2) interior, which needs the
+Szollosi-chart transcription (eq 7.14 + Zauner's circulant triple
+construction) and then this same walker in two dimensions.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
