@@ -661,6 +661,40 @@ constants throughout. Remaining EMPIRICAL in the loop: curve-residual
 corner sampling, Sn/Q sensitivities, overlap gradients (roadmap R4
 tail), plus the libm-faithfulness assumption under everything.
 
+## Result 19 — the first family-complete certificate: the whole B-arc
+
+`layer3_family.py` + `layer3_patch.py`: an adaptive anchor walk (delta
+grows 1.3x on success, halves on drowning, gap-and-skip at the floor;
+K warm-tracked between anchors and the triple re-verified at each)
+certified, across ~540 anchors and ~50 min in three runs:
+
+    THEOREM (prototype-grade). For every theta in [1.25, 5.03] — the
+    Hermitian (Beauchamp-Nicoara) arc, minus the endpoint segments that
+    degenerate to Bjorck's C (excluded pointwise, Result 5) — no vector
+    is mutually unbiased to the triple {I, B(theta), K(theta)}: the
+    ENTIRE Hermitian family of MU triples is strongly unextendible.
+
+Zero gaps after patching. Discoveries made by the walk itself:
+
+1. **The arc crosses two Dita-equivalent special points** — theta = pi
+   and theta = 3pi/2 (y = -1 and y = -i in the family chart, exactly
+   the special values Bengtsson et al. list) — where the MU-vector
+   count spikes (108-120 vs 56-72 generic) and certification margins
+   tighten (delta ground to ~1e-3 through pi).
+2. **K-tracking silently loses its branch at a special point** (at Dita
+   the partner-basis structure reorganizes: 10 bases live there). The
+   first pass through 3pi/2 produced a spurious rate blowup (29.7) and
+   a 0.15-rad honest-gap trail from a broken tracked K; rebuild-mode
+   anchors (fresh multistart triple per anchor) crossed the same zone
+   at rates 0.9-1.4 with delta = 2e-3, zero gaps, in 6 min. CAMPAIGN
+   LESSON: continuation must re-anchor by rebuild at special loci —
+   tracked objects can lose their branch exactly where the structure is
+   richest, and the certificate correctly refuses rather than lies.
+
+With Result 12 (theta-interval mechanics) this completes Layer 3 for
+one of the three known infinite triple families; the remaining X6^(2)
+territory is the same walk over Szollosi's two-parameter chart.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

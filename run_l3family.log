@@ -1,0 +1,9 @@
+=== family-complete Layer 3 over theta in [1.25, 5.03] ===
+  theta 1.508 (7%), 40 anchors, delta 0.0070, [3.9 min]
+  theta 2.039 (21%), 80 anchors, delta 0.0070, [5.6 min]
+  theta 2.585 (35%), 120 anchors, delta 0.0070, [7.4 min]
+  theta 2.988 (46%), 160 anchors, delta 0.0043, [10.7 min]
+  theta 3.178 (51%), 200 anchors, delta 0.0010, [16.4 min]
+  theta 3.481 (59%), 240 anchors, delta 0.0021, [27.8 min]
+  theta 3.654 (64%), 280 anchors, delta 0.0023, [31.1 min]
+  theta 3.803 (68%), 320 anchors, delta 0.0025, [34.2 min]

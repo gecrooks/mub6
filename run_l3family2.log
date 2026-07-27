@@ -1,0 +1,54 @@
+=== family-complete Layer 3 over theta in [3.8, 5.03] ===
+  theta 4.334 (43%), 40 anchors, delta 0.0070, [1.6 min]
+  theta 4.674 (71%), 80 anchors, delta 0.0040, [3.3 min]
+  theta 4.989 (97%), 120 anchors, delta 0.0033, [5.5 min]
+
+FAMILY ARC CERTIFIED: 129 anchors, 514665334 boxes, 6.0 min, worst triple defect 3.3e-02
+GAPS (47):
+  theta ~ 4.7614: uncertifiable at delta_min (rate 5.55)
+  theta ~ 4.7630: uncertifiable at delta_min (rate 7.54)
+  theta ~ 4.7646: uncertifiable at delta_min (rate 29.71)
+  theta ~ 4.7662: triple tracking defect 3.3e-04
+  theta ~ 4.7694: triple tracking defect 1.1e-03
+  theta ~ 4.7726: triple tracking defect 1.8e-03
+  theta ~ 4.7758: triple tracking defect 2.6e-03
+  theta ~ 4.7790: triple tracking defect 3.3e-03
+  theta ~ 4.7822: triple tracking defect 4.1e-03
+  theta ~ 4.7854: triple tracking defect 4.8e-03
+  theta ~ 4.7886: triple tracking defect 5.6e-03
+  theta ~ 4.7918: triple tracking defect 6.3e-03
+  theta ~ 4.7950: triple tracking defect 7.1e-03
+  theta ~ 4.7982: triple tracking defect 7.9e-03
+  theta ~ 4.8014: triple tracking defect 8.6e-03
+  theta ~ 4.8046: triple tracking defect 9.4e-03
+  theta ~ 4.8078: triple tracking defect 1.0e-02
+  theta ~ 4.8110: triple tracking defect 1.1e-02
+  theta ~ 4.8142: triple tracking defect 1.2e-02
+  theta ~ 4.8174: triple tracking defect 1.3e-02
+  theta ~ 4.8206: triple tracking defect 1.3e-02
+  theta ~ 4.8238: triple tracking defect 1.4e-02
+  theta ~ 4.8270: triple tracking defect 1.5e-02
+  theta ~ 4.8302: triple tracking defect 1.6e-02
+  theta ~ 4.8334: triple tracking defect 1.6e-02
+  theta ~ 4.8366: triple tracking defect 1.7e-02
+  theta ~ 4.8398: triple tracking defect 1.8e-02
+  theta ~ 4.8430: triple tracking defect 1.9e-02
+  theta ~ 4.8462: triple tracking defect 2.0e-02
+  theta ~ 4.8494: triple tracking defect 2.0e-02
+  theta ~ 4.8526: triple tracking defect 2.1e-02
+  theta ~ 4.8558: triple tracking defect 2.2e-02
+  theta ~ 4.8590: triple tracking defect 2.3e-02
+  theta ~ 4.8622: triple tracking defect 2.4e-02
+  theta ~ 4.8654: triple tracking defect 2.4e-02
+  theta ~ 4.8686: triple tracking defect 2.5e-02
+  theta ~ 4.8718: triple tracking defect 2.6e-02
+  theta ~ 4.8750: triple tracking defect 2.7e-02
+  theta ~ 4.8782: triple tracking defect 2.7e-02
+  theta ~ 4.8814: triple tracking defect 2.8e-02
+  theta ~ 4.8846: triple tracking defect 2.9e-02
+  theta ~ 4.8878: triple tracking defect 3.0e-02
+  theta ~ 4.8910: triple tracking defect 3.0e-02
+  theta ~ 4.8942: triple tracking defect 3.1e-02
+  theta ~ 4.8974: triple tracking defect 3.2e-02
+  theta ~ 4.9006: triple tracking defect 3.2e-02
+  theta ~ 4.9038: triple tracking defect 3.3e-02

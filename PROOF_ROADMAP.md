@@ -256,10 +256,13 @@ R1. F-locus shell — DE-RISKED 2026-07-26 (`fourier_shell.py`, Result 10):
     spurious ones; every clique pair certified >= 1/6 wall); wall drift
     along F(a,b) measured at ~0.05/unit-parameter => O(0.1)-thick shell
     tiles. Remaining: parametric version (same tube machinery).
-R2. X-locus / Layer 3 — DE-RISKED 2026-07-26 (`layer3.py`, Result 10):
-    certified triple-unextendability of a concrete X-triple in 0.4 s,
-    zero suspects, margin = 1/6 (maximal). Remaining: parametrize over
-    the X-family (2 params; margins dwarf the beta-taxes).
+R2. X-locus / Layer 3 — B-ARC COMPLETE 2026-07-27 (Result 19): the
+    entire Hermitian family arc theta in [1.25, 5.03] certified
+    strongly-unextendible via ~540 adaptive anchors (zero gaps; two
+    Dita special points crossed — rebuild-mode anchoring required at
+    special loci, where tracked partners lose their branch). Remaining:
+    the same walk over Szollosi's 2-parameter X6^(2) chart, and the
+    endpoint segments joining Bjorck's C.
 R3. Fold-pair bookkeeping — CLOSED 2026-07-26 (Result 13): a real fold
     located by count-bisection (48 -> 52, two pairs born, orbit of 2);
     certified intra-dip self-overlap makes the single-vertex collapse
