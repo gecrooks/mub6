@@ -1,0 +1,10 @@
+fold-aware campaign: exclude roots with sig_min < cut from the tile ceiling
+(they get fold/Miranda tubes; assumes those cost no extra tile shrink)
+  cut 0.00: folded roots   0/1280, h quartiles 1.81e-04/5.43e-04/1.17e-03, cap 0.003 => N ~ 4.03e+14 tiles
+  cut 0.00: folded roots   0/1280, h quartiles 1.81e-04/5.43e-04/1.17e-03, cap 0.005 => N ~ 4.03e+14 tiles
+  cut 0.01: folded roots  19/1280, h quartiles 4.57e-04/7.33e-04/1.28e-03, cap 0.003 => N ~ 2.55e+11 tiles
+  cut 0.01: folded roots  19/1280, h quartiles 4.57e-04/7.33e-04/1.28e-03, cap 0.005 => N ~ 2.55e+11 tiles
+  cut 0.02: folded roots  63/1280, h quartiles 8.67e-04/1.16e-03/1.78e-03, cap 0.003 => N ~ 2.74e+10 tiles
+  cut 0.02: folded roots  63/1280, h quartiles 8.67e-04/1.16e-03/1.78e-03, cap 0.005 => N ~ 2.74e+10 tiles
+  cut 0.03: folded roots 150/1280, h quartiles 1.55e-03/1.94e-03/2.39e-03, cap 0.003 => N ~ 6.07e+09 tiles
+  cut 0.03: folded roots 150/1280, h quartiles 1.55e-03/1.94e-03/2.39e-03, cap 0.005 => N ~ 6.03e+09 tiles

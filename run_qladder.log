@@ -1,0 +1,22 @@
+  tile h=0.0003: 48 roots at center
+    zoned sweep: 5048769 boxes, max guard 0.215, far tax 0.0054
+    48 tubes certified, worst radius 5.73e-04
+    pairs: 24 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [29 s]
+{'ok': True, 'h': 0.0003, 'n_roots': 48, 'n_conflicts': 24, 'seconds': 28.909512042999268}
+  tile h=0.0006: 48 roots at center
+    zoned sweep: 5861601 boxes, max guard 0.400, far tax 0.0108
+    48 tubes certified, worst radius 1.62e-03
+    pairs: 24 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0006  [35 s]
+{'ok': True, 'h': 0.0006, 'n_roots': 48, 'n_conflicts': 24, 'seconds': 34.63097882270813}
+  tile h=0.001: 48 roots at center
+    zoned sweep: 19502667 boxes, max guard 0.500, far tax 0.0180
+    48 tubes certified, worst radius 1.03e-04
+    pairs: 24 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.001  [93 s]
+{'ok': True, 'h': 0.001, 'n_roots': 48, 'n_conflicts': 24, 'seconds': 92.65072202682495}
+  tile h=0.0014: 48 roots at center
+{'ok': False, 'h': 0.0014, 'seconds': 276.7508509159088, 'reason': 'zoned sweep: zoned sweep exceeded 6e+07 boxes'}
+  tile h=0.002: 48 roots at center
+{'ok': False, 'h': 0.002, 'seconds': 283.7249209880829, 'reason': 'zoned sweep: zoned sweep exceeded 6e+07 boxes'}

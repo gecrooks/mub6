@@ -1,0 +1,4 @@
+=== parametric tile prototype at K6(5.9785, 4.0075, 1.6328) ===
+(EMPIRICAL constants: FD map derivatives, corner-sampled residuals and drifts, padded x2.0; rigorous version swaps in interval enclosures of the map.)
+  tile h=0.0003: 48 roots at center
+    far sweep: 645351311 boxes, 221786781 suspects, sprawl 0.179, tax 0.0054

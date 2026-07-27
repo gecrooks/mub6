@@ -1,0 +1,8 @@
+=== Layer 3 prototype: triple {I, B(1.6), K} ===
+MU vectors of {I,B}: 120; unique basis found
+triple defect |B vs K|: 2.50e-16
+after unitary polish:   3.61e-16
+unextendability margin over 114 non-basis MU vectors: min 0.1664  median 0.1863
+certified sweep over the phase torus (10 components)...
+  boxes 908451, suspects 0, min margin 0.00000 [0 s]
+  ==> THEOREM (prototype-grade): no vector is MU to the triple {I, B', K'} for any B', K' in the 1e-9 balls -- the X-family triple is strongly unextendible.

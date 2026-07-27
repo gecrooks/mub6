@@ -1,0 +1,35 @@
+=== parametric Layer 3: theta in [1.55, 1.6500000000000001] ===
+sampled drift rates: |dB/dth| 0.408  |dK/dth| 0.389
+triple defect at endpoints: 1.94e-16 (must stay tiny)
+interval ball radius (both Hadamards): 0.0798 -> sweep slop 0.3988  (margin to beat ~ 1/6)
+    ...20070751 boxes, 8294953 suspects [7 s]
+    ...40096375 boxes, 18328809 suspects [15 s]
+    ...60034363 boxes, 28262388 suspects [22 s]
+    ...80028389 boxes, 38077833 suspects [30 s]
+    ...100015509 boxes, 48244107 suspects [37 s]
+    ...120054407 boxes, 58075014 suspects [45 s]
+    ...140084553 boxes, 68211027 suspects [52 s]
+    ...160027421 boxes, 78151205 suspects [59 s]
+    ...180085363 boxes, 88046647 suspects [66 s]
+    ...200053147 boxes, 98118795 suspects [73 s]
+    ...220080257 boxes, 107976078 suspects [80 s]
+    ...240004753 boxes, 118008610 suspects [87 s]
+    ...260007053 boxes, 127823237 suspects [95 s]
+    ...280000047 boxes, 137836991 suspects [102 s]
+    ...300088049 boxes, 148003346 suspects [110 s]
+    ...320053713 boxes, 157895684 suspects [118 s]
+    ...340072899 boxes, 167925132 suspects [125 s]
+    ...360075039 boxes, 177842958 suspects [133 s]
+    ...380049889 boxes, 187753937 suspects [141 s]
+Traceback (most recent call last):
+  File "/Users/work/Work/ops/MUB6/layer3_param.py", line 79, in <module>
+    main()
+    ~~~~^^
+  File "/Users/work/Work/ops/MUB6/layer3_param.py", line 66, in main
+    n_sus, min_margin, total = certified_triple_sweep(
+                               ~~~~~~~~~~~~~~~~~~~~~~^
+        B0, K0, hslop=hslop, wmin=2e-3)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/work/Work/ops/MUB6/layer3.py", line 87, in certified_triple_sweep
+    raise RuntimeError(f"exceeded {max_boxes:g} boxes")
+RuntimeError: exceeded 4e+08 boxes

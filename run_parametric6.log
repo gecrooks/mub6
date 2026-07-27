@@ -1,0 +1,4 @@
+  tile h=0.0006: 48 roots at center
+    zoned sweep: 5865439 boxes, max guard 0.406, far tax 0.0108
+    root 14: TUBE FAILED (near zone: 42 stuck boxes (D=0.387))
+{'ok': False, 'h': 0.0006, 'seconds': 29.442963361740112, 'reason': 'tube 14: near zone: 42 stuck boxes (D=0.387)'}

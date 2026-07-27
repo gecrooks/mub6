@@ -1,0 +1,3 @@
+pt 8 beta = [1.386501 1.678339 4.019655]  (Layer-1 slope wall: h = 1.68e-05)
+  tile h=0.0003: 52 roots at center
+{'ok': False, 'h': 0.0003, 'seconds': 5.122719049453735, 'reason': 'valley 5: valley floor never clears far tax by T=1.6'}

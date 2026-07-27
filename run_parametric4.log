@@ -1,0 +1,14 @@
+=== parametric tile prototype at K6(5.9785, 4.0075, 1.6328) ===
+(EMPIRICAL constants: FD map derivatives, corner-sampled residuals and drifts, padded x2.0; rigorous version swaps in interval enclosures of the map.)
+  tile h=0.0003: 48 roots at center
+    zoned sweep: 5049791 boxes, max guard 0.217, far tax 0.0054
+    48 tubes certified, worst radius 5.80e-04
+    pairs: 24 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [53 s]
+  tile h=0.001: 48 roots at center
+    zoned sweep: 19512445 boxes, max guard 0.500, far tax 0.0180
+    root 14: TUBE FAILED (zoned sweep exceeded 3e+07 boxes)
+  tile h=0.001 FAILED: tube 14: zoned sweep exceeded 3e+07 boxes
+
+max certifying half-width: h = 0.0003  (naive-threading equivalent was 2.9e-6)
+naive full-family tile count: 1.15e+12; cost/tile 53 s => 703329061 CPU-days in Python (before symmetry quotient, adaptivity, C kernel)

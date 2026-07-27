@@ -1,0 +1,5 @@
+pt 8 beta = [1.386501 1.678339 4.019655]
+52 roots; five smallest sigma_min: [0.0028 0.0047 0.0189 0.0205 0.0266]
+(Layer-1 slope wall here was h = 1.68e-05)
+  tile h=0.0003: 52 roots at center
+{'ok': False, 'h': 0.0003, 'seconds': 4.5455639362335205, 'reason': 'fold 5: edge margin 0.0014 <= tax'}

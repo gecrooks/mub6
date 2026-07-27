@@ -1,0 +1,10 @@
+=== parametric Layer 3 around theta = 1.6 ===
+sampled drift rates: |dB/dth| 0.408  |dK/dth| 0.389
+triple defect at th+eps: 1.94e-16
+delta = 0.02: ball 0.0319, sweep slop 0.1595 (vs 1/6 margin)
+  drowned (exceeded 4e+07 boxes) [15 s]
+delta = 0.012: ball 0.0191, sweep slop 0.0957 (vs 1/6 margin)
+  drowned (exceeded 4e+07 boxes) [15 s]
+delta = 0.006: ball 0.0096, sweep slop 0.0479 (vs 1/6 margin)
+  boxes 3540827, suspects 0 [1 s]
+==> THEOREM (prototype-grade): for every theta in [1.594, 1.606], no vector is MU to the X-family triple {I, B(theta), K(theta)} -- one anchor covers a theta-interval of length 0.012; the whole family needs ~524 anchors at this rate.

@@ -1,0 +1,13 @@
+=== BIRTH-STRADDLING tile, take 3: s=0.2981 ===
+  tile h=0.0003: 48 roots at center
+    root 9: VALLEY T=0.35 sig=0.0300 edge=0.0101 rho_y=0.102 mono=True
+    root 35: VALLEY T=0.35 sig=0.0212 edge=0.0071 rho_y=0.078 mono=True
+    root 38: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.095 mono=True
+    stage A: 40442 coarse boxes, 62 clusters (13 far from roots)
+    phantom 48: |g|min 1.14e-04 T=0.70 dips=1 mono=False
+    phantom 49: |g|min 1.14e-04 T=0.70 dips=1 mono=False
+    zoned sweep: 5561199 boxes, max guard 0.909, far tax 0.0060, folds 5 (phantoms 2)
+    45 tubes + 5 fold windows certified
+    pairs: 26 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [33 s]
+{'ok': True, 'h': 0.0003, 'n_roots': 50, 'n_folds': 5, 'n_conflicts': 26, 'seconds': 32.53586196899414}

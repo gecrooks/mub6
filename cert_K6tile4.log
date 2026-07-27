@@ -1,0 +1,54 @@
+parameter Lipschitz estimate: 1.04
+=== certifying K6(5.9785,4.0075,1.6328) TILE hslop=3e-6 (H-ball radius 3e-06) ===
+    ...5002317 boxes, 48435 suspects, stack 42814, peakRSS 447MB
+    ...5005197 boxes, 48435 suspects, stack 42810, peakRSS 447MB
+    ...5008073 boxes, 48435 suspects, stack 42538, peakRSS 447MB
+    ...5010677 boxes, 48435 suspects, stack 41978, peakRSS 447MB
+    ...5012721 boxes, 48435 suspects, stack 42268, peakRSS 447MB
+    ...5015055 boxes, 48435 suspects, stack 42508, peakRSS 447MB
+    ...5017629 boxes, 48435 suspects, stack 42530, peakRSS 447MB
+    ...5020225 boxes, 48435 suspects, stack 42168, peakRSS 447MB
+    ...5022459 boxes, 48435 suspects, stack 41492, peakRSS 447MB
+    ...5024017 boxes, 48435 suspects, stack 41810, peakRSS 447MB
+    ...5025893 boxes, 48435 suspects, stack 41842, peakRSS 447MB
+    ...5027801 boxes, 48435 suspects, stack 41738, peakRSS 447MB
+    ...5029605 boxes, 48435 suspects, stack 41434, peakRSS 447MB
+    ...5031105 boxes, 48435 suspects, stack 41084, peakRSS 447MB
+    ...5032255 boxes, 48435 suspects, stack 41320, peakRSS 447MB
+    ...5033641 boxes, 48435 suspects, stack 41360, peakRSS 447MB
+    ...5035067 boxes, 48435 suspects, stack 41430, peakRSS 447MB
+    ...5036563 boxes, 48435 suspects, stack 41344, peakRSS 447MB
+    ...5037973 boxes, 48435 suspects, stack 41014, peakRSS 447MB
+    ...5039053 boxes, 48435 suspects, stack 41178, peakRSS 447MB
+    ...5040297 boxes, 48435 suspects, stack 41394, peakRSS 447MB
+    ...5041757 boxes, 48435 suspects, stack 41396, peakRSS 447MB
+    ...5043219 boxes, 48435 suspects, stack 41330, peakRSS 447MB
+    ...5044615 boxes, 48435 suspects, stack 41026, peakRSS 447MB
+    ...5045707 boxes, 48435 suspects, stack 41318, peakRSS 447MB
+    ...5047091 boxes, 48435 suspects, stack 41442, peakRSS 447MB
+    ...5048599 boxes, 48435 suspects, stack 41472, peakRSS 447MB
+    ...5050137 boxes, 48435 suspects, stack 41324, peakRSS 447MB
+    ...5051527 boxes, 48435 suspects, stack 41034, peakRSS 447MB
+    ...5052627 boxes, 48435 suspects, stack 41402, peakRSS 447MB
+    ...5054095 boxes, 48435 suspects, stack 41506, peakRSS 447MB
+    ...5055667 boxes, 48435 suspects, stack 41620, peakRSS 447MB
+    ...5057353 boxes, 48435 suspects, stack 41572, peakRSS 447MB
+    ...5058991 boxes, 48435 suspects, stack 41374, peakRSS 447MB
+    ...5060431 boxes, 48435 suspects, stack 41602, peakRSS 447MB
+    ...5062099 boxes, 48435 suspects, stack 41816, peakRSS 447MB
+    ...5063981 boxes, 48435 suspects, stack 41994, peakRSS 447MB
+    ...5066041 boxes, 48435 suspects, stack 41990, peakRSS 447MB
+    ...5068097 boxes, 48435 suspects, stack 41716, peakRSS 447MB
+    ...5069879 boxes, 48435 suspects, stack 42164, peakRSS 447MB
+    ...5072109 boxes, 48435 suspects, stack 42524, peakRSS 447MB
+    ...5074699 boxes, 48435 suspects, stack 42820, peakRSS 447MB
+    ...5077585 boxes, 48435 suspects, stack 42996, peakRSS 447MB
+    ...5080647 boxes, 49919 suspects, stack 39934, peakRSS 447MB
+    ...5093097 boxes, 49919 suspects, stack 41576, peakRSS 447MB
+  sweep: 6858651 boxes, 3359111 excluded, 70215 suspect
+  verified 48 unique roots; all suspects covered
+  possible-edge graph: 48 vertices, 24 edges (min certified non-edge margin 0.0059)
+  clique number of possible-edge graph: 2
+  ==> THEOREM: no MU triple {I,H,K} exists for any H in the 3e-06-ball around K6(5.9785,4.0075,1.6328) TILE hslop=3e-6.
+[2 s] {'name': 'K6(5.9785,4.0075,1.6328) TILE hslop=3e-6', 'ok': True, 'n_roots': 48, 'n_edges': 24, 'clique': 2, 'margin': np.float64(0.0059193492493525264), 'excluded': 3359111, 'suspects': 70215, 'boxes_processed': 6858651}
+certified parameter-tile radius >= 2.89e-06

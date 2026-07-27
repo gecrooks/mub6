@@ -1,0 +1,7 @@
+=== certifying K3 seed 3003 (generic Karlsson) (H-ball radius 1e-11) ===
+  sweep: 76 generations, 6119797 boxes, 3035661 excluded, 24238 suspect
+  verified 48 unique roots; all suspects covered
+  possible-edge graph: 48 vertices, 24 edges (min certified non-edge margin 0.0112)
+  clique number of possible-edge graph: 2
+  ==> THEOREM: no MU triple {I,H,K} exists for any H in the 1e-11-ball around K3 seed 3003 (generic Karlsson).
+[1070 s] {'name': 'K3 seed 3003 (generic Karlsson)', 'ok': True, 'n_roots': 48, 'n_edges': 24, 'clique': 2, 'margin': np.float64(0.011169719512229613), 'generations': 76, 'excluded': 3035661, 'suspects': 24238, 'boxes_processed': 6119797}

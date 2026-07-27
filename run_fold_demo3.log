@@ -1,0 +1,14 @@
+pt 8 beta = [1.386501 1.678339 4.019655]  (Layer-1 slope wall: h = 1.68e-05)
+  tile h=0.0003: 52 roots at center
+    root 5: VALLEY T=1.05 sig=0.0028 edge=0.0044 rho_y=0.064 mono=True
+    root 31: VALLEY T=0.70 sig=0.0047 edge=0.0044 rho_y=0.096 mono=True
+    root 48: VALLEY T=0.35 sig=0.0266 edge=0.0083 rho_y=0.096 mono=True
+    root 50: VALLEY T=0.35 sig=0.0189 edge=0.0041 rho_y=0.095 mono=True
+    root 51: VALLEY T=0.35 sig=0.0205 edge=0.0053 rho_y=0.093 mono=True
+    zoned sweep: 5936599 boxes, max guard 0.905, far tax 0.0045, folds 5
+    47 tubes + 5 fold windows certified
+    pairs: 27 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [36 s]
+{'ok': True, 'h': 0.0003, 'n_roots': 52, 'n_folds': 5, 'n_conflicts': 27, 'seconds': 36.363322019577026}
+  tile h=0.001: 52 roots at center
+{'ok': False, 'h': 0.001, 'seconds': 5.096636772155762, 'reason': 'valley 5: valley floor never clears far tax by T=1.6'}

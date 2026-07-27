@@ -1,0 +1,23 @@
+=== Fourier-shell prototype at F6 ===
+    ...5001727 boxes, 15362 suspects, stack 11756, peakRSS 394MB
+    ...5013483 boxes, 15362 suspects, stack 11252, peakRSS 394MB
+    ...5024735 boxes, 15362 suspects, stack 8592, peakRSS 394MB
+    ...5033327 boxes, 15362 suspects, stack 10200, peakRSS 394MB
+    ...5043527 boxes, 15362 suspects, stack 11544, peakRSS 394MB
+    ...5055071 boxes, 15362 suspects, stack 12236, peakRSS 394MB
+    ...5067307 boxes, 15362 suspects, stack 10712, peakRSS 394MB
+    ...5078019 boxes, 15362 suspects, stack 8804, peakRSS 394MB
+    ...5086823 boxes, 15362 suspects, stack 10444, peakRSS 394MB
+    ...5097267 boxes, 15362 suspects, stack 11488, peakRSS 394MB
+  sweep: 5237583 boxes, 2598964 excluded, 19828 suspect
+  verified 48 unique roots; all suspects covered
+  possible-edge graph: 48 vertices, 300 edges (min certified non-edge margin 0.1547)
+  48 roots, 300 edges [2 s]
+  6-cliques of the certified graph: 16 (Grassl: 16 bases)
+  min over clique pairs of certified max-deviation from 1/6: 0.166667   (the 1/6 wall: 0.166667)
+  ==> QUADRUPLE-EXCLUSION CERTIFIED at F6: no two MU bases through {I, F6} are mutually unbiased.
+drift of the wall along F(a,b):
+  eps=     0: vecs= 48 bases= 16 min pair-defect=0.166667
+  eps= 0.001: vecs= 48 bases=  8 min pair-defect=0.166662
+  eps= 0.003: vecs= 48 bases=  8 min pair-defect=0.166624
+  eps=  0.01: vecs= 48 bases=  8 min pair-defect=0.166177

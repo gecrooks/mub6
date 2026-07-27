@@ -1,0 +1,7 @@
+=== certifying F6 (control) (H-ball radius 1e-11) ===
+  sweep: 76 generations, 5237583 boxes, 2598964 excluded, 19828 suspect
+  verified 48 unique roots; all suspects covered
+  possible-edge graph: 48 vertices, 300 edges (min certified non-edge margin 0.1547)
+  clique number of possible-edge graph: 6
+  (cliques of size 6 present -- bases may exist; no-triple NOT certified, as expected for this H)
+[715 s] {'name': 'F6 (control)', 'ok': True, 'n_roots': 48, 'n_edges': 300, 'clique': 6, 'margin': np.float64(0.1547005365509505), 'generations': 76, 'excluded': 2598964, 'suspects': 19828, 'boxes_processed': 5237583}

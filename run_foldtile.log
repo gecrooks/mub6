@@ -1,0 +1,26 @@
+=== tile at the fold's doorstep: s=0.29834, beta=[4.446555 3.938456 2.57251 ] ===
+(52 roots incl. two near-born pairs, sep 0.039/0.055, sigma ~ 0.002)
+  tile h=0.0001: 52 roots at center
+    root 21: VALLEY T=0.35 sig=0.0017 edge=0.0026 rho_y=0.055 mono=False
+    root 26: VALLEY T=0.35 sig=0.0024 edge=0.0034 rho_y=0.064 mono=False
+    root 29: VALLEY T=0.35 sig=0.0016 edge=0.0032 rho_y=0.054 mono=False
+    root 31: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.050 mono=True
+    root 50: VALLEY T=0.35 sig=0.0025 edge=0.0026 rho_y=0.066 mono=False
+    root 51: VALLEY T=0.35 sig=0.0212 edge=0.0072 rho_y=0.042 mono=True
+    zoned sweep: 5259971 boxes, max guard 0.375, far tax 0.0020, folds 6
+    46 tubes + 6 fold windows certified
+    pairs: 28 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0001  [33 s]
+{'ok': True, 'h': 0.0001, 'n_roots': 52, 'n_folds': 6, 'n_conflicts': 28, 'seconds': 33.02465200424194}
+  tile h=0.0003: 52 roots at center
+    root 21: VALLEY T=0.70 sig=0.0017 edge=0.0094 rho_y=0.133 mono=False
+    root 26: VALLEY T=0.70 sig=0.0024 edge=0.0116 rho_y=0.175 mono=False
+    root 29: VALLEY T=0.70 sig=0.0016 edge=0.0105 rho_y=0.131 mono=False
+    root 31: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.095 mono=True
+    root 50: VALLEY T=0.70 sig=0.0025 edge=0.0103 rho_y=0.177 mono=False
+    root 51: VALLEY T=0.35 sig=0.0212 edge=0.0071 rho_y=0.078 mono=True
+    zoned sweep: 5366237 boxes, max guard 0.920, far tax 0.0060, folds 6
+    46 tubes + 6 fold windows certified
+    pairs: 30 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0003  [36 s]
+{'ok': True, 'h': 0.0003, 'n_roots': 52, 'n_folds': 6, 'n_conflicts': 30, 'seconds': 35.5307137966156}

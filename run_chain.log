@@ -1,0 +1,16 @@
+=== margin-cached chain at h=0.0003, anchor K6(5.978503016422594, 4.007534549834652, 1.6327649325136653) ===
+  anchor: 4681165 boxes, cached 2068009 (+259871 slant) [95 MB], 24 conflicts, 26 s
+    step dist=4.80e-04: check 4 ms, fail 380689 (+259871 slant, 653934 patch boxes, 2.9 s), motion 0.0020, OK (24 conflicts) [3.5 s]
+    step dist=9.60e-04: check 4 ms, fail 664521 (+259871 slant, 950908 patch boxes, 4.2 s), motion 0.0040, OK (24 conflicts) [4.9 s]
+    step dist=1.44e-03: check 3 ms, fail 888766 (+259871 slant, 1187949 patch boxes, 5.0 s), motion 0.0061, OK (24 conflicts) [5.6 s]
+    step dist=1.92e-03: check 4 ms, fail 1068753 (+259871 slant, 1380306 patch boxes, 5.8 s), motion 0.0081, OK (24 conflicts) [6.5 s]
+    step dist=2.40e-03: check 4 ms, fail 1229484 (+259871 slant, 1553625 patch boxes, 6.4 s), motion 0.0101, OK (24 conflicts) [7.0 s]
+    step dist=2.88e-03: check 4 ms, fail 1366589 (+259871 slant, 1703246 patch boxes, 7.3 s), motion 0.0121, OK (24 conflicts) [7.9 s]
+    step dist=3.36e-03: check 3 ms, fail 1476031 (+259871 slant, 1825154 patch boxes, 7.7 s), motion 0.0142, OK (24 conflicts) [8.4 s]
+    step dist=3.84e-03: check 5 ms, fail 1561851 (+259871 slant, 1922028 patch boxes, 8.6 s), motion 0.0162, OK (24 conflicts) [9.3 s]
+    step dist=4.32e-03: check 4 ms, fail 1638964 (+259871 slant, 2010931 patch boxes, 8.7 s), motion 0.0182, OK (24 conflicts) [9.5 s]
+    step dist=4.80e-03: check 5 ms, fail 1705813 (+259871 slant, 2089254 patch boxes, 8.7 s), motion 0.0202, OK (24 conflicts) [9.5 s]
+    step dist=5.28e-03: check 3 ms, fail 1763853 (+259871 slant, 2158808 patch boxes, 8.9 s), motion 0.0223, OK (24 conflicts) [9.6 s]
+    step dist=5.76e-03: check 5 ms, fail 1813618 (+259871 slant, 2220019 patch boxes, 9.4 s), motion 0.0243, OK (24 conflicts) [10.1 s]
+
+chain: 12 steps certified from one anchor; certified theta-interval half-length ~ 6.06e-03 (vs single tile 0.0003) -- amortization factor ~ 20.2x on sweep volume

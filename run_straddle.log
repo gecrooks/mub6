@@ -1,0 +1,7 @@
+=== BIRTH-STRADDLING tile: s=0.2981, |beta - fold| ~ 2.93e-04 ===
+roots at center: 48 (the pair is born INSIDE the tile at h=3e-4)
+  tile h=0.0003: 48 roots at center
+    root 9: VALLEY T=0.35 sig=0.0300 edge=0.0101 rho_y=0.102 mono=True
+    root 35: VALLEY T=0.35 sig=0.0212 edge=0.0071 rho_y=0.078 mono=True
+    root 38: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.095 mono=True
+{'ok': False, 'h': 0.0003, 'seconds': 265.5476050376892, 'reason': 'zoned sweep: zoned sweep exceeded 6e+07 boxes'}

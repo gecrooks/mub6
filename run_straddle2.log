@@ -1,0 +1,22 @@
+=== BIRTH-STRADDLING tile, take 2 (two-stage sweep): s=0.2981 ===
+roots at center: 48
+  tile h=0.0003: 48 roots at center
+    root 9: VALLEY T=0.35 sig=0.0300 edge=0.0101 rho_y=0.102 mono=True
+    root 35: VALLEY T=0.35 sig=0.0212 edge=0.0071 rho_y=0.078 mono=True
+    root 38: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.095 mono=True
+    stage A: 40442 coarse boxes, 62 clusters (13 far from roots)
+    phantom 48: |g|min 1.14e-04 T=0.70 dips=1 mono=False
+{'ok': False, 'h': 0.0003, 'seconds': 30.853063106536865, 'reason': 'phantom at |g|min 2.09e-02: no phi-dip found (lost the root?)'}
+  tile h=0.0001: 52 roots at center
+    root 21: VALLEY T=0.35 sig=0.0017 edge=0.0026 rho_y=0.055 mono=False
+    root 26: VALLEY T=0.35 sig=0.0024 edge=0.0034 rho_y=0.064 mono=False
+    root 29: VALLEY T=0.35 sig=0.0016 edge=0.0032 rho_y=0.054 mono=False
+    root 31: VALLEY T=0.35 sig=0.0242 edge=0.0086 rho_y=0.050 mono=True
+    root 50: VALLEY T=0.35 sig=0.0025 edge=0.0026 rho_y=0.066 mono=False
+    root 51: VALLEY T=0.35 sig=0.0212 edge=0.0072 rho_y=0.042 mono=True
+    stage A: 39289 coarse boxes, 50 clusters (1 far from roots)
+    zoned sweep: 5299260 boxes, max guard 0.375, far tax 0.0020, folds 6 (phantoms 0)
+    46 tubes + 6 fold windows certified
+    pairs: 28 conflicts; colored with 2 colors (clique <= 2 < 6)
+  ==> TILE CERTIFIED (prototype) at h=0.0001  [33 s]
+regression (doorstep h=1e-4): {'ok': True, 'h': 0.0001, 'n_roots': 52, 'n_folds': 6, 'n_conflicts': 28, 'seconds': 33.24031090736389}

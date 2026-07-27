@@ -1,0 +1,30 @@
+=== affine families (rigorous results known) ===
+F(0,0) = F6                   vecs=  48  bases= 16  MUpairs= 0  minDefect=0.1667  defect(H)=4  H2red~True
+F(1/6,0)                      vecs=  42  bases=  6  MUpairs= 0  minDefect=0.0952  defect(H)=4  H2red~True
+F(0.1043,0.0567) generic      vecs=  48  bases=  8  MUpairs= 0  minDefect=0.1056  defect(H)=4  H2red~True
+F^T(0.1043,0.0567)            vecs=  48  bases=  8  MUpairs= 0  minDefect=0.1056  defect(H)=4  H2red~True
+D(0) Dita                     vecs= 120  bases= 10  MUpairs= 0  minDefect=0.1667  defect(H)=4  H2red~True
+D(1/8) endpoint               vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~True
+D(0.05)                       vecs=  72  bases=  4  MUpairs= 0  minDefect=0.1667  defect(H)=4  H2red~True
+C Bjorck                      vecs=  55  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~True
+S6 Tao                        vecs=  90  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=0  H2red~False
+=== non-affine Hermitian family B(theta) (no rigorous results) ===
+B(1.346)                      vecs=  72  bases=  1  MUpairs= 0  minDefect=inf  defect(H)=4  H2red~True
+B(1.796)                      vecs=  72  bases=  1  MUpairs= 0  minDefect=inf  defect(H)=4  H2red~True
+B(2.071)                      vecs=  60  bases=  1  MUpairs= 0  minDefect=inf  defect(H)=4  H2red~True
+B(2.742)                      vecs=  60  bases=  1  MUpairs= 0  minDefect=inf  defect(H)=4  H2red~True
+=== generic random Hadamards (G6^(4) territory, unexplored) ===
+random #0                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #1                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #2                     vecs=  90  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=0  H2red~False
+random #3                     vecs=  54  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #4                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #5                     vecs=  52  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #6                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #7                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #8                     vecs=  52  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #9                     vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #10                    vecs=  48  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+random #11                    vecs=  52  bases=  0  MUpairs= 0  minDefect=nan  defect(H)=4  H2red~False
+
+saved -> families_results.npy

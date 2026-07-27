@@ -1,0 +1,21 @@
+fingerprint: (1, 1, 12)
+parameter Lipschitz estimate: 1.04
+=== certifying K6(5.9785,4.0075,1.6328) TILE hslop=1e-5 (H-ball radius 1e-05) ===
+    ...1 boxes, 0 suspects
+    ...3 boxes, 0 suspects
+    ...7 boxes, 0 suspects
+    ...15 boxes, 0 suspects
+    ...31 boxes, 0 suspects
+    ...63 boxes, 0 suspects
+    ...127 boxes, 0 suspects
+    ...255 boxes, 0 suspects
+    ...511 boxes, 0 suspects
+    ...1023 boxes, 0 suspects
+    ...2047 boxes, 0 suspects
+    ...4095 boxes, 0 suspects
+    ...8191 boxes, 0 suspects
+    ...16383 boxes, 0 suspects
+    ...32767 boxes, 0 suspects
+    ...65523 boxes, 0 suspects
+    ...5046493 boxes, 201455 suspects
+  sweep: 9474751 boxes, 4309336 excluded, 428040 suspect

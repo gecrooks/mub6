@@ -1,0 +1,25 @@
+=== fold hunt along pt2(48) -> pt0(60) ===
+s=0: 48 vecs   s=1: 60 vecs
+  s=0.000: 48 vecs
+  s=0.125: 48 vecs
+  s=0.250: 48 vecs
+  s=0.375: 60 vecs
+  s=0.500: 56 vecs
+  s=0.625: 52 vecs
+  s=0.750: 48 vecs
+  s=0.875: 56 vecs
+  s=1.000: 60 vecs
+bracket [0.250, 0.375]: 48 -> 60
+  s=0.31250: 52
+  s=0.28125: 48
+  s=0.29688: 48
+  s=0.30469: 52
+  s=0.30078: 52
+  s=0.29883: 52
+  s=0.29785: 48
+  s=0.29834: 52
+  s=0.29810: 48
+fold near s = 0.29822
+many side (s=0.29834): 52 vecs; nearest pairs and sigmas:
+  pair (39,51): sep 0.0386  sigmas 0.0016/0.0017  |<u,v>| = 0.9998
+  pair (21,40): sep 0.0548  sigmas 0.0025/0.0024  |<u,v>| = 0.9998

@@ -1,0 +1,7 @@
+=== certifying S6 (Tao) (H-ball radius 1e-11) ===
+  sweep: 76 generations, 8106467 boxes, 4019174 excluded, 34060 suspect
+  verified 90 unique roots; all suspects covered
+  possible-edge graph: 90 vertices, 0 edges (min certified non-edge margin 0.1545)
+  clique number of possible-edge graph: 1
+  ==> THEOREM: no MU triple {I,H,K} exists for any H in the 1e-11-ball around S6 (Tao).
+[2073 s] {'name': 'S6 (Tao)', 'ok': True, 'n_roots': 90, 'n_edges': 0, 'clique': 1, 'margin': np.float64(0.15450849550158602), 'generations': 76, 'excluded': 4019174, 'suspects': 34060, 'boxes_processed': 8106467}
