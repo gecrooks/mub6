@@ -487,9 +487,12 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     L_map = map_lipschitz(beta)
     L_H = PAD * L_map
     cert_rates = None
+    Htm = None
     if use_certified:
         from rates import certified_rates
+        from tmres import tm_karlsson
         cert_rates = certified_rates(beta, h)
+        Htm = tm_karlsson(beta, h)
         far_tax = cert_rates["far_tax"]
         beta_rate = cert_rates["beta_rate_vec"]
         valley_tax = cert_rates["far_tax"] * (1.0 / np.sqrt(6.0) + 0.06)
@@ -552,15 +555,20 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             continue
         S, Q, defect = root_data2(beta, th0)
         Sn = float(np.max(np.sum(np.abs(S), axis=1)))
-        Rcurve = curve_residual(beta, th0, S, Q, h, quadratic=True)
         qoff = q_offset(Q, h)
         if cert_rates is not None:
+            from tmres import certified_curve_residual
+            Rcurve = certified_curve_residual(beta, h, th0, S, Q, Htm=Htm)
+            rad_g = Rcurve + defect * SQ3 * h     # certified: no PAD
+            coef0_res = Rcurve
             RJx = cert_rates["RJ_extra"]
         else:
+            Rcurve = curve_residual(beta, th0, S, Q, h, quadratic=True)
+            rad_g = PAD * Rcurve + defect * SQ3 * h
+            coef0_res = PAD * Rcurve
             RJx = PAD * sampled_J_drift(beta, th0, S, h)
-        rad_g = PAD * Rcurve + defect * SQ3 * h
         coef1[i] = PAD * SQ3 * h * (HESS_ROW_TH * Sn + gb_rate)
-        coef0[i] = PAD * Rcurve + PAD * defect * SQ3 * h + coef1[i] * qoff.max()
+        coef0[i] = coef0_res + PAD * defect * SQ3 * h + coef1[i] * qoff.max()
         per_root[i] = dict(S=S, Q=Q, defect=defect, Sn=Sn, qoff=qoff,
                            rad_g=rad_g, RJ_extra=RJx)
         tax_est = coef0[i] + coef1[i] * 0.6 + 4e-4

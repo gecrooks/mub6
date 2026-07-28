@@ -830,6 +830,34 @@ by construction; promoting interval-chains to a stated continuum
 theorem is assembly, not computation. Total cloud spend for the entire
 X-campaign: ~$29.
 
+## Result 25 — Taylor-model curve residuals: the last big EMPIRICAL
+## category certified
+
+`tm.py` (degree-2 Taylor models in the three tile variables with
+rigorous remainders — coefficient roundoff Gamma-folded, elementary
+series with explicit tails, Moebius/csqrt via bounded expansions) and
+`tmres.py` (the Karlsson map over TMs, shared per tile, plus the
+g-along-the-curve composition) replace `curve_residual`'s corner
+sampling + PAD with a certified bound:
+
+- **Soundness simplification discovered en route: S and Q need no
+  certification at all** — they merely define the tube curve; rigor
+  lives entirely in the certified residual along the defined curve. The
+  FD-status of the sensitivities stops being a rigor gap.
+- Certified R(h) scales exactly as h^3 (measured 37x from h = 3e-4 to
+  1e-3, matching (10/3)^3), runs in 0.01 s/root — FASTER than the
+  sampling it replaces — and lands 4+ orders below the binding taxes
+  (2e-8 vs 1e-3 at h = 3e-4), so certificates lose nothing despite the
+  bound's 15-400x headroom over sampled values.
+- Wired into `certify_tile(use_certified=True)`; the reference tile
+  re-certifies in 24 s with TM residuals and no PAD on rad_g.
+
+Remaining EMPIRICAL in the certified path: overlap gradients in the
+partition step (drift of pair overlaps across the tile) — the sole
+survivor, with the same TM treatment available (overlaps are TM
+products of the u-compositions already built here). Plus the global
+libm-faithfulness assumption (Arb swap).
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
