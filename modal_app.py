@@ -178,7 +178,7 @@ def campaign_line(spec: dict):
         print("LEDGER " + rec, flush=True)
     print("CAMPAIGN_LINE_RESULT " + json.dumps(
         dict(covered=covered, n=n, **spec)), flush=True)
-    return dict(covered=covered, n=n)
+    return dict(covered=covered, n=n, ledger=buf.getvalue())
 
 
 @app.local_entrypoint()
