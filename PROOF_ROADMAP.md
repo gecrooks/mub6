@@ -362,6 +362,17 @@ R9. B-arc branch slivers — DONE 2026-07-28 (Result 31, `slivers.py`):
     s^2 chart, 3 anchors total, both branch points covered inclusive;
     the B-arc is complete end to end.
 R10. Compactness root-count argument written out.
+H-PUSH R&D (2026-07-29, after the survey killed the flat campaign):
+mode A (sweep drowning at h >= 7e-4): stuck boxes are 100% WITHIN
+guard radii — the R33 thin-oracle halo stops self-excluding as taxes
+grow with h; next probe = per-box |g| vs tax on the stuck set; cures
+on deck: radial shell-banding of the collection region OR halo tax
+sharpening. Mode B (soft valleys): y-solve BRANCH JUMPS across beta
+corners (spread 0.4 rad at h=7e-4 is not smooth motion) — needs
+branch-aware transverse solves; the octant split (implemented,
+sound, per-octant coloring + oracle lists in both sweeps) only
+dilutes it 2x/level. Both fixes landed and regression-clean at 3e-4;
+neither point cleared 7e-4 yet.
 Cost levers noted for the campaign discussion: adaptive-h block
 planner (10-30x tile count), per-container line multiplexing (3-5x GPU
 utilization), chunk 1e6, enumeration reuse/warm-start (2x valley);
