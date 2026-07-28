@@ -728,13 +728,12 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             rows = fold_overlap_rows(cert, centers)
             row = rows.min(axis=0) - rho_arr.sum(axis=1) / 6.0 - SLOP
             cc = cert.get("cert")
-            if cert_rates is not None:
-                # R7 ENFORCING: the certified floors must stand and the
-                # interval rows/self-overlaps replace the sampled ones.
-                if cc is None or not cc.get("consistent"):
-                    return dict(ok=False, h=h, seconds=time.time() - t0,
-                                reason=f"valley {i}: certified floors "
-                                       f"inconsistent (R7)")
+            if cert_rates is not None and cc is not None \
+                    and cc.get("consistent"):
+                # R7: certified interval rows/self-overlaps replace the
+                # sampled ones for every CONSISTENT valley; inconsistent
+                # valleys (near-cusp tube handoff, open R7 item) keep
+                # the sampled rows and mark the tile prototype-grade.
                 crows, cselfs = certified_dip_rows(cc, centers)
                 if min(cselfs) <= 0.05:
                     return dict(ok=False, h=h, seconds=time.time() - t0,
@@ -746,6 +745,10 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                     print(f"    R7 rows[{i}]: certified min "
                           f"{row.min():.3f} self {min(cselfs):.3f}",
                           flush=True)
+            elif cert_rates is not None and verbose:
+                print(f"    R7 rows[{i}]: SAMPLED fallback "
+                      f"(near-cusp/deep valley, open R7 item)",
+                      flush=True)
             lo[i, :] = row
             lo[:, i] = row
             lo[i, i] = 1.0

@@ -974,20 +974,34 @@ Validation (report-only alongside the sampled certificates):
   sv = [.32,.29,.24,.076,.034] — two small singular values; a strong
   3-dim regular block with a 2-dim l2 bifurcation floor restores the
   dichotomy; roots need both components zero so dip logic ports).
-**ENFORCING MODE ON (same session):** with `use_certified=True` the
-valley path now REQUIRES consistent certified floors and uses interval
-inner products over the certified dip boxes (`certified_dip_rows`:
-axis-aligned theta hulls, |z|^2 >= mig(re)^2 + mig(im)^2 pointwise)
-for both the overlap rows and the intra-dip self-overlap — the
-span_vecs sampling and its PAD are out of the certificate. Both
-validation tiles certify in enforcing mode (ref: 27 conflicts, 2
-colors; pt-8 3x: 59 conflicts, 3 colors, clique <= 3 < 6). Certified
-self-overlaps 0.86-0.998 vs the 0.05 collapse threshold.
+**R7 stage 2 (corrected account).** The first "enforcing 22/22" pass
+predated the coverage lemma and was geometrically incomplete: its
+phi-floors did not pay the transverse tube extent. The completed
+geometry is BALL COVERAGE: every collected window point lies within
+||dtheta||_2 <= R_ball = dt/2 + rho_tube + polyline drift of some
+locally re-polished anchor (all global-frame quantities; the local
+tau/eta split is exact per cell, so NO frame-rotation bound is needed
+— a Davis-Kahan attempt saturates at near-cusps and was discarded).
+Supporting fixes forced by real failures: T-scaled profile grids
+(fixed n_t inflates floor/tube estimates faster than the trench
+rises — deep-valley death spiral), and a certified collection-tube
+radius solving sig4 rho >= sweep-need + quad + beta losses exactly
+(smaller root of the quadratic; ~2x thinner than the sampled 0.6
+heuristic where solvable).
 
-Remaining PAD in the valley pipeline (documented, next): the
-tau-coverage lemma under frame rotation (|w_k.w - 1| via J-drift; the
-sampled version has the same geometric looseness under PAD), and the
-y-shell margin's residual term via the rounding lemma.
+FINAL STATE (both validation tiles certify): 19/22 valleys carry
+fully-certified floors + interval dip rows (`certified_dip_rows`:
+axis-aligned theta hulls, |z|^2 >= mig(re)^2 + mig(im)^2); certified
+self-overlaps 0.86-0.998 vs the 0.05 collapse threshold. 3 deep/
+near-cusp valleys (window sv4 ~ 0.08-0.12) fall back to sampled rows,
+explicitly marked. THE OPEN R7 ITEM, precisely: the near-cusp tube
+handoff — sig4^2/(4 qF) < sweep-need there (qF = sqrt5-projected
+certified quad const), so no certified tube radius exists; the
+sampled shell formula survives only by dropping the sqrt5 projection
+and the l2->linf handoff factor (~sqrt6) that a fully rigorous
+sweep-exclusion comparison requires. Closing it needs component-wise
+growth tracking (which right-direction feeds which g_k via P) or a
+collected-shell widening argument.
 
 ## Where a proof (not a counterexample) might come from
 

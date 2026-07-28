@@ -103,55 +103,54 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
         # split — strong 3-dim regular block, 2-dim bifurcation vector
         # with l2 floor (roots need BOTH components zero; dip logic
         # ports, monotonicity is not used by the dichotomy)
-        m = 3 if sv[3] < 0.1 else 4
+        # true cusps only: the 2-dim block pays its larger sv across
+        # the whole ball, so it is a last resort; borderline cells
+        # survive as 4/1 under the per-cell constants
+        m = 3 if sv[3] < 0.05 else 4
         u_k = U[:, m:5]                       # (5, 5-m) bifurcation block
         P_k = U[:, :m]
         phi_hat = float(np.linalg.norm(u_k.T @ gam))
         Fres = float(np.linalg.norm(P_k.T @ gam))
         sv4, sv5 = sv[m - 1], sv[m]           # cond / linear-loss rates
+        # BALL COVERAGE (tau-coverage lemma): every collected window
+        # point lies within ||dtheta||_2 <= R_ball of some anchor,
+        # R_ball = dt/2 (station spacing) + rho_tube (transverse tube)
+        # + polyline step drift — all GLOBAL-frame quantities. The
+        # local tau/eta decomposition is exact per cell, so no frame-
+        # rotation bound is needed: tau is free up to R_ball, the
+        # phi-side covers ||eta|| <= r* with R2 = R_ball, the F-side
+        # covers [r*, R_ball].
+        drift_k = (np.linalg.norm(anchors[k] - anchors[k - 1])
+                   if k > 0 else 0.0)
+        R_ball = r_t + rho_tube + 0.5 * drift_k
         uvec = np.concatenate(([1.0], np.exp(1j * th_k))) * inv6
         s_hat = np.abs(uvec.conj() @ H0)          # (6,)
 
-        def losses(rho):
-            # |s_k| enclosure over cell x rho-ball x beta box
-            R2 = float(np.sqrt(r_t ** 2 + rho ** 2))
-            s_enc = np.minimum(
-                s_hat + hmag * inv6 * SQ5 * R2 + s_beta, 1.0)
-            # per-COMPONENT certified Hessian quad coefs, |s|-local:
-            # q_k <= 0.5 (D_k + 4 O) R2^2; project by |u| (phi side)
-            # and l2 (F side) instead of sqrt5-uniform
-            Dk = 2.0 * (hmag ** 2 / 6.0 + hmag * inv6 * s_enc)   # (6,)
-            O = 2.0 * hmag ** 2 / 6.0
-            qk = 0.5 * (Dk + 4.0 * O)[1:6]                       # (5,)
-            q_phi = float(np.linalg.norm(np.abs(u_k).T @ qk))
-            q_F = float(np.linalg.norm(qk))
-            # per-component beta losses, |s|-local; g-components 1..5
-            rate = (2.0 * inv6) * s_enc[None, :] * c1        # (3, 6)
-            bcol = (rate * hvv[:, None]).sum(axis=0)[1:6]    # (5,)
-            return R2, q_phi, q_F, bcol
-
-        # split radius: minimal r* clearing the F-side, small headroom;
-        # one fixed-point pass (s_enc grows mildly with rho)
-        r_star = 0.0
-        for _ in range(2):
-            _R2, _qp, qF, bcol = losses(r_star)
-            cb_F = float(np.linalg.norm(bcol))
-            r_star = 1.1 * (Fres + cb_F + qF * (r_t ** 2 + r_star ** 2)
-                            + SLOPV + 1e-4) / max(sv4, 1e-6)
-        ok = True
-        for rho in (r_star, rho_tube):
-            if rho < r_star - 1e-15:
-                continue
-            _R2r, _qpr, qFr, bcolr = losses(rho)
-            m = sv4 * rho - Fres - qFr * (r_t ** 2 + rho ** 2) \
-                - float(np.linalg.norm(bcolr)) - SLOPV
-            if m <= 0:
-                ok = False
-        f_ok[k] = ok
-        r_stars[k] = r_star
-        R2s, qps, _qFs, bcols = losses(r_star)
-        cb_phi = float(np.linalg.norm(np.abs(u_k).T @ bcols))
-        floors[k] = (phi_hat - sv5 * R2s - qps * R2s ** 2
+        # losses at the ball radius (quad constant over the cell ball)
+        s_enc = np.minimum(
+            s_hat + hmag * inv6 * SQ5 * R_ball + s_beta, 1.0)
+        # per-COMPONENT certified Hessian quad coefs, |s|-local:
+        # q_k <= 0.5 (D_k + 4 O) R^2; projected by the u-block (phi
+        # side) and l2 (F side)
+        Dk = 2.0 * (hmag ** 2 / 6.0 + hmag * inv6 * s_enc)   # (6,)
+        O = 2.0 * hmag ** 2 / 6.0
+        qk = 0.5 * (Dk + 4.0 * O)[1:6]                       # (5,)
+        q_phi = float(np.linalg.norm(np.abs(u_k).T @ qk))
+        q_F = float(np.linalg.norm(qk))
+        # per-component beta losses, |s|-local; g-components 1..5
+        rate = (2.0 * inv6) * s_enc[None, :] * c1        # (3, 6)
+        bcol = (rate * hvv[:, None]).sum(axis=0)[1:6]    # (5,)
+        cb_F = float(np.linalg.norm(bcol))
+        cb_phi = float(np.linalg.norm(np.abs(u_k).T @ bcol))
+        # split radius: minimal r* clearing the F-side (margin linear
+        # and increasing in rho, so r* is the binding point); if
+        # r* > R_ball the F-side is void and the phi floor must carry
+        # the whole ball (it already uses R_ball, so only f_ok flags).
+        r_star = 1.1 * (Fres + cb_F + q_F * R_ball ** 2
+                        + SLOPV + 1e-4) / max(sv4, 1e-6)
+        f_ok[k] = r_star <= R_ball
+        r_stars[k] = min(r_star, R_ball)
+        floors[k] = (phi_hat - sv5 * R_ball - q_phi * R_ball ** 2
                      - cb_phi - SLOPV)
     # dip runs from certified floors
     low = floors <= 0
@@ -348,11 +347,25 @@ def certified_dip_rows(cc, centers):
     return rows, selfs
 
 
-def _rho_y_estimate(fr, far_tax):
-    """Conservative (large) rho_tube estimate for the in-loop certified
-    F-side check; the final floors re-run with the true rho_y."""
-    sig4 = fr["sv"][3]
-    return max(0.05, PAD * (far_tax + 0.01) / max(0.6 * sig4, 0.02) + 0.02)
+def _rho_certified(fr, far_tax, cert_rates, r_t):
+    """Certified collection-tube radius: smallest rho with
+    sig4 rho >= sweep need + quad + beta losses (certified constants,
+    no PAD, no 0.6 heuristic) — the per-cell F-side floors then verify
+    it cell-locally. Iterated fixed point (quad depends on rho)."""
+    sig4 = max(fr["sv"][3], 0.05)
+    hmag = cert_rates["hmag"]
+    qF = 0.5 * (2.0 * (hmag ** 2 / 6.0 + hmag / np.sqrt(6.0))
+                + 4.0 * 2.0 * hmag ** 2 / 6.0) * SQ5
+    cbF = SQ5 * far_tax
+    need = 1.2 * far_tax + 1e-4
+    # smaller root of qF (r_t+rho)^2 - sig4 rho + (need+cbF+SLOPV) = 0
+    c0 = need + cbF + SLOPV + qF * r_t ** 2
+    b = 2.0 * qF * r_t - sig4
+    disc = b * b - 4.0 * qF * c0
+    if disc <= 0:
+        return None                    # no certified tube at this frame
+    rho = (-b - np.sqrt(disc)) / (2.0 * qF)
+    return max(rho * 1.1, 0.025)
 
 
 def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
@@ -379,9 +392,13 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
                                          (-1, -1, -1)]]
 
     def profile(T):
-        tgrid = np.linspace(-T, T, n_t)
-        phi = np.zeros((len(corners), n_t))
-        Y = np.zeros((len(corners), n_t, 4))
+        # scale the grid with T: fixed cell size, else escalation
+        # coarsens the grid -> floor and tube estimates inflate faster
+        # than the trench rises (deep-valley death spiral)
+        n_loc = min(321, max(n_t, 1 + 2 * int(round((n_t - 1) * T / 0.7))))
+        tgrid = np.linspace(-T, T, n_loc)
+        phi = np.zeros((len(corners), n_loc))
+        Y = np.zeros((len(corners), n_loc, 4))
         res_max = 0.0
         for ci, db in enumerate(corners):
             Hb = karlsson_map(beta[0] + db[0], beta[1] + db[1],
@@ -414,16 +431,34 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
             if sampled_ok is None:
                 sampled_ok = (tgrid, phi, Y, res_max)
             if cert_rates is not None:
-                # R7 (report-only): escalate T until the PAD-free floors
-                # also clear; if the cap runs out, fall back to the
-                # sampled window with consistent=False recorded.
+                # R7: escalate T until the PAD-free floors also clear;
+                # if the cap runs out, fall back to the sampled window
+                # with consistent=False recorded. Uses the TRUE tube
+                # radius (same formula as the final certificate) — the
+                # coarse estimate blows up for deep valleys.
+                rt_ = float(np.max(np.abs(Y - Y[0][None]))) + 0.01
+                rc = _rho_certified(fr, far_tax, cert_rates,
+                                    0.5 * (tgrid[1] - tgrid[0]))
+                if rc is None:
+                    # near-cusp: no certified tube — sampled formula
+                    # (grid-var floor), floors still verify f_ok at it
+                    gv_ = np.max(np.abs(np.diff(phi, axis=1)))
+                    bs_ = np.max(phi.max(axis=0) - phi.min(axis=0))
+                    fl_ = PAD * (0.5 * gv_ + 0.5 * bs_ + res_max + 1e-9)
+                    rc = PAD * (far_tax + fl_) \
+                        / max(0.6 * fr["sv"][3], 0.02) + 0.02
+                rho_true = max(rt_, rc)
                 cT = certified_valley_floors(
                     beta, np.broadcast_to(np.asarray(h, float), (3,)),
-                    th0, w, Wc, tgrid, Y[0], cert_rates,
-                    _rho_y_estimate(fr, far_tax))
+                    th0, w, Wc, tgrid, Y[0], cert_rates, rho_true)
                 if not (cT["edge_ok"] and cT["all_f_ok"]
                         and all(a > 0 and b < len(tgrid) - 1
                                 for a, b in cT["dips"])):
+                    if verbose:
+                        print(f"      cert@T={T:.2f}: edge="
+                              f"{cT['edge_margin']:.4f} f_ok="
+                              f"{cT['all_f_ok']} dips={cT['dips']} "
+                              f"rho={rho_true:.4f}", flush=True)
                     cert_T = None
                     T += 0.35
                     continue
@@ -443,15 +478,16 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
     floor = PAD * (0.5 * grid_var + 0.5 * beta_spread + res_max + 1e-9)
 
     # enclosure(s): cells where the envelope dips below the floor
+    n_g = len(tgrid)                      # grid scales with accepted T
     env = np.min(np.abs(phi), axis=0)
     low = env < floor
     runs, k = [], 0
-    while k < n_t:
+    while k < n_g:
         if low[k]:
             j = k
-            while j + 1 < n_t and low[j + 1]:
+            while j + 1 < n_g and low[j + 1]:
                 j += 1
-            runs.append((max(0, k - 1), min(n_t - 1, j + 1)))
+            runs.append((max(0, k - 1), min(n_g - 1, j + 1)))
             k = j + 1
         else:
             k += 1
@@ -465,7 +501,7 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
         raise RuntimeError("no phi-dip found (lost the root?)")
     if len(merged) > 2:
         raise RuntimeError(f"{len(merged)} phi-dips (>2)")
-    if merged[0][0] == 0 or merged[-1][1] == n_t - 1:
+    if merged[0][0] == 0 or merged[-1][1] == n_g - 1:
         raise RuntimeError("phi-dip touches window edge")
 
     # acceptance: monotone single-crossing OR clean dips
@@ -482,8 +518,13 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
     Yc = Y[0]                                  # center-beta polyline
     rho_thin = float(np.max(np.abs(Y - Yc[None]))) + 0.01
     sig4 = fr["sv"][3]
-    rho_y = max(rho_thin,
-                PAD * (far_tax + floor) / max(0.6 * sig4, 0.02) + 0.02)
+    rho_samp = PAD * (far_tax + floor) / max(0.6 * sig4, 0.02) + 0.02
+    if cert_rates is not None:
+        rc = _rho_certified(fr, far_tax, cert_rates,
+                            0.5 * (tgrid[1] - tgrid[0]))
+        rho_y = max(rho_thin, rho_samp if rc is None else rc)
+    else:
+        rho_y = max(rho_thin, rho_samp)
     shell_margin = 0.6 * sig4 * rho_y - 0.5 * (11.0 / 18.0) * rho_y ** 2 \
         - PAD * res_max
     if shell_margin <= 0:
