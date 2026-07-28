@@ -538,7 +538,8 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
         h_ceiling = sv[-1] / (PAD * SQ3 * (HESS_ROW_TH * Sn_est + gb_rate))
         if sv[-1] < fold_cut or h_ceiling < 2.5 * h:
             try:
-                cert = valley_certificate(beta, th0, hv, valley_tax)
+                cert = valley_certificate(beta, th0, hv, valley_tax,
+                                          cert_rates=cert_rates)
             except RuntimeError as e:
                 return dict(ok=False, h=h, seconds=time.time() - t0,
                             reason=f"valley {i}: {e}")
@@ -557,6 +558,11 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                       f"sig={sv[-1]:.4f} edge={cert['edge_margin']:.4f} "
                       f"rho_y={cert['rho_y']:.3f} "
                       f"mono={cert['monotone']}", flush=True)
+                if cert.get("cert") is not None:
+                    cc = cert["cert"]
+                    print(f"      R7 floors: edge={cc['edge_margin']:.4f} "
+                          f"dips={cc['dips']} consistent="
+                          f"{cc['consistent']}", flush=True)
             continue
         S, Q, defect = root_data2(beta, th0)
         Sn = float(np.max(np.sum(np.abs(S), axis=1)))
@@ -622,7 +628,8 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                    for p in phantoms):
                 continue
             try:
-                cert = valley_certificate(beta, th_p, hv, valley_tax)
+                cert = valley_certificate(beta, th_p, hv, valley_tax,
+                                          cert_rates=cert_rates)
             except RuntimeError as e:
                 return dict(ok=False, h=h, seconds=time.time() - t0,
                             reason=f"phantom at |g|min "

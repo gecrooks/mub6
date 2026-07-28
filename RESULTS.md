@@ -945,6 +945,36 @@ night — the first "failures" were also container OOM at default
 memory, fixed with memory=16384); campaign dispatches must use
 `.spawn()` + app-log/ledger collection, never a live `.remote()`.
 
+## Result 29 — R7 stage 1: certified valley floors (report-only)
+
+`fold.certified_valley_floors`: a PAD-free per-cell local-frame
+dichotomy for valley windows. Each t-cell gets a locally re-polished
+anchor (transverse solve in the cell's own singular frame — without
+this, the trench value bleeds into the F-residual at window ends and
+inflates the split radius); the cell x y-tube x beta-box then splits
+at radius r*: outside, certified regular-block growth sv4*rho beats
+residual + |s|-local Hessian quad (hmag-general D/O constants) +
+dual-AD beta losses; inside, the trench-scalar floor
+|phi_hat| - sv5*R2 - QP*R2^2 - u-weighted beta loss (sv5 = the
+near-null singular value — tiny in valleys). Certified edge clearance
+joins the T-search opportunistically (windows auto-extend, cap 2.0)
+with fallback to the sampled window recorded as consistent=False.
+
+Validation (report-only alongside the sampled certificates):
+- reference tile: 4/4 valleys consistent — certified edges 0.0073-
+  0.0082 vs sampled 0.0089-0.0100 (losses ~20% of margin), dips
+  properly containing the sampled enclosures;
+- pt-8 anisotropic 3x tile: 21/22 valleys consistent across the two
+  validation tiles; the single deepest valley (root 17) exhausts the
+  T-cap — the identified tightening levers, in order: optimized r*
+  (the 2.0 factor is arbitrary), per-cell u-projected quad bound
+  (currently sqrt5-uniform), l1-radius s-enclosures, and 1-dim
+  interval-Newton along the trench as the endgame.
+Remaining for enforcing mode: the tau-coverage lemma under frame
+rotation (|w_k.w - 1| via J-drift; the sampled version has the same
+geometric looseness under PAD), and interval inner products over
+certified dip boxes to replace span_vecs sampling in overlap rows.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

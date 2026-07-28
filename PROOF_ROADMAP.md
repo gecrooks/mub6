@@ -323,6 +323,36 @@ R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
 R6. C checker + certificate format + parallel campaign (~6e9 tiles);
     re-verification of the four pointwise theorems on the same substrate.
 
+RIGOR TIER (2026-07-28, user decision: rigor before campaign spend):
+R7. Valley/fold certified envelopes — replace the PAD'd sampled pieces
+    of `fold.valley_certificate` with a PER-CELL LOCAL-FRAME DICHOTOMY
+    (global-frame rate bounds diverge over T=0.35; local frames only
+    pay cell-radius drift):
+    For each t-cell: local SVD at the cell's center theta_hat_k gives
+    (u_k, P_k, w_k, Wc_k, sv_k); gamma_hat_k = g(theta_hat_k, beta0)
+    float+rounding-lemma; decompose dtheta = tau w_k + Wc_k eta.
+    Dichotomy over the cell x y-tube x beta box, split radius r*:
+      F-side (|eta| >= r*):  ||P^T g|| >= sv4_k r* - ||P^T gamma_hat||
+        - Q_cert R^2 - Cb_F hv > 0   (certified Hessian quad const
+        Q_cert from the 7/18-1/18 bounds; Cb_F from dual-AD c1),
+      phi-side (|eta| < r*): |u.g| >= |phi_hat_k| - sv4_k (dt/2 + r*)
+        - Q_cert R^2 - Cb_phi hv  =: certified floor.
+    Frames are definitional; sign-align u_k across cells for dip
+    logic. Dip cells (floor <= 0) -> theta enclosure = cell x
+    {|eta| <= r*}; edge clearance, <= 2 dips, monotone crossing from
+    certified floors (no PAD). Dip enclosure boxes -> interval inner
+    products (iv_sin/iv_cos exist) for overlap rows and intra-dip
+    self-overlap (replaces span_vecs sampling + spread pad).
+R8. Arb swap for libm faithfulness (enclosures of exp/sin/cos inputs
+    to dual/interval substrate).
+R9. B-arc branch slivers (theta = theta_min + s^2 reparametrization).
+R10. Compactness root-count argument written out.
+Cost levers noted for the campaign discussion: adaptive-h block
+planner (10-30x tile count), per-container line multiplexing (3-5x GPU
+utilization), chunk 1e6, enumeration reuse/warm-start (2x valley);
+H100 ~1.6x wall-clock at ~cost-neutral (bench pending); stratified
+survey (~$5-10) to firm the estimate before commitment.
+
 Out of scope for this theorem (Zauner needs more): G6^(4) via a variety
 atlas, and the completeness Conjecture 7.1 (S6 u K3 u G4 = everything).
 
