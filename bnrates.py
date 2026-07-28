@@ -16,16 +16,21 @@ drift (|e^{i a} - e^{i b}| <= |a-b|, scaled 1/sqrt6).
 The triple sweep's ball slop is then rate_B * delta + K entry drift —
 no FD, no PAD.
 
-STATUS (2026-07-28): dual_bn is DONE and tight (sup|dB/dth| enclosure
-0.567 over a 4e-3 ball at theta=1.6 vs FD 0.57 — no dependency
-blowup). certified_k_drift works for well-conditioned columns but K
-has ILL-CONDITIONED columns (||J^-1|| ~ 5e2 at theta=1.6): the
-q-contraction cannot dominate there, and the certified treatment is
-the 1-parameter frame-split continuation (strong 4x4 block contracts
-with q ~ 0.02; the weak direction needs the signed interval dg with
-cancellation via Y @ dg_iv, plus a 1-dim crossing argument — the
-valley machinery specialized to one parameter). Remaining ledger
-item 3 narrows to exactly that piece.
+STATUS (2026-07-28, end of session): WORKS end-to-end. dual_bn tight
+(0.417 enclosure over a 5e-4 ball vs FD 0.408). certified_k_drift
+certifies at delta = 5e-4 with pair slop 9.4e-3 via two independent
+continuation fixed points (plain |Y|-bound and adaptive frame-split
+with signed point forcing + Lipschitz tube term). Known conservatism
+~15x vs the FD-observed K rate (0.39): the deep column (sv5 ~ 2e-3)
+is bounded by the plain path's magnitude bound; the frame-split
+would beat it at delta ~ 2e-4 (the weak-slope floor sv5 - sqrt5*RJ
+demands it) but the ladder accepts the first certifying delta.
+Open polish items: (a) let the walker choose the split's delta when
+it wins; (b) anchors whose s-ball CONTAINS the branch point need an
+algebraic even-symmetry bound (B(s) = B(-s); entry drift via the
+sqrt-disc factorization) since dual_bn's csqrt rightly refuses
+zero-containing discriminants. Neither blocks the sliver walks:
+non-branch anchors can use certified slop today.
 """
 
 import warnings
@@ -108,22 +113,93 @@ def certified_k_drift(B, K, theta, delta, slop_extra=1e-11):
         # hmagB/sqrt6 + e1[l,k]/sqrt6]
         dJ_fam = 2.0 * ((inv6 * col1[1:6, None] * hmagB * inv6)
                         + e1[1:6, 1:6].T / SQ6)
-        r_tube = float(r_encl.max())
-        for _ in range(3):
-            s_enc = inv6 + inv6 * (5.0 * r_tube) + hs
-            # |dg_k/dth| <= 2 |s_k|_enc (1/sqrt6) sum_i |dB_ik/dth|
-            dg = 2.0 * min(s_enc, 1.0) * inv6 * col1[1:6]
-            RJ_col = (r_tube / 3.0 + 5.0 * r_tube / 18.0
-                      + dJ_fam.max() * delta + SLOP)
+        U, sv, Vt = np.linalg.svd(J)
+        dg_iv = _dg_interval(Bd, c, float(r_encl.max()))
+        L_phi = 2.0 * np.sqrt(5.0) * float(col1.max()) * inv6 \
+            * (5.0 * hmagB * inv6 + 1.0)
+
+        def rj_col(r_t):
+            return (r_t / 3.0 + 5.0 * r_t / 18.0
+                    + dJ_fam.max() * delta + SLOP)
+
+        def dgm(r_t):
+            s_enc = min(inv6 + inv6 * (5.0 * r_t) + hs, 1.0)
+            return 2.0 * s_enc * inv6 * col1[1:6]
+
+        def rate_plain(r_t):
             q = float(np.max(np.abs(np.eye(5) - Y @ J).sum(axis=1))
-                      + np.abs(Y).sum(axis=1).max() * RJ_col)
+                      + np.abs(Y).sum(axis=1).max() * rj_col(r_t))
             if q >= 0.7:
-                raise RuntimeError(f"K column {j}: contraction q = "
-                                   f"{q:.2f} >= 0.7")
-            rate_u = float(np.max(np.abs(Y) @ dg)) / (1.0 - q)
-            r_tube = float(r_encl.max()) + 1.1 * rate_u * delta
-        worst_motion = max(worst_motion, r_tube)
+                return None
+            return float(np.max(np.abs(Y) @ dgm(r_t))) / (1.0 - q)
+
+        def rate_split(r_t):
+            # adaptive frame-split: largest contracting strong block;
+            # weak rows use the SIGNED point forcing u_i^T dg plus an
+            # explicit Lipschitz tube term (cancellation preserved)
+            RJ5 = np.sqrt(5.0) * rj_col(r_t)
+            if sv[4] - RJ5 <= 0:
+                return None
+            for m in (4, 3, 2):
+                Ym = np.linalg.inv(U[:, :m].T @ J @ Vt[:m].T)
+                qm = float(np.abs(Ym).sum(axis=1).max() * RJ5)
+                if qm >= 0.5:
+                    continue
+                rate_w = sum((_proj_interval(U[:, i], dg_iv)
+                              + L_phi * r_t) / (sv[i] - RJ5)
+                             for i in range(m, 5))
+                dgP = np.abs(U[:, :m].T) @ dgm(r_t)
+                return rate_w + float(np.max(np.abs(Ym) @ dgP)) \
+                    / (1.0 - qm)
+            return None
+
+        # independent fixed points per method; take the best converged
+        best = None
+        for fn in (rate_split, rate_plain):
+            r_t = float(r_encl.max())
+            rate = None
+            for _ in range(3):
+                rate = fn(r_t)
+                if rate is None:
+                    break
+                r_t = float(r_encl.max()) + 1.1 * rate * delta
+            if rate is not None:
+                best = r_t if best is None else min(best, r_t)
+        if best is None:
+            raise RuntimeError(f"K column {j}: neither continuation "
+                               f"method certifies (reduce delta)")
+        worst_motion = max(worst_motion, best)
     return worst_motion / SQ6, worst_motion
+
+
+def _dg_interval(Bd, c, phase_rad):
+    """Signed interval vector dg_k = 2 Re(conj(s_k) <u, dh_k/dth>),
+    k = 1..5, over the theta-ball (Bd) and the root box c +- phase_rad
+    (CIV arithmetic; cancellation preserved)."""
+    from interval import iv_cos, iv_sin
+    u = [CIV(IV.pad(1.0 / SQ6, 4))]
+    for i in range(5):
+        ang = IV(c[i] - phase_rad, c[i] + phase_rad)
+        u.append(CIV(iv_cos(ang), iv_sin(ang))
+                 * CIV(IV.pad(1.0 / SQ6, 4)))
+    out = []
+    for k in range(1, 6):
+        s = CIV(0.0)
+        ds = CIV(0.0)
+        for i in range(6):
+            s = s + u[i].conj() * Bd[i][k].v
+            ds = ds + u[i].conj() * Bd[i][k].d[0]
+        re = (s.conj() * ds).re * IV(2.0)
+        out.append(re)
+    return out
+
+
+def _proj_interval(u5, dg_iv):
+    """mag of the signed interval sum sum_k u5_k dg_k."""
+    acc = IV(0.0)
+    for k in range(5):
+        acc = acc + dg_iv[k] * float(u5[k])
+    return float(acc.mag())
 
 
 def certified_pair_slop(theta, delta, B, K):
@@ -141,18 +217,21 @@ def main():
     delta = 4e-3
     t0 = time.time()
     B, K, _p, _b = build_triple(theta)
-    rate_B = certified_bn_rate(theta, delta)
-    dK, wph = certified_k_drift(B, K, theta, delta)
-    # compare with the FD estimate the walks use
     from mub import beauchamp_nicoara
     eps = 1e-4
     B1 = beauchamp_nicoara(theta + eps)
     fd = np.max(np.abs(B1 - B)) / eps
-    print(f"certified sup|dB/dth| = {rate_B:.4f}  (FD center {fd:.4f})")
-    print(f"certified K drift over delta={delta:g}: {dK:.2e} "
-          f"(phase radius {wph:.2e})")
-    print(f"certified pair slop = {rate_B*delta + dK:.3e}  vs FD+PAD "
-          f"~ {1.25*(fd+dK/delta)*delta:.3e}")
+    for d in (delta, 2e-3, 1e-3, 5e-4, 2e-4, 1e-4):
+        try:
+            rate_B = certified_bn_rate(theta, d)
+            dK, wph = certified_k_drift(B, K, theta, d)
+        except RuntimeError as e:
+            print(f"delta={d:g}: {e}")
+            continue
+        print(f"delta={d:g}: sup|dB/dth| = {rate_B:.4f} (FD {fd:.4f}); "
+              f"K drift {dK:.2e} (phase {wph:.2e}); "
+              f"pair slop {rate_B*d + dK:.3e}")
+        break
     print(f"[{time.time()-t0:.0f} s]")
 
 
