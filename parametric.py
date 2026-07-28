@@ -682,13 +682,32 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
               f"certified", flush=True)
 
     # partition certificate: Q-tube rows analytic, fold rows span-sampled
-    O0, G = overlap_gradients(beta, roots)
     lo = np.empty((n, n))
-    for a in range(n):
-        for b in range(n):
-            drift = PAD * float(np.abs(G[a, b]).sum()) * h
-            tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
-            lo[a, b] = O0[a, b] - drift - tube - SLOP
+    if cert_rates is not None:
+        # fully certified pair bounds via TM inner products of u-curves
+        from tmres import certified_overlap_lo, u_curve_tms
+        curves = [None] * n
+        for i in range(n):
+            if i not in fold_certs and per_root[i] is not None:
+                pr = per_root[i]
+                curves[i] = u_curve_tms(h, roots[i], pr["S"], pr["Q"])
+        lo_tm = certified_overlap_lo(h, curves, rho_arr, slop=SLOP)
+        O0, G = overlap_gradients(beta, roots)   # fills non-TM pairs
+        for a in range(n):
+            for b in range(n):
+                if a != b and not np.isnan(lo_tm[a, b]):
+                    lo[a, b] = lo_tm[a, b]
+                else:
+                    drift = PAD * float(np.abs(G[a, b]).sum()) * h
+                    tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
+                    lo[a, b] = O0[a, b] - drift - tube - SLOP
+    else:
+        O0, G = overlap_gradients(beta, roots)
+        for a in range(n):
+            for b in range(n):
+                drift = PAD * float(np.abs(G[a, b]).sum()) * h
+                tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
+                lo[a, b] = O0[a, b] - drift - tube - SLOP
     if fold_certs:
         centers = _uvec(np.array(roots))
         for i, cert in fold_certs.items():

@@ -82,6 +82,42 @@ def tm_karlsson(beta, h):
     return H
 
 
+def u_curve_tms(h, th0, S, Q):
+    """The six u_j(db) TMs along a root's Q-curve (shared helper)."""
+    inv6 = 1.0 / np.sqrt(6.0)
+    us = [TM.const(h, inv6)]
+    for j in range(5):
+        t = TM(h)
+        t.l = S[j].astype(complex)
+        t.q = np.array([0.5 * Q[j, 0, 0], Q[j, 0, 1], Q[j, 0, 2],
+                        0.5 * Q[j, 1, 1], Q[j, 1, 2], 0.5 * Q[j, 2, 2]],
+                       complex)
+        us.append(tm_exp_i(t).scale(np.exp(1j * th0[j]) * inv6))
+    return us
+
+
+def certified_overlap_lo(h, curves, rho_arr, slop=1e-11):
+    """Certified lower bounds on pairwise |<u_a(db), u_b(db)>| over the
+    tile: TM inner products of the u-curves, minus tube-enclosure drift.
+    curves: list of u_curve_tms outputs (or None for non-Q-tube roots,
+    whose rows the caller fills by span sampling)."""
+    n = len(curves)
+    lo = np.full((n, n), np.nan)
+    for a in range(n):
+        if curves[a] is None:
+            continue
+        for b in range(a + 1, n):
+            if curves[b] is None:
+                continue
+            o = TM.const(h, 0.0)
+            for j in range(6):
+                o = o + curves[a][j].conj() * curves[b][j]
+            v = abs(o.c0) - o.bound_centered() \
+                - (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0 - slop
+            lo[a, b] = lo[b, a] = v
+    return lo
+
+
 def certified_curve_residual(beta, h, th0, S, Q, Htm=None):
     """Certified bound on max_k |g_k| along the Q-curve over the tile.
     Htm may be shared across roots of the same tile."""

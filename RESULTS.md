@@ -852,11 +852,19 @@ sampling + PAD with a certified bound:
 - Wired into `certify_tile(use_certified=True)`; the reference tile
   re-certifies in 24 s with TM residuals and no PAD on rad_g.
 
-Remaining EMPIRICAL in the certified path: overlap gradients in the
-partition step (drift of pair overlaps across the tile) — the sole
-survivor, with the same TM treatment available (overlaps are TM
-products of the u-compositions already built here). Plus the global
-libm-faithfulness assumption (Arb swap).
+**And the sole survivor fell in the same session**: `certified_overlap_lo`
+bounds every Q-tube pair's overlap over the tile by TM inner products of
+the u-curves (0.15 s for all ~1100 pairs), replacing the FD overlap
+gradients + PAD; fold/valley rows keep their span-sampled bounds.
+Regressions: the reference tile (24 s) and the fold-doorstep tile
+(31 s, valleys + TM path coexisting) both re-certify.
+
+**Status: for Q-tube content, the certified tile path is free of
+sampled constants end-to-end** — taxes (dual-AD), curve residuals (TM),
+pair overlaps (TM), map values (certified enclosures), rounding
+(derived lemma, interval-validated). Remaining assumptions: libm
+faithfulness (Arb swap), and the fold/valley windows' 1-dim sampled
+envelopes (same TM treatment available, not yet built).
 
 ## Where a proof (not a counterexample) might come from
 
