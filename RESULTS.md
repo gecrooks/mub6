@@ -866,6 +866,29 @@ pair overlaps (TM), map values (certified enclosures), rounding
 faithfulness (Arb swap), and the fold/valley windows' 1-dim sampled
 envelopes (same TM treatment available, not yet built).
 
+## Result 26 — the symmetry quotient measured: divide the campaign by 32
+
+`quotient.py` discovered the Karlsson parametrization's equivalence
+group numerically (Haagerup-invariant screening + full-multiset
+confirmation at multiple generic points):
+
+- **Period pi in every axis**: theta -> theta+pi, phi -> phi+pi,
+  lam -> lam+pi are all Hadamard equivalences (2^3 = 8x);
+- the central inversion (-theta, -phi, -lam) and the reflection
+  (theta, pi-phi, pi-lam), closing with the translations into a
+  point-group of 4;
+- **every H(beta) is equivalent to its own conjugate AND transpose**
+  (so the anti-linear quadruple-statement symmetries are already
+  internal — structurally notable: the family is self-dual under both).
+
+Orbit size at generic points: **32** — the fundamental domain is 1/32
+of the naive parameter box, and every campaign tile-count divides
+accordingly: ~6e9 tiles -> **~1.9e8**, which at the GPU-measured sweep
+economics projects to **~10-30 GPU-days ~ days at the 10-GPU cap ~
+$500-1500** for the main K3 campaign — down from CPU-years at the
+session's start. (Fundamental-domain boundary bookkeeping — half-open
+faces under the group action — goes with the adaptive driver.)
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
