@@ -128,9 +128,13 @@ contradicts a 6-clique. QED (tile).
 2. Near-cusp valley tube handoff (3/22 validation valleys): sampled
    shell formula + PAD. Removal path: R8b routes (component-wise
    growth mu_inf; radial shell chaining; valley slant taxes).
-3. Layer-3 family rates (B/K arc walks): FD + PAD. Removal path:
-   certified arc-map rates on the L1 substrate (same pattern as
-   rates.py).
+3. Layer-3 family rates (B/K arc walks): FD + PAD. NARROWED
+   (bnrates.py): certified dB/dtheta is DONE and tight (dual-AD B-N
+   map, no dependency blowup); what remains is K-column motion for
+   ILL-CONDITIONED columns (||J^-1|| ~ 5e2) — the 1-parameter
+   frame-split continuation (strong-block Krawczyk contracts at
+   q ~ 0.02; weak direction needs signed interval dg with
+   cancellation + a 1-dim crossing argument).
 4. tau-coverage: CLOSED (ball-coverage lemma, Result 29-2).
 5. libm in certified constants: CLOSED (Result 30, mpmath.iv).
 
