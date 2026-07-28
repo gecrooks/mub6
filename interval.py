@@ -1,11 +1,18 @@
 """Directed-rounding interval arithmetic (scalar, prototype checker).
 
 Real intervals [lo, hi] with outward rounding via np.nextafter; complex
-intervals as axis-aligned rectangles (re, im). Elementary functions
-(sqrt, sin, cos, atan2) use libm values padded outward by ULPS ulps —
-DOCUMENTED ASSUMPTION: libm is faithfully rounded to <= 2 ulp for these
-functions on this platform (replace with Arb/crlibm for publication
-grade; the structure is identical).
+intervals as axis-aligned rectangles (re, im).
+
+R8: transcendentals (sin, cos, atan2) are backed by mpmath.iv —
+guaranteed arbitrary-precision interval enclosures (the pure-Python
+Arb equivalent) at 100-bit precision, converted outward to float64
+with 1-ulp padding. NO libm assumption remains in the certified-
+constants path. sqrt is IEEE-754 correctly rounded by specification
+(padded outward anyway), so it carries no assumption either. The only
+remaining libm dependence in the proof is the SWEEP's pointwise
+float evaluations (covered by SLOP + the static rounding lemma, with
+the faithful-libm assumption now scoped to that single use; the
+C/GPU kernel with own argument reduction is the documented endgame).
 
 Complex sqrt uses the principal branch and REFUSES rectangles touching
 the branch cut (negative real axis) or containing 0 — the caller must
@@ -15,9 +22,17 @@ obligation.
 
 import math
 
+import mpmath
 import numpy as np
 
 ULPS = 4
+_MPIV = mpmath.iv
+_MPIV.prec = 100
+
+
+def _mp_endpoints(r):
+    """Outward float64 endpoints of an mpmath.iv result."""
+    return (_dn(float(mpmath.mpf(r.a)), 1), _up(float(mpmath.mpf(r.b)), 1))
 
 
 def _up(x, n=1):
@@ -116,29 +131,17 @@ class IV:
         return max(abs(self.lo), abs(self.hi))
 
 
-def _trig(x, fn, extremum_phase):
-    """Interval sin/cos: monotone between extrema at extremum_phase + k*pi."""
-    if x.width >= 2 * math.pi:
-        return IV(-1.0, 1.0)
-    vals = [_dn(fn(x.lo), ULPS), _up(fn(x.lo), ULPS),
-            _dn(fn(x.hi), ULPS), _up(fn(x.hi), ULPS)]
-    lo, hi = min(vals), max(vals)
-    k0 = math.ceil((x.lo - extremum_phase) / math.pi)
-    k1 = math.floor((x.hi - extremum_phase) / math.pi)
-    for k in range(k0, k1 + 1):
-        if fn(extremum_phase + k * math.pi) > 0:
-            hi = 1.0
-        else:
-            lo = -1.0
+def iv_sin(x):
+    """Certified interval sine via mpmath.iv (extremum logic and pi are
+    internal to the guaranteed enclosure; no libm, no float-pi k-range)."""
+    lo, hi = _mp_endpoints(_MPIV.sin(_MPIV.mpf([x.lo, x.hi])))
     return IV(max(lo, -1.0), min(hi, 1.0))
 
 
-def iv_sin(x):
-    return _trig(x, math.sin, math.pi / 2)
-
-
 def iv_cos(x):
-    return _trig(x, math.cos, 0.0)
+    """Certified interval cosine via mpmath.iv."""
+    lo, hi = _mp_endpoints(_MPIV.cos(_MPIV.mpf([x.lo, x.hi])))
+    return IV(max(lo, -1.0), min(hi, 1.0))
 
 
 class CIV:
@@ -222,10 +225,11 @@ class CIV:
         corner-extremal on the rectangle)."""
         if not self.cut_clear():
             raise ValueError("argument: rectangle touches branch cut")
-        cs = [math.atan2(im, re)
-              for re in (self.re.lo, self.re.hi)
-              for im in (self.im.lo, self.im.hi)]
-        return IV(_dn(min(cs), ULPS), _up(max(cs), ULPS))
+        los, his = zip(*[_mp_endpoints(_MPIV.atan2(_MPIV.mpf(im),
+                                                   _MPIV.mpf(re)))
+                         for re in (self.re.lo, self.re.hi)
+                         for im in (self.im.lo, self.im.hi)])
+        return IV(min(los), max(his))
 
     def csqrt(self):
         """Principal square root; requires cut clearance."""

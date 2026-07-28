@@ -1003,6 +1003,27 @@ sweep-exclusion comparison requires. Closing it needs component-wise
 growth tracking (which right-direction feeds which g_k via P) or a
 collected-shell widening argument.
 
+## Result 30 — R8 stage 1: libm out of the certified-constants path
+
+The interval substrate's transcendentals (iv_sin, iv_cos, CIV.arg's
+atan2) are now backed by **mpmath.iv** — guaranteed arbitrary-
+precision interval enclosures (the pure-Python Arb equivalent) at
+100-bit precision, converted outward to float64 with 1-ulp padding.
+This also fixed a latent soundness hole: the old float-pi k-range in
+the extremum logic could miss an extremum at interval boundaries;
+mpmath.iv's internal certified pi cannot. sqrt was never an
+assumption (IEEE-754 correctly rounded). tm_sincos's base-point
+sin/cos coefficients get an explicit 5e-16 remainder pad. Cost:
+negligible (certified_rates 0.3 s; both validation tiles certify,
+constants match the libm values to ~1e-15 — the faithfulness that
+was assumed is now proven for every certified constant).
+
+The libm assumption now survives in exactly ONE place: the sweep's
+pointwise float evaluations (covered by SLOP 1e-11 vs ~1e-13 lemma
+budget), with the self-contained C/GPU trig kernel (Cody-Waite
+reduction + certified minimax polynomial under the rounding lemma)
+as the documented endgame to remove it entirely.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

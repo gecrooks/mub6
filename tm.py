@@ -151,6 +151,10 @@ def tm_sincos(h, base, k):
     sinx = TM(h, 0.0, x.l.copy(), x.q.copy(), x.rem + hk ** 3 / 6.0)
     cosx = TM.const(h, 1.0) - x2.scale(0.5)
     cosx.rem += hk ** 4 / 24.0
+    # base-point sin/cos come from libm: pad 2 ulps of coefficient
+    # error into both remainders (R8: no unpadded libm coefficients)
+    sinx.rem += 5e-16
+    cosx.rem += 5e-16
     s = sinx.scale(cb) + cosx.scale(sb)
     c = cosx.scale(cb) - sinx.scale(sb)
     return s, c
