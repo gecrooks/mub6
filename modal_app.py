@@ -18,7 +18,7 @@ image = (modal.Image.from_registry(
              "gpusweep", "layer3", "layer3_param", "layer3_x", "mub",
              "szollosi", "parametric", "certify", "fold", "karlsson",
              "interval", "dual", "rates", "xcover", "families",
-             "degenerate", "gputile", "tm", "tmres", "cache"))
+             "degenerate", "gputile", "tm", "tmres", "cache", "campaign"))
 
 
 def _gpu_sweep_fn():
@@ -149,9 +149,48 @@ def tile_bench():
     return out
 
 
+@app.function(gpu="A100", image=image, timeout=3600, memory=16384)
+def campaign_line(spec: dict):
+    """One campaign theta-line with the zoned sweep on GPU. Designed for
+    .spawn(): ledger records and the summary go to app logs."""
+    import io
+    import json
+    import warnings
+    warnings.filterwarnings("ignore")
+    import cupy as cp
+
+    import cache as cache_mod
+    import parametric
+    from gputile import zoned_sweep_xp
+
+    def sweep(*a, **kw):
+        kw.setdefault("chunk", 1_000_000)
+        return zoned_sweep_xp(*a, **kw, xp=cp)
+
+    parametric.zoned_sweep = sweep      # certify_tile path
+    cache_mod.zoned_sweep = sweep       # anchored_tile/chain_step path
+    from campaign import run_line
+    buf = io.StringIO()
+    covered, n = run_line(spec["phi"], spec["lam"], spec["th_lo"],
+                          spec["th_hi"], spec["h"], buf,
+                          start_at=spec.get("start"))
+    for rec in buf.getvalue().splitlines():
+        print("LEDGER " + rec, flush=True)
+    print("CAMPAIGN_LINE_RESULT " + json.dumps(
+        dict(covered=covered, n=n, **spec)), flush=True)
+    return dict(covered=covered, n=n)
+
+
 @app.local_entrypoint()
 def main(lines: str = "", patch: str = "", tile: bool = False,
-         tile_spawn: bool = False):
+         tile_spawn: bool = False, campaign: str = ""):
+    if campaign:
+        phi, lam, th_lo, th_hi, h = [float(x) for x in campaign.split(",")]
+        call = campaign_line.spawn(dict(phi=phi, lam=lam, th_lo=th_lo,
+                                        th_hi=th_hi, h=h))
+        print(f"SPAWNED {call.object_id} — collect via app logs "
+              f"(LEDGER / CAMPAIGN_LINE_RESULT)", flush=True)
+        return
     if tile_spawn:
         call = tile_bench.spawn()
         print(f"SPAWNED {call.object_id} — result in app logs "

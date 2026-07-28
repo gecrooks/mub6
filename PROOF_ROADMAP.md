@@ -312,11 +312,14 @@ R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
     resume. Smoke-validated on both territories: pt-8 valley line (4
     adaptive tiles, hv=(9e-4,3e-4,3e-4) auto-selected, 3x fewer tiles)
     and regular chain line (29 s anchor + 1.4-2.6 s steps).
+    GPU TILE SWEEP DONE 2026-07-28 (Result 28, `gputile.py`):
+    box-exact CPU/GPU agreement, 41x warm on A100; `campaign_line`
+    Modal function (spawn-based, ledger via app logs) validated
+    remotely on both the valley line and the chain line.
     Remaining for production: reuse enumeration between the failed
     anchor probe and the tile (currently duplicated, ~2x overhead in
-    valley strata); GPU port of the zoned tile sweep (the campaign
-    cost model assumes it); the compactness root-count argument
-    written out.
+    valley strata); multi-line dispatcher at the 10-GPU cap with
+    ledger merge; the compactness root-count argument written out.
 R6. C checker + certificate format + parallel campaign (~6e9 tiles);
     re-verification of the four pointwise theorems on the same substrate.
 
