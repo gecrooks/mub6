@@ -722,10 +722,30 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                 tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
                 lo[a, b] = O0[a, b] - drift - tube - SLOP
     if fold_certs:
+        from fold import certified_dip_rows
         centers = _uvec(np.array(roots))
         for i, cert in fold_certs.items():
             rows = fold_overlap_rows(cert, centers)
             row = rows.min(axis=0) - rho_arr.sum(axis=1) / 6.0 - SLOP
+            cc = cert.get("cert")
+            if cert_rates is not None:
+                # R7 ENFORCING: the certified floors must stand and the
+                # interval rows/self-overlaps replace the sampled ones.
+                if cc is None or not cc.get("consistent"):
+                    return dict(ok=False, h=h, seconds=time.time() - t0,
+                                reason=f"valley {i}: certified floors "
+                                       f"inconsistent (R7)")
+                crows, cselfs = certified_dip_rows(cc, centers)
+                if min(cselfs) <= 0.05:
+                    return dict(ok=False, h=h, seconds=time.time() - t0,
+                                reason=f"valley {i}: certified self-"
+                                       f"overlap {min(cselfs):.3f}")
+                row = np.min(np.vstack(crows), axis=0) \
+                    - rho_arr.sum(axis=1) / 6.0 - SLOP
+                if verbose:
+                    print(f"    R7 rows[{i}]: certified min "
+                          f"{row.min():.3f} self {min(cselfs):.3f}",
+                          flush=True)
             lo[i, :] = row
             lo[:, i] = row
             lo[i, i] = 1.0

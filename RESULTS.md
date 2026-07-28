@@ -974,10 +974,20 @@ Validation (report-only alongside the sampled certificates):
   sv = [.32,.29,.24,.076,.034] — two small singular values; a strong
   3-dim regular block with a 2-dim l2 bifurcation floor restores the
   dichotomy; roots need both components zero so dip logic ports).
-Remaining for enforcing mode: the tau-coverage lemma under frame
-rotation (|w_k.w - 1| via J-drift; the sampled version has the same
-geometric looseness under PAD), and interval inner products over
-certified dip boxes to replace span_vecs sampling in overlap rows.
+**ENFORCING MODE ON (same session):** with `use_certified=True` the
+valley path now REQUIRES consistent certified floors and uses interval
+inner products over the certified dip boxes (`certified_dip_rows`:
+axis-aligned theta hulls, |z|^2 >= mig(re)^2 + mig(im)^2 pointwise)
+for both the overlap rows and the intra-dip self-overlap — the
+span_vecs sampling and its PAD are out of the certificate. Both
+validation tiles certify in enforcing mode (ref: 27 conflicts, 2
+colors; pt-8 3x: 59 conflicts, 3 colors, clique <= 3 < 6). Certified
+self-overlaps 0.86-0.998 vs the 0.05 collapse threshold.
+
+Remaining PAD in the valley pipeline (documented, next): the
+tau-coverage lemma under frame rotation (|w_k.w - 1| via J-drift; the
+sampled version has the same geometric looseness under PAD), and the
+y-shell margin's residual term via the rounding lemma.
 
 ## Where a proof (not a counterexample) might come from
 

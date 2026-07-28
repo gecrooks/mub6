@@ -291,6 +291,63 @@ def fold_overlap_rows(cert, other_vecs):
     return np.array(rows)
 
 
+def _dip_theta_hulls(cc, a, b):
+    """Axis-aligned theta-interval hull of dip cells a..b: per cell,
+    anchor +- (r_t |w_k| + r*_k rowwise |Wc_k| radius); hull across
+    cells. Frames are recomputed per anchor (definitional)."""
+    los = np.full(5, np.inf)
+    his = np.full(5, -np.inf)
+    for k in range(a, b + 1):
+        th_k = cc["anchors"][k]
+        # cell radius through the local frame: |tau| <= r_t along w_k,
+        # ||eta||_2 <= r*_k through Wc_k (row l2 norms bound each coord)
+        # w_k/Wc_k are not stored — bound conservatively by the full
+        # rotation: |w_k|_inf <= 1, row norms of Wc_k <= 1:
+        # |dtheta_l| <= r_t + r*_k  (unit rows of an orthonormal frame)
+        d = cc["r_t"] + cc["r_stars"][k]
+        los = np.minimum(los, th_k - d)
+        his = np.maximum(his, th_k + d)
+    return los, his
+
+
+def certified_dip_rows(cc, centers):
+    """Certified lower bounds min over the dip theta-box of
+    |<u(theta), c>| for each center vector c (overlap rows), and the
+    certified intra-dip self-overlap, via interval arithmetic
+    (iv_sin/iv_cos; |z|^2 >= mig(re)^2 + mig(im)^2 pointwise)."""
+    from interval import IV, iv_cos, iv_sin
+    inv6 = 1.0 / 6.0
+    rows = []
+    selfs = []
+    for (a, b) in cc["dips"]:
+        los, his = _dip_theta_hulls(cc, a, b)
+        cos_l = [iv_cos(IV(los[j], his[j])) for j in range(5)]
+        sin_l = [iv_sin(IV(los[j], his[j])) for j in range(5)]
+        # rows vs each center vector c (6 complex entries, |c_j|=1/sqrt6)
+        row = np.zeros(len(centers))
+        for ci, c in enumerate(centers):
+            re = IV(np.real(c[0])) / np.sqrt(6.0)
+            im = IV(-np.imag(c[0])) / np.sqrt(6.0)
+            for j in range(5):
+                aj, bj = np.real(c[j + 1]), np.imag(c[j + 1])
+                re = re + (cos_l[j] * aj + sin_l[j] * bj) / np.sqrt(6.0)
+                im = im + (sin_l[j] * aj - cos_l[j] * bj) / np.sqrt(6.0)
+            row[ci] = np.sqrt(max(0.0, re.mig()) ** 2
+                              + max(0.0, im.mig()) ** 2)
+        rows.append(row)
+        # intra-dip self-overlap: |<u(th), u(th')>| = |1 + sum e^{i dth}|/6
+        # with dth_j in the difference interval of the hull
+        re = IV(1.0)
+        im = IV(0.0)
+        for j in range(5):
+            d = IV(-(his[j] - los[j]), his[j] - los[j])
+            re = re + iv_cos(d)
+            im = im + iv_sin(d)
+        selfs.append(np.sqrt(max(0.0, re.mig()) ** 2
+                             + max(0.0, im.mig()) ** 2) * inv6)
+    return rows, selfs
+
+
 def _rho_y_estimate(fr, far_tax):
     """Conservative (large) rho_tube estimate for the in-loop certified
     F-side check; the final floors re-run with the true rho_y."""
