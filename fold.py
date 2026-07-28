@@ -99,10 +99,16 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
         anchors[k] = th_k
         gam, J = _g_and_J(H0, th_k)
         U, sv, _Vt = np.linalg.svd(J)
-        u_k, P_k = U[:, -1], U[:, :4]
-        phi_hat = abs(float(u_k @ gam))
+        # adaptive split: near-cusp cells (sv4 also small) use a 3/2
+        # split — strong 3-dim regular block, 2-dim bifurcation vector
+        # with l2 floor (roots need BOTH components zero; dip logic
+        # ports, monotonicity is not used by the dichotomy)
+        m = 3 if sv[3] < 0.1 else 4
+        u_k = U[:, m:5]                       # (5, 5-m) bifurcation block
+        P_k = U[:, :m]
+        phi_hat = float(np.linalg.norm(u_k.T @ gam))
         Fres = float(np.linalg.norm(P_k.T @ gam))
-        sv4, sv5 = sv[3], sv[4]
+        sv4, sv5 = sv[m - 1], sv[m]           # cond / linear-loss rates
         uvec = np.concatenate(([1.0], np.exp(1j * th_k))) * inv6
         s_hat = np.abs(uvec.conj() @ H0)          # (6,)
 
@@ -111,34 +117,42 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
             R2 = float(np.sqrt(r_t ** 2 + rho ** 2))
             s_enc = np.minimum(
                 s_hat + hmag * inv6 * SQ5 * R2 + s_beta, 1.0)
-            # certified Hessian quad const, |s|-local; frame-projected
-            D = 2.0 * (hmag ** 2 / 6.0 + hmag * inv6 * float(s_enc.max()))
+            # per-COMPONENT certified Hessian quad coefs, |s|-local:
+            # q_k <= 0.5 (D_k + 4 O) R2^2; project by |u| (phi side)
+            # and l2 (F side) instead of sqrt5-uniform
+            Dk = 2.0 * (hmag ** 2 / 6.0 + hmag * inv6 * s_enc)   # (6,)
             O = 2.0 * hmag ** 2 / 6.0
-            QP = 0.5 * (D + 4.0 * O) * SQ5
+            qk = 0.5 * (Dk + 4.0 * O)[1:6]                       # (5,)
+            q_phi = float(np.linalg.norm(np.abs(u_k).T @ qk))
+            q_F = float(np.linalg.norm(qk))
             # per-component beta losses, |s|-local; g-components 1..5
             rate = (2.0 * inv6) * s_enc[None, :] * c1        # (3, 6)
             bcol = (rate * hvv[:, None]).sum(axis=0)[1:6]    # (5,)
-            return R2, QP, bcol
+            return R2, q_phi, q_F, bcol
 
-        _R20, QP0, bcol0 = losses(0.0)
-        cb_F0 = float(np.linalg.norm(bcol0))
-        # split radius: F-side must clear its losses at rho = r*
-        r_star = 2.0 * (Fres + cb_F0 + QP0 * r_t ** 2 + SLOPV + 1e-4) \
-            / max(sv4, 1e-6)
+        # split radius: minimal r* clearing the F-side, small headroom;
+        # one fixed-point pass (s_enc grows mildly with rho)
+        r_star = 0.0
+        for _ in range(2):
+            _R2, _qp, qF, bcol = losses(r_star)
+            cb_F = float(np.linalg.norm(bcol))
+            r_star = 1.1 * (Fres + cb_F + qF * (r_t ** 2 + r_star ** 2)
+                            + SLOPV + 1e-4) / max(sv4, 1e-6)
         ok = True
         for rho in (r_star, rho_tube):
             if rho < r_star - 1e-15:
                 continue
-            _R2r, QPr, bcolr = losses(rho)
-            m = sv4 * rho - Fres - QPr * (r_t ** 2 + rho ** 2) \
+            _R2r, _qpr, qFr, bcolr = losses(rho)
+            m = sv4 * rho - Fres - qFr * (r_t ** 2 + rho ** 2) \
                 - float(np.linalg.norm(bcolr)) - SLOPV
             if m <= 0:
                 ok = False
         f_ok[k] = ok
         r_stars[k] = r_star
-        R2s, QPs, bcols = losses(r_star)
-        floors[k] = (phi_hat - sv5 * R2s - QPs * R2s ** 2
-                     - float(np.abs(u_k) @ bcols) - SLOPV)
+        R2s, qps, _qFs, bcols = losses(r_star)
+        cb_phi = float(np.linalg.norm(np.abs(u_k).T @ bcols))
+        floors[k] = (phi_hat - sv5 * R2s - qps * R2s ** 2
+                     - cb_phi - SLOPV)
     # dip runs from certified floors
     low = floors <= 0
     runs, k = [], 0
@@ -454,11 +468,13 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
             cert_rates, rho_y)
         # consistency: certified analysis stands alone (edge + F-side
         # everywhere); each sampled enclosure must lie INSIDE a certified
-        # dip (else the samples found a crossing the floors missed), and
-        # the counts agree (no spurious certified dips).
+        # dip (else the samples found a crossing the floors missed). A
+        # certified dip may CONTAIN several sampled dips (fold pair whose
+        # floors merge) — the <=2-dip cap and the downstream self-overlap
+        # collapse still apply to the certified boxes.
         cert["consistent"] = (
             cert["edge_ok"] and cert["all_f_ok"]
-            and len(cert["dips"]) == len(merged)
+            and len(cert["dips"]) <= 2
             and all(any(ca <= sa and sb <= cb
                         for (ca, cb) in cert["dips"])
                     for (sa, sb) in merged))

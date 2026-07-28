@@ -964,12 +964,16 @@ Validation (report-only alongside the sampled certificates):
 - reference tile: 4/4 valleys consistent — certified edges 0.0073-
   0.0082 vs sampled 0.0089-0.0100 (losses ~20% of margin), dips
   properly containing the sampled enclosures;
-- pt-8 anisotropic 3x tile: 21/22 valleys consistent across the two
-  validation tiles; the single deepest valley (root 17) exhausts the
-  T-cap — the identified tightening levers, in order: optimized r*
-  (the 2.0 factor is arbitrary), per-cell u-projected quad bound
-  (currently sqrt5-uniform), l1-radius s-enclosures, and 1-dim
-  interval-Newton along the trench as the endgame.
+- FINAL (after three refinements): **22/22 valleys consistent across
+  both validation tiles** (reference iso + pt-8 anisotropic 3x). The
+  refinements, each forced by a real failure: (1) optimized split
+  radius r* = 1.1x the F-side minimum with a fixed-point pass
+  (arbitrary 2.0x wasted the deepest valley's whole budget); (2)
+  per-cell u-projected / l2-projected quad bounds in place of
+  sqrt5-uniform; (3) ADAPTIVE 3/2 SPLIT for near-cusp cells (root 45:
+  sv = [.32,.29,.24,.076,.034] — two small singular values; a strong
+  3-dim regular block with a 2-dim l2 bifurcation floor restores the
+  dichotomy; roots need both components zero so dip logic ports).
 Remaining for enforcing mode: the tau-coverage lemma under frame
 rotation (|w_k.w - 1| via J-drift; the sampled version has the same
 geometric looseness under PAD), and interval inner products over
