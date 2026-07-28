@@ -1043,6 +1043,30 @@ overlapping the Result-20 coverage. **The full B-arc
 gap-free** (prototype Layer-3 rates: FD + PAD, as everywhere on
 Layer 3; certified B-map rates remain the substrate item).
 
+## Result 32 — the certified trig kernel: libm out of the sweeps
+
+`trig_kernel.py`: self-contained vectorized sin/cos — certified 2pi
+pre-wrap + Cody-Waite pi/2 reduction (two-part constants) + fdlibm-
+style minimax kernels — with the error bound PROVEN IN-REPO, not
+cited: sin/cos are replaced by degree-25/26 Taylor polynomials with
+certified remainders (~1e-28) and the difference polynomial's sup is
+bounded by exact coefficient algebra at 60 digits (sum |c_k| (pi/4)^k
+— no subdivision, no interval cancellation loss; a first attempt via
+piecewise interval evaluation failed exactly on that cancellation and
+was discarded). Certified: sin 2.73e-13, cos 1.70e-14; recorded
+E_TRIG = 3e-13. Empirically the kernel agrees with libm to 1.5 ulp —
+the certified bound is triangle-counting conservatism.
+
+Wired into ALL sweep u-constructions (certify._uvec, gputile,
+gpusweep) so CPU and GPU run identical arithmetic: the exact-match
+harness passes on kernel trig (3974 stuck / 3,813,643 — marginal
+boxes shifted vs the libm era, both sound), and both validation
+tiles certify (ref 28 s, pt-8 100 s; CPU kernel is 2.5x libm's
+cost, GPU unaffected in structure). A sweep test touches ~10 trig
+values: <= 3e-12 against SLOP 1e-11, noted in the rounding-lemma
+accounting. **Ledger item 1 closed: no libm in any certificate
+path.**
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

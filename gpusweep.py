@@ -9,6 +9,7 @@ as the NumPy path. The |s|-local ball slop matches layer3.py.
 import numpy as _np
 
 from certify import SLOP
+from trig_kernel import kexp_i
 
 
 def certified_triple_sweep_xp(B, K, hslop=1e-9, wmin=2e-3, chunk=1_000_000,
@@ -34,7 +35,7 @@ def certified_triple_sweep_xp(B, K, hslop=1e-9, wmin=2e-3, chunk=1_000_000,
             raise RuntimeError(f"exceeded {max_boxes:g} boxes")
         u = xp.empty((C.shape[0], 6), dtype=xp.complex128)
         u[:, 0] = inv_sqrt6
-        u[:, 1:] = xp.exp(1j * C) * inv_sqrt6
+        u[:, 1:] = kexp_i(C, xp) * inv_sqrt6   # certified kernel (E_TRIG)
         sw = W.sum(axis=1)
         best = xp.full(C.shape[0], -_np.inf)
         for Hc in stacks:

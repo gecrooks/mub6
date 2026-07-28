@@ -12,6 +12,7 @@ float32 arrays (the chain machinery consumes them on CPU).
 import numpy as _np
 
 from certify import SLOP
+from trig_kernel import kexp_i
 
 
 def _to_host(xp, a):
@@ -74,7 +75,7 @@ def zoned_sweep_xp(H0, roots, coef0, coef1, guards, far_tax,
             raise RuntimeError(f"zoned sweep exceeded {max_boxes:g} boxes")
         u = xp.empty((m, 6), dtype=xp.complex128)
         u[:, 0] = inv6
-        u[:, 1:] = xp.exp(1j * C) * inv6
+        u[:, 1:] = kexp_i(C, xp) * inv6      # certified kernel (E_TRIG)
         s = u @ Hc
         g = xp.abs(s) ** 2 - 1.0 / 6.0
         sw = W.sum(axis=1)

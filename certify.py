@@ -41,7 +41,8 @@ def _uvec(C):
     m = C.shape[0]
     u = np.empty((m, 6), dtype=complex)
     u[:, 0] = 1.0 / SQ6
-    u[:, 1:] = np.exp(1j * C) / SQ6
+    from trig_kernel import kexp_i
+    u[:, 1:] = kexp_i(C) / SQ6              # certified kernel (E_TRIG)
     return u
 
 
