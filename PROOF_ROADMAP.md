@@ -343,8 +343,21 @@ R7. Valley/fold certified envelopes — replace the PAD'd sampled pieces
     certified floors (no PAD). Dip enclosure boxes -> interval inner
     products (iv_sin/iv_cos exist) for overlap rows and intra-dip
     self-overlap (replaces span_vecs sampling + spread pad).
-R8. Arb swap for libm faithfulness (enclosures of exp/sin/cos inputs
-    to dual/interval substrate).
+R8. Arb swap — STAGE 1 DONE 2026-07-28 (Result 30): mpmath.iv backs
+    iv_sin/iv_cos/atan2 (guaranteed enclosures, certified pi; also
+    fixed the float-pi extremum k-range hole); tm_sincos coefficients
+    padded. libm now lives ONLY in the sweep's pointwise floats
+    (SLOP-covered); endgame = self-contained C/GPU trig kernel.
+R8b. Near-cusp tube handoff (open R7 corner) — candidate routes,
+    quantified 2026-07-28: (i) component-wise growth mu_inf =
+    min_eta max_k |a_k.eta| via net + Lipschitz on A = U[:, :4] diag
+    (sigma) — beats sigma4/sqrt5 but est. still short at 3x-hv taxes;
+    (ii) two-radius scheme (thin certified ball + F-only shell +
+    sampled collection radius) — shell quad at fat radii is the
+    blocker; radial shell-chaining with re-anchoring would fix it;
+    (iii) valley slant taxes: export local root-distance data from
+    the window so guard-interior boxes get a certified slant bound
+    instead of falling to far taxes — most promising structurally.
 R9. B-arc branch slivers (theta = theta_min + s^2 reparametrization).
 R10. Compactness root-count argument written out.
 Cost levers noted for the campaign discussion: adaptive-h block
