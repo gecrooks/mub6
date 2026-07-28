@@ -1024,6 +1024,25 @@ budget), with the self-contained C/GPU trig kernel (Cody-Waite
 reduction + certified minimax polynomial under the rounding lemma)
 as the documented endgame to remove it entirely.
 
+## Result 31 — R9: the B-arc branch slivers closed; arc complete
+
+`slivers.py`: the two residual slivers of Result 20 (total width
+< 1.8e-3, where the Beauchamp-Nicoara chart's theta-rates diverge
+like 1/sqrt(theta - theta_min)) are closed by walking in the branch
+variable s, theta = theta_min + s^2 (resp. theta_max - s^2), where
+the map is smooth with finite rates. The branch point itself is
+basis-degenerate for the enumeration, so the first anchor sits at
+small s0 > 0 with its ball required to reach back through s = 0 —
+covering theta down to and including the branch point (which is
+Bjorck-equivalent and independently certified in Result 20).
+
+Outcome: lower sliver ONE anchor (96 s), upper sliver two anchors
+(133 s); 9.4M boxes total, triple defects 3.1e-16, both walks
+overlapping the Result-20 coverage. **The full B-arc
+[1.1960619, 5.0871234] including both branch points is covered
+gap-free** (prototype Layer-3 rates: FD + PAD, as everywhere on
+Layer 3; certified B-map rates remain the substrate item).
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
