@@ -923,6 +923,28 @@ place of the global max. The adaptive driver should pick hv from the
 center-point diagnostics (|u.Gb| axis profile of the flagged roots),
 which cost one SVD sweep per tile — negligible.
 
+## Result 28 — zoned tile sweep on GPU: box-exact, 41x
+
+`gputile.py` ports `parametric.zoned_sweep` (the certify_tile inner
+engine: zones, per-root slant taxes, guard/oracle collection,
+valley-tube membership, chain cache emission) to the xp-generic
+NumPy/CuPy pattern of `gpusweep.py`. Validation is EXACT, not
+statistical: replaying the reference tile's captured stage-A inputs,
+xp=numpy reproduces the CPU sweep's (stuck, D0, total) to the bit
+(3595 / 3,813,469 boxes, D0 diff 0.0), and the A100 CuPy path
+returns the *same exact counts* — the FP64-IEEE rigor-identity
+claim observed, not assumed, on the full tile machinery including
+oracle interpolation.
+
+A100 timings (Modal, reference tile stage A): container CPU 52.9 s,
+GPU cold 91 s (JIT, once per worker), **GPU warm 1.28 s = 41x** —
+at the tile pipeline's inherited 20k chunk; larger chunks raise it
+further. Ops note: Modal calls from this Mac get their in-flight
+input cancelled when the local client's connection drops (~3 min at
+night — the first "failures" were also container OOM at default
+memory, fixed with memory=16384); campaign dispatches must use
+`.spawn()` + app-log/ledger collection, never a live `.remote()`.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory
