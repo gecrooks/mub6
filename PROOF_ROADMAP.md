@@ -365,9 +365,17 @@ R10. Compactness root-count argument written out.
 H-PUSH R&D (2026-07-29, after the survey killed the flat campaign):
 mode A (sweep drowning at h >= 7e-4): stuck boxes are 100% WITHIN
 guard radii — the R33 thin-oracle halo stops self-excluding as taxes
-grow with h; next probe = per-box |g| vs tax on the stuck set; cures
-on deck: radial shell-banding of the collection region OR halo tax
-sharpening. Mode B (soft valleys): y-solve BRANCH JUMPS across beta
+grow with h. PROBE VERDICT: they miss by WHISKERS (median excess
+-1.2e-3, p95 -2e-5, healthy |g| ~ 0.009, taxes 3-7e-3 on high-|s|
+columns) — pure tax conservatism, factor ~1.2-1.5. THE CURE (next
+build): FIRST-ORDER SWEEP TAXES — per-box signed beta-gradient
+dg_k/dbeta_j = 2 Re(conj(s_k) <u, dH_k/dbeta_j>) via 3 extra
+matmuls per chunk (dHc arrays from the dual substrate at tile
+center) + certified second-order remainder c2 h^2; the box's own
+u gives the cancellation the sup-tax wastes. Expected ~2x tax
+reduction -> mode A clears 7e-4, plausibly 1e-3. Must land in CPU
+and GPU sweeps in lockstep (box-exactness) with rates.py providing
+dHc + a coarse certified c2. Mode B (soft valleys): y-solve BRANCH JUMPS across beta
 corners (spread 0.4 rad at h=7e-4 is not smooth motion) — needs
 branch-aware transverse solves; the octant split (implemented,
 sound, per-octant coloring + oracle lists in both sweeps) only
