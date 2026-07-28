@@ -358,7 +358,9 @@ R8b. Near-cusp tube handoff (open R7 corner) — candidate routes,
     (iii) valley slant taxes: export local root-distance data from
     the window so guard-interior boxes get a certified slant bound
     instead of falling to far taxes — most promising structurally.
-R9. B-arc branch slivers (theta = theta_min + s^2 reparametrization).
+R9. B-arc branch slivers — DONE 2026-07-28 (Result 31, `slivers.py`):
+    s^2 chart, 3 anchors total, both branch points covered inclusive;
+    the B-arc is complete end to end.
 R10. Compactness root-count argument written out.
 Cost levers noted for the campaign discussion: adaptive-h block
 planner (10-30x tile count), per-container line multiplexing (3-5x GPU
