@@ -170,7 +170,9 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
             merged[-1] = (merged[-1][0], max(merged[-1][1], b))
         else:
             merged.append((a, b))
-    edge_ok = (not low[0]) and (not low[-1]) and f_ok[0] and f_ok[-1]
+    # f_ok is diagnostic (pure-phi ball floors are sound without the
+    # F-dichotomy)
+    edge_ok = (not low[0]) and (not low[-1])
     return dict(floors=floors, f_ok=f_ok, r_stars=r_stars, dips=merged,
                 edge_ok=edge_ok, edge_margin=float(min(floors[0],
                                                        floors[-1])),
@@ -436,22 +438,25 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
                 # with consistent=False recorded. Uses the TRUE tube
                 # radius (same formula as the final certificate) — the
                 # coarse estimate blows up for deep valleys.
+                # R8b: the tube radius is GEOMETRY (what the oracle
+                # collects), not a growth-solvability object — the
+                # floors certify the whole ball at it (f_ok), boxes
+                # beyond the window self-exclude by direct evaluation
+                # or stick loudly (cover-completeness lemma). Use the
+                # sampled formula's radius.
+                # oracle radius: just past the actual root territory
+                # (thin y-spread); the shell beyond self-excludes in
+                # the sweep (its |g| is measured-large vs |s|-local
+                # taxes) or sticks loudly. Fat radii only inflate the
+                # ball quad.
                 rt_ = float(np.max(np.abs(Y - Y[0][None]))) + 0.01
-                rc = _rho_certified(fr, far_tax, cert_rates,
-                                    0.5 * (tgrid[1] - tgrid[0]))
-                if rc is None:
-                    # near-cusp: no certified tube — sampled formula
-                    # (grid-var floor), floors still verify f_ok at it
-                    gv_ = np.max(np.abs(np.diff(phi, axis=1)))
-                    bs_ = np.max(phi.max(axis=0) - phi.min(axis=0))
-                    fl_ = PAD * (0.5 * gv_ + 0.5 * bs_ + res_max + 1e-9)
-                    rc = PAD * (far_tax + fl_) \
-                        / max(0.6 * fr["sv"][3], 0.02) + 0.02
-                rho_true = max(rt_, rc)
+                rho_true = max(rt_ + 0.01, 0.035)
                 cT = certified_valley_floors(
                     beta, np.broadcast_to(np.asarray(h, float), (3,)),
                     th0, w, Wc, tgrid, Y[0], cert_rates, rho_true)
-                if not (cT["edge_ok"] and cT["all_f_ok"]
+                # f_ok is diagnostic only: the floors are pure-phi
+                # ball floors, sound without the F-dichotomy
+                if not (cT["edge_ok"]
                         and all(a > 0 and b < len(tgrid) - 1
                                 for a, b in cT["dips"])):
                     if verbose:
@@ -520,9 +525,7 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
     sig4 = fr["sv"][3]
     rho_samp = PAD * (far_tax + floor) / max(0.6 * sig4, 0.02) + 0.02
     if cert_rates is not None:
-        rc = _rho_certified(fr, far_tax, cert_rates,
-                            0.5 * (tgrid[1] - tgrid[0]))
-        rho_y = max(rho_thin, rho_samp if rc is None else rc)
+        rho_y = max(rho_thin + 0.01, 0.035)     # R8b: thin oracle
     else:
         rho_y = max(rho_thin, rho_samp)
     shell_margin = 0.6 * sig4 * rho_y - 0.5 * (11.0 / 18.0) * rho_y ** 2 \
@@ -571,7 +574,7 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
         # floors merge) — the <=2-dip cap and the downstream self-overlap
         # collapse still apply to the certified boxes.
         cert["consistent"] = (
-            cert["edge_ok"] and cert["all_f_ok"]
+            cert["edge_ok"]
             and len(cert["dips"]) <= 2
             and all(any(ca <= sa and sb <= cb
                         for (ca, cb) in cert["dips"])

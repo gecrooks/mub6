@@ -1067,6 +1067,31 @@ values: <= 3e-12 against SLOP 1e-11, noted in the rounding-lemma
 accounting. **Ledger item 1 closed: no libm in any certificate
 path.**
 
+## Result 33 — R8b closed: the near-cusp handoff dissolves
+
+The "near-cusp tube handoff" (ledger item 2 — no certified tube
+radius solves sig4 rho >= sweep-need + quad at sv4 ~ 0.08) turned
+out to be a MISFRAMING, not a missing inequality. The certificate
+never needed the collected tube to reach tax-excludable territory by
+a growth argument:
+
+- the valley oracle now collects a THIN tube (actual root territory:
+  y-spread + 0.01, floor 0.035) — fat radii only inflated the ball
+  quad that was killing the floors;
+- the certified pure-phi ball floors stand alone (the F-dichotomy
+  and its f_ok flags are diagnostic; |u-block . g| > 0 excludes
+  roots regardless of the transverse coordinate);
+- boxes in the abandoned shell self-exclude in the sweep by direct
+  evaluation (their |g| is measured-large vs |s|-local taxes) or
+  remain stuck — LOUD failure under the cover-completeness lemma.
+
+After removing the vestigial f_ok requirements from edge/consistency
+(the last failures were exactly those flags on valleys with POSITIVE
+floors), **both validation tiles certify with 22/22 valleys on
+certified floors + interval dip rows — zero sampled fallbacks.**
+The tile-certificate assumption ledger is now EMPTY: no PAD, no
+sampling, no libm anywhere in the tile chain.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

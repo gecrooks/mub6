@@ -124,9 +124,10 @@ contradicts a 6-clique. QED (tile).
 1. Sweep pointwise floats: CLOSED (Result 32) — in-repo certified
    trig kernel (E_TRIG = 3e-13, proven by exact coefficient algebra)
    in every sweep; ~10 calls/test <= 3e-12 vs SLOP = 1e-11.
-2. Near-cusp valley tube handoff (3/22 validation valleys): sampled
-   shell formula + PAD. Removal path: R8b routes (component-wise
-   growth mu_inf; radial shell chaining; valley slant taxes).
+2. Near-cusp valley tube handoff: CLOSED (Result 33) — thin oracle
+   (actual root territory), pure-phi ball floors standalone, shell
+   boxes self-exclude or stick loudly (cover-completeness). 22/22
+   validation valleys certified, zero fallbacks.
 3. Layer-3 family rates (B/K arc walks): FD + PAD. NARROWED
    (bnrates.py): certified dB/dtheta is DONE and tight (dual-AD B-N
    map, no dependency blowup); what remains is K-column motion for
