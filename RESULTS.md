@@ -889,6 +889,40 @@ $500-1500** for the main K3 campaign — down from CPU-years at the
 session's start. (Fundamental-domain boundary bookkeeping — half-open
 faces under the group action — goes with the adaptive driver.)
 
+## Result 27 — anisotropic tiles: 3x volume at the deep-valley wall
+
+The h-vector is now plumbed through the whole certified stack: `tm.py`
+Taylor models carry per-variable half-widths (per-axis series
+remainders), `rates.py` weights every certified rate per-direction
+(BR_k = (2/sqrt6) sum_j c1[j,k] hv_j; RJ and s_drift likewise), and
+`certify_tile` accepts an hv vector on the certified path — slope terms
+use hv-weighted row sums sum_k |S_ik| hv_k, q_offset is
+0.5 sum |Q| hv_k hv_l, curve-residual and overlap TMs get the true box,
+valley corners broadcast. All formulas reduce *exactly* to the scalar
+ones at isotropic hv: the reference tile reproduces its prior
+certificate bit-for-bit-comparable (48 roots, 3.84M boxes, 24 s).
+
+Demonstration at the deep-valley scan point beta = (1.386501, 1.678339,
+4.019655) (52 roots, 12 near-singular, racing axes *mixed* across
+valleys — beta1 for some, beta2/beta0 for others):
+
+- isotropic ceiling under certified taxes: **h = 3e-4 certifies;
+  6e-4 fails** (valley 20 y-shell margin -1.8e-3);
+- the cheap direction is the weakly-coupled beta0 (|u.Gb|_0 = 0.06 vs
+  0.23 on beta1 for the binding valley 20);
+- **hv = (9e-4, 3e-4, 3e-4) CERTIFIES: 3.0x the isotropic ceiling
+  volume**; (1e-3, 3e-4, 3e-4) fails by only -2.3e-4 on the same
+  margin, and trading beta1 down does not rescue larger beta0 —
+  pinning the binding term as the *global* far tax
+  sum_j c1[j] hv_j inflating rho_y, not the corner spread.
+
+Campaign consequence: deep-valley strata (the tile-count-dominant
+regions) get ~3x fewer tiles from shape alone; the identified next
+lever, if ever needed, is a trench-local per-column valley tax in
+place of the global max. The adaptive driver should pick hv from the
+center-point diagnostics (|u.Gb| axis profile of the flagged roots),
+which cost one SVD sweep per tile — negligible.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

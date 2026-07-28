@@ -23,7 +23,8 @@ class TM:
     __slots__ = ("c0", "l", "q", "rem", "h")
 
     def __init__(self, h, c0=0.0, l=None, q=None, rem=0.0):
-        self.h = h
+        # h: scalar or per-variable (3,) half-widths (anisotropic tiles)
+        self.h = np.broadcast_to(np.asarray(h, float), (3,)).copy()
         self.c0 = complex(c0)
         self.l = np.zeros(3, complex) if l is None else np.asarray(l, complex)
         self.q = np.zeros(6, complex) if q is None else np.asarray(q, complex)
@@ -40,8 +41,12 @@ class TM:
         return TM(h, c0=z)
 
     def mags(self):
-        return (abs(self.c0), float(np.abs(self.l).sum()) * self.h,
-                float(np.abs(self.q).sum()) * self.h * self.h)
+        hv = self.h
+        m1 = float((np.abs(self.l) * hv).sum())
+        m2 = 0.0
+        for n, (i, j) in enumerate(IDX):
+            m2 += abs(self.q[n]) * hv[i] * hv[j]
+        return (abs(self.c0), m1, m2)
 
     def bound(self):
         m0, m1, m2 = self.mags()
@@ -142,9 +147,10 @@ def tm_sincos(h, base, k):
     x2 = x * x
     sb, cb = np.sin(base), np.cos(base)
     sinx = x                                  # + rem h^3/6
-    sinx = TM(h, 0.0, x.l.copy(), x.q.copy(), x.rem + h ** 3 / 6.0)
+    hk = float(np.broadcast_to(np.asarray(h, float), (3,))[k])
+    sinx = TM(h, 0.0, x.l.copy(), x.q.copy(), x.rem + hk ** 3 / 6.0)
     cosx = TM.const(h, 1.0) - x2.scale(0.5)
-    cosx.rem += h ** 4 / 24.0
+    cosx.rem += hk ** 4 / 24.0
     s = sinx.scale(cb) + cosx.scale(sb)
     c = cosx.scale(cb) - sinx.scale(sb)
     return s, c

@@ -40,9 +40,11 @@ SQ6 = np.sqrt(6.0)
 
 
 def certified_rates(beta, h):
-    Hd = dual_karlsson(IV(beta[0] - h, beta[0] + h),
-                       IV(beta[1] - h, beta[1] + h),
-                       IV(beta[2] - h, beta[2] + h))
+    """h: scalar or per-direction (3,) half-widths (anisotropic tiles)."""
+    hv = np.broadcast_to(np.asarray(h, float), (3,)).copy()
+    Hd = dual_karlsson(IV(beta[0] - hv[0], beta[0] + hv[0]),
+                       IV(beta[1] - hv[1], beta[1] + hv[1]),
+                       IV(beta[2] - hv[2], beta[2] + hv[2]))
     e1 = np.zeros((3, 6, 6))
     hmag = 0.0
     for i in range(6):
@@ -51,20 +53,21 @@ def certified_rates(beta, h):
             for j in range(3):
                 e1[j, i, k] = cdual_mag(Hd[i][k].d[j])
     c1 = e1.sum(axis=1)                          # c1[j, k]
-    BR = (2.0 / SQ6) * h * c1.sum(axis=0)        # (6,) per-column beta tax
+    BR = (2.0 / SQ6) * (c1 * hv[:, None]).sum(axis=0)   # per-column tax
     # per-unit l2-distance drift rate per column (Cauchy-Schwarz over j)
     BU = (2.0 / SQ6) * np.sqrt((c1 ** 2).sum(axis=0))
     GB = (2.0 / SQ6) * c1.sum(axis=0) * (hmag * SQ6 / 6.0 + 1.0)
-    dJ = np.zeros((6, 6))
+    dJj = np.zeros((3, 6, 6))
     for k in range(6):
         for l in range(6):
-            dJ[k, l] = 2.0 * sum(
-                (1.0 / SQ6) * c1[j, k] * hmag / SQ6 + e1[j, l, k] / SQ6
-                for j in range(3))
-    RJ = float(dJ.max()) * h
+            for j in range(3):
+                dJj[j, k, l] = 2.0 * ((1.0 / SQ6) * c1[j, k] * hmag / SQ6
+                                      + e1[j, l, k] / SQ6)
+    RJ = float((dJj * hv[:, None, None]).sum(axis=0).max())
+    s_drift = float((1.0 / SQ6) * (c1 * hv[:, None]).sum(axis=0).max())
     return dict(beta_rate_vec=BR, beta_unit_vec=BU, far_tax=float(BR.max()),
                 gb=float(GB.max()), RJ_extra=RJ, hmag=hmag,
-                c1=c1, s_drift=float((1.0 / SQ6) * h * c1.sum(axis=0).max()))
+                c1=c1, s_drift=s_drift)
 
 
 def chain_certified_rates(beta, h, span, axis=0):

@@ -300,10 +300,14 @@ R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
     a 4x4 grid of margin-cached chain-lines certified a full-dimension
     block (112 tiles, 16 anchors, 17.7 min, zero failures/re-anchors) —
     theorem: no MU quadruple contains any Karlsson Hadamard from the
-    certified 4.6e-3 x 3.0e-3 x 3.0e-3 box. Remaining: adaptive
-    per-tile h + anisotropy near strata; coverage bookkeeping over the
-    full domain + symmetry quotient; the compactness root-count
-    argument written out.
+    certified 4.6e-3 x 3.0e-3 x 3.0e-3 box. ANISOTROPY DONE 2026-07-27
+    (Result 27): h-vector plumbed through tm/rates/certify_tile, 3.0x
+    volume certified at the deep-valley wall point; driver picks hv
+    from center-point |u.Gb| diagnostics. Remaining: the adaptive
+    campaign driver itself (per-tile hv chooser, fundamental-domain
+    cover + boundary bookkeeping under the order-32 quotient,
+    checkpoint/resume); the compactness root-count argument written
+    out.
 R6. C checker + certificate format + parallel campaign (~6e9 tiles);
     re-verification of the four pointwise theorems on the same substrate.
 

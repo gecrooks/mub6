@@ -146,8 +146,9 @@ def curve_residual(beta, th0, S, Q, h, quadratic=True):
 
 def q_offset(Q, h):
     """Per-coordinate bound on the quadratic curve's deviation from the
-    linear frame: 0.5 |Q[db,db]| <= 0.5 sum_kl |Q_ikl| h^2."""
-    return 0.5 * np.abs(Q).sum(axis=(1, 2)) * h ** 2
+    linear frame: 0.5 sum_kl |Q_ikl| h_k h_l (h scalar or (3,))."""
+    hv = np.broadcast_to(np.asarray(h, float), (3,))
+    return 0.5 * np.einsum("ikl,k,l->i", np.abs(Q), hv, hv)
 
 
 def sampled_tube_residual(beta, th0, S, h):
@@ -484,6 +485,10 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     from fold import fold_overlap_rows, valley_certificate
 
     t0 = time.time()
+    hv = np.broadcast_to(np.asarray(h, float), (3,)).copy()
+    if float(np.ptp(hv)) > 0 and not use_certified:
+        raise ValueError("anisotropic tiles require use_certified=True")
+    h = float(np.linalg.norm(hv) / np.sqrt(3.0))   # l2-equivalent scalar
     L_map = map_lipschitz(beta)
     L_H = PAD * L_map
     cert_rates = None
@@ -491,8 +496,8 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     if use_certified:
         from rates import certified_rates
         from tmres import tm_karlsson
-        cert_rates = certified_rates(beta, h)
-        Htm = tm_karlsson(beta, h)
+        cert_rates = certified_rates(beta, hv)
+        Htm = tm_karlsson(beta, hv)
         far_tax = cert_rates["far_tax"]
         beta_rate = cert_rates["beta_rate_vec"]
         valley_tax = cert_rates["far_tax"] * (1.0 / np.sqrt(6.0) + 0.06)
@@ -528,12 +533,12 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
         _, J = _g_and_J(H0, th0)
         _U, sv, Vt = np.linalg.svd(J)
         Gb = dg_dbeta(beta, th0)
-        Sn_est = float(np.max(np.sum(
-            np.abs(np.linalg.lstsq(J, Gb, rcond=None)[0]), axis=1)))
+        Sn_est = float(np.max(
+            np.abs(np.linalg.lstsq(J, Gb, rcond=None)[0]) @ hv)) / h
         h_ceiling = sv[-1] / (PAD * SQ3 * (HESS_ROW_TH * Sn_est + gb_rate))
         if sv[-1] < fold_cut or h_ceiling < 2.5 * h:
             try:
-                cert = valley_certificate(beta, th0, h, valley_tax)
+                cert = valley_certificate(beta, th0, hv, valley_tax)
             except RuntimeError as e:
                 return dict(ok=False, h=h, seconds=time.time() - t0,
                             reason=f"valley {i}: {e}")
@@ -555,10 +560,11 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             continue
         S, Q, defect = root_data2(beta, th0)
         Sn = float(np.max(np.sum(np.abs(S), axis=1)))
-        qoff = q_offset(Q, h)
+        Sn_hv = float(np.max(np.abs(S) @ hv))     # = Sn*h when isotropic
+        qoff = q_offset(Q, hv)
         if cert_rates is not None:
             from tmres import certified_curve_residual
-            Rcurve = certified_curve_residual(beta, h, th0, S, Q, Htm=Htm)
+            Rcurve = certified_curve_residual(beta, hv, th0, S, Q, Htm=Htm)
             rad_g = Rcurve + defect * SQ3 * h     # certified: no PAD
             coef0_res = Rcurve
             RJx = cert_rates["RJ_extra"]
@@ -567,7 +573,7 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             rad_g = PAD * Rcurve + defect * SQ3 * h
             coef0_res = PAD * Rcurve
             RJx = PAD * sampled_J_drift(beta, th0, S, h)
-        coef1[i] = PAD * SQ3 * h * (HESS_ROW_TH * Sn + gb_rate)
+        coef1[i] = PAD * SQ3 * (HESS_ROW_TH * Sn_hv + gb_rate * h)
         coef0[i] = coef0_res + PAD * defect * SQ3 * h + coef1[i] * qoff.max()
         per_root[i] = dict(S=S, Q=Q, defect=defect, Sn=Sn, qoff=qoff,
                            rad_g=rad_g, RJ_extra=RJx)
@@ -616,7 +622,7 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                    for p in phantoms):
                 continue
             try:
-                cert = valley_certificate(beta, th_p, h, valley_tax)
+                cert = valley_certificate(beta, th_p, hv, valley_tax)
             except RuntimeError as e:
                 return dict(ok=False, h=h, seconds=time.time() - t0,
                             reason=f"phantom at |g|min "
@@ -690,15 +696,15 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
         for i in range(n):
             if i not in fold_certs and per_root[i] is not None:
                 pr = per_root[i]
-                curves[i] = u_curve_tms(h, roots[i], pr["S"], pr["Q"])
-        lo_tm = certified_overlap_lo(h, curves, rho_arr, slop=SLOP)
+                curves[i] = u_curve_tms(hv, roots[i], pr["S"], pr["Q"])
+        lo_tm = certified_overlap_lo(hv, curves, rho_arr, slop=SLOP)
         O0, G = overlap_gradients(beta, roots)   # fills non-TM pairs
         for a in range(n):
             for b in range(n):
                 if a != b and not np.isnan(lo_tm[a, b]):
                     lo[a, b] = lo_tm[a, b]
                 else:
-                    drift = PAD * float(np.abs(G[a, b]).sum()) * h
+                    drift = PAD * float(np.abs(G[a, b]) @ hv)
                     tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
                     lo[a, b] = O0[a, b] - drift - tube - SLOP
     else:
