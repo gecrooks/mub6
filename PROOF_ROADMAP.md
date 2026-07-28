@@ -303,11 +303,20 @@ R5. Drivers — FIRST END-TO-END RUN 2026-07-26 (Result 16, `driver.py`):
     certified 4.6e-3 x 3.0e-3 x 3.0e-3 box. ANISOTROPY DONE 2026-07-27
     (Result 27): h-vector plumbed through tm/rates/certify_tile, 3.0x
     volume certified at the deep-valley wall point; driver picks hv
-    from center-point |u.Gb| diagnostics. Remaining: the adaptive
-    campaign driver itself (per-tile hv chooser, fundamental-domain
-    cover + boundary bookkeeping under the order-32 quotient,
-    checkpoint/resume); the compactness root-count argument written
-    out.
+    from center-point |u.Gb| diagnostics. ADAPTIVE DRIVER v1 DONE
+    2026-07-27 (`campaign.py`): fundamental domain [0,pi/2]^2 x [0,pi]
+    (closed over-cover, no half-open bookkeeping needed for
+    soundness), theta-chain-lines with automatic fallback to
+    standalone anisotropic tiles across valley strata (fatten-weakest-
+    axis ladder from coupling diagnostics), JSONL ledger + frontier
+    resume. Smoke-validated on both territories: pt-8 valley line (4
+    adaptive tiles, hv=(9e-4,3e-4,3e-4) auto-selected, 3x fewer tiles)
+    and regular chain line (29 s anchor + 1.4-2.6 s steps).
+    Remaining for production: reuse enumeration between the failed
+    anchor probe and the tile (currently duplicated, ~2x overhead in
+    valley strata); GPU port of the zoned tile sweep (the campaign
+    cost model assumes it); the compactness root-count argument
+    written out.
 R6. C checker + certificate format + parallel campaign (~6e9 tiles);
     re-verification of the four pointwise theorems on the same substrate.
 
