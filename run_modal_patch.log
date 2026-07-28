@@ -1,0 +1,316 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gavincrooks/main/ap-cshK67e8pJnEdsw79ZH1m1
+✓ Created objects.
+├── 🔨 Created mount /Users/work/Work/ops/MUB6/modal_app.py
+├── 🔨 Created mount PythonPackage:gpusweep, PythonPackage:layer3, 
+│   PythonPackage:layer3_param, PythonPackage:layer3_x, PythonPackage:mub, 
+│   PythonPackage:szollosi, PythonPackage:parametric, PythonPackage:certify, 
+│   PythonPackage:fold, PythonPackage:karlsson, PythonPackage:interval, 
+│   PythonPackage:dual, PythonPackage:rates, PythonPackage:xcover, 
+│   PythonPackage:families, PythonPackage:degenerate
+├── 🔨 Created function bench.
+├── 🔨 Created function line.
+└── 🔨 Created function patch_line.
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+===
+=======
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+[modal-client] 2026-07-27T23:18:38+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=75.08, time_since_heartbeat_success=75.22, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:19:00+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=83.32, time_since_heartbeat_success=83.34, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:19:46+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.28, time_since_heartbeat_success=64.34, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:20:07+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=104.76, time_since_heartbeat_success=104.88, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:20:25+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.41, time_since_heartbeat_success=168.24, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:21:38+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=71.31, time_since_heartbeat_success=240.69, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:21:39+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=94.62, time_since_heartbeat_success=96.50, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:21:54+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=89.96, time_since_heartbeat_success=90.09, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:22:17+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=128.64, time_since_heartbeat_success=235.59, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:22:24+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=84.81, time_since_heartbeat_success=84.82, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:22:46+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=95.60, time_since_heartbeat_success=98.87, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:23:07+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=84.70, time_since_heartbeat_success=184.48, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:23:32+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=97.09, time_since_heartbeat_success=188.31, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:23:44+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=73.22, time_since_heartbeat_success=73.51, error=ConnectionError('Deadline exceeded'))
+{'c': -0.975, 't_lo': np.float64(-0.3130000000000295), 't_hi': np.float64(0.3129999999999571), 'anchors': 42, 'gaps': 0, 'gap_ts': [], 'minutes': 8.767458395163219}
+[modal-client] 2026-07-27T23:25:12+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=66.68, time_since_heartbeat_success=66.70, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:25:12+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=85.91, time_since_heartbeat_success=162.13, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:25:27+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.19, time_since_heartbeat_success=63.20, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:26:00+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.61, time_since_heartbeat_success=64.65, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:26:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.33, time_since_heartbeat_success=63.35, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:26:28+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=70.78, time_since_heartbeat_success=71.86, error=ConnectionError('Deadline exceeded'))
+{'c': -0.9, 't_lo': np.float64(-0.4380000000000268), 't_hi': np.float64(0.4379999999999544), 'anchors': 56, 'gaps': 0, 'gap_ts': [], 'minutes': 10.969023672739665}
+[modal-client] 2026-07-27T23:26:49+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=97.13, time_since_heartbeat_success=259.26, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:27:17+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.72, time_since_heartbeat_success=63.77, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:27:23+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=65.87, time_since_heartbeat_success=66.19, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:27:28+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=86.79, time_since_heartbeat_success=152.46, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:27:46+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.83, time_since_heartbeat_success=64.96, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:28:14+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.38, time_since_heartbeat_success=63.39, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:28:30+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=67.31, time_since_heartbeat_success=134.16, error=ConnectionError('Deadline exceeded'))
+{'c': -0.85, 't_lo': np.float64(-0.523000000000025), 't_hi': np.float64(0.5229999999999526), 'anchors': 66, 'gaps': 0, 'gap_ts': [], 'minutes': 12.939267146587373}
+{'c': -0.825, 't_lo': np.float64(-0.568000000000024), 't_hi': np.float64(0.5679999999999517), 'anchors': 65, 'gaps': 0, 'gap_ts': [], 'minutes': 12.851713236172994}
+[modal-client] 2026-07-27T23:28:58+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.29, time_since_heartbeat_success=80.29, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:29:05+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=86.18, time_since_heartbeat_success=86.18, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:29:07+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=65.85, time_since_heartbeat_success=65.86, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:29:39+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=67.52, time_since_heartbeat_success=202.56, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:29:52+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=62.70, time_since_heartbeat_success=62.78, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:09+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.78, time_since_heartbeat_success=63.79, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:19+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=72.06, time_since_heartbeat_success=138.06, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:21+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.39, time_since_heartbeat_success=63.39, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:24+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=78.35, time_since_heartbeat_success=165.33, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:44+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=65.39, time_since_heartbeat_success=268.04, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:47+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=83.33, time_since_heartbeat_success=83.39, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:30:56+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.90, time_since_heartbeat_success=126.74, error=ConnectionError('Deadline exceeded'))
+{'c': -0.675, 't_lo': np.float64(-0.8480000000000181), 't_hi': np.float64(0.8479999999999457), 'anchors': 86, 'gaps': 0, 'gap_ts': [], 'minutes': 15.733659756183624}
+[modal-client] 2026-07-27T23:31:40+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=73.77, time_since_heartbeat_success=240.72, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:31:47+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=62.25, time_since_heartbeat_success=330.57, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:31:48+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.84, time_since_heartbeat_success=227.49, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:32:01+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.54, time_since_heartbeat_success=191.38, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:32:34+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=101.47, time_since_heartbeat_success=190.17, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:33:05+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.68, time_since_heartbeat_success=255.24, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:33:07+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.16, time_since_heartbeat_success=410.87, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:33:37+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=90.28, time_since_heartbeat_success=90.28, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:33:54+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=72.68, time_since_heartbeat_success=72.75, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:34:11+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=65.85, time_since_heartbeat_success=321.46, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:34:23+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=105.20, time_since_heartbeat_success=299.35, error=ConnectionError('Deadline exceeded'))
+{'c': -0.65, 't_lo': np.float64(-0.898000000000017), 't_hi': np.float64(0.8979999999999446), 'anchors': 94, 'gaps': 1, 'gap_ts': [0.87355], 'minutes': 18.801060287157693}
+[modal-client] 2026-07-27T23:34:41+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=77.85, time_since_heartbeat_success=77.99, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:34:58+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=81.18, time_since_heartbeat_success=171.47, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:35:15+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.44, time_since_heartbeat_success=153.64, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:35:16+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.78, time_since_heartbeat_success=386.51, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:36:04+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=92.46, time_since_heartbeat_success=400.19, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:36:11+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=90.65, time_since_heartbeat_success=168.65, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:37:00+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=100.82, time_since_heartbeat_success=259.09, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:37:51+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=106.75, time_since_heartbeat_success=506.95, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:38:06+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=113.71, time_since_heartbeat_success=283.33, error=ConnectionError('Deadline exceeded'))
+{'c': -0.425, 't_lo': np.float64(-1.0080000000000147), 't_hi': np.float64(1.0079999999999423), 'anchors': 99, 'gaps': 0, 'gap_ts': [], 'minutes': 22.391242615381877}
+[modal-client] 2026-07-27T23:38:58+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=123.85, time_since_heartbeat_success=125.27, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:39:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=71.63, time_since_heartbeat_success=579.56, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:39:14+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=92.95, time_since_heartbeat_success=93.16, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:39:56+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=106.99, time_since_heartbeat_success=392.97, error=ConnectionError('Deadline exceeded'))
+{'c': -0.4, 't_lo': np.float64(-1.0080000000000147), 't_hi': np.float64(1.0079999999999423), 'anchors': 106, 'gaps': 0, 'gap_ts': [], 'minutes': 24.351628148555754}
+[modal-client] 2026-07-27T23:40:27+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=112.26, time_since_heartbeat_success=112.58, error=ConnectionError('Deadline exceeded'))
+{'c': -0.2, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 101, 'gaps': 0, 'gap_ts': [], 'minutes': 24.735675088564555}
+{'c': -0.15, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 103, 'gaps': 0, 'gap_ts': [], 'minutes': 24.686049111684163}
+[modal-client] 2026-07-27T23:41:05+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=122.23, time_since_heartbeat_success=252.41, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:41:44+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.81, time_since_heartbeat_success=63.82, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:42:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=86.27, time_since_heartbeat_success=86.35, error=ConnectionError('Deadline exceeded'))
+{'c': -0.1, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 103, 'gaps': 0, 'gap_ts': [], 'minutes': 17.684840575853983}
+[modal-client] 2026-07-27T23:42:55+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=110.67, time_since_heartbeat_success=363.07, error=ConnectionError('Deadline exceeded'))
+{'c': -0.05, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 100, 'gaps': 0, 'gap_ts': [], 'minutes': 16.775075689951578}
+[modal-client] 2026-07-27T23:43:44+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=97.51, time_since_heartbeat_success=187.04, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:43:59+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=134.63, time_since_heartbeat_success=198.90, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:44:04+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=87.09, time_since_heartbeat_success=87.89, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:44:06+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=81.78, time_since_heartbeat_success=81.82, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:44:35+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=97.71, time_since_heartbeat_success=462.18, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:44:48+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.06, time_since_heartbeat_success=63.06, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:45:38+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=91.49, time_since_heartbeat_success=173.64, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:45:41+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=115.90, time_since_heartbeat_success=304.73, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:45:46+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.29, time_since_heartbeat_success=63.44, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:46:04+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=62.10, time_since_heartbeat_success=62.14, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:46:15+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.30, time_since_heartbeat_success=63.32, error=ConnectionError('Deadline exceeded'))
+{'c': -0.025, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 101, 'gaps': 0, 'gap_ts': [], 'minutes': 17.846796186765037}
+[modal-client] 2026-07-27T23:46:30+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=134.93, time_since_heartbeat_success=349.75, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:46:36+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=71.75, time_since_heartbeat_success=72.43, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:46:55+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=73.85, time_since_heartbeat_success=250.36, error=ConnectionError('Deadline exceeded'))
+{'c': 0.0, 't_lo': np.float64(-0.993000000000015), 't_hi': np.float64(0.9979999999999425), 'anchors': 104, 'gaps': 1, 'gap_ts': [0.00295], 'minutes': 18.40001735687256}
+[modal-client] 2026-07-27T23:47:12+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=85.03, time_since_heartbeat_success=87.00, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:47:14+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=86.32, time_since_heartbeat_success=397.30, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:47:48+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=71.48, time_since_heartbeat_success=144.84, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:48:11+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=76.09, time_since_heartbeat_success=326.51, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:48:35+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=82.16, time_since_heartbeat_success=169.65, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:48:48+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=130.10, time_since_heartbeat_success=487.01, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:48:51+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=88.09, time_since_heartbeat_success=494.53, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:48:58+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.01, time_since_heartbeat_success=64.03, error=ConnectionError('Deadline exceeded'))
+{'c': 0.025, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 100, 'gaps': 0, 'gap_ts': [], 'minutes': 17.583244931697845}
+[modal-client] 2026-07-27T23:49:32+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.47, time_since_heartbeat_success=407.39, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:50:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.73, time_since_heartbeat_success=129.24, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:50:11+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=80.96, time_since_heartbeat_success=81.02, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:50:37+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=108.23, time_since_heartbeat_success=596.93, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:50:53+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.21, time_since_heartbeat_success=64.47, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:51:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=88.37, time_since_heartbeat_success=498.49, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:52:09+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.16, time_since_heartbeat_success=63.17, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:52:18+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=64.46, time_since_heartbeat_success=64.48, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:52:24+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=84.62, time_since_heartbeat_success=84.64, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:52:25+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=87.79, time_since_heartbeat_success=87.91, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:52:31+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=111.59, time_since_heartbeat_success=710.47, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:53:17+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=62.74, time_since_heartbeat_success=62.82, error=ConnectionError('Deadline exceeded'))
+{'c': 0.05, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 100, 'gaps': 0, 'gap_ts': [], 'minutes': 19.35031572977702}
+[modal-client] 2026-07-27T23:54:04+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=70.71, time_since_heartbeat_success=70.71, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:54:06+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=92.19, time_since_heartbeat_success=805.11, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:54:06+0000 Modal Client → Modal Worker heartbeat attempts have been failing for over 13.42 minutes. Container will eventually be marked unhealthy. See https://modal.com/docs/guide/troubleshooting#heartbeat-timeout. 
+[modal-client] 2026-07-27T23:54:12+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=106.50, time_since_heartbeat_success=195.61, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:54:48+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=140.41, time_since_heartbeat_success=228.36, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:55:03+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=89.85, time_since_heartbeat_success=90.07, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:55:41+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=93.36, time_since_heartbeat_success=168.02, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:55:55+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=97.50, time_since_heartbeat_success=298.63, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:56:55+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=101.79, time_since_heartbeat_success=202.56, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:56:58+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=73.72, time_since_heartbeat_success=244.53, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:57:14+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.20, time_since_heartbeat_success=63.37, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:57:17+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=63.03, time_since_heartbeat_success=63.03, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:57:27+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=107.63, time_since_heartbeat_success=109.71, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:57:44+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=66.07, time_since_heartbeat_success=66.37, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:58:04+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=67.24, time_since_heartbeat_success=272.00, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:58:34+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=93.81, time_since_heartbeat_success=340.08, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:59:38+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=84.37, time_since_heartbeat_success=88.09, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-27T23:59:57+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=81.38, time_since_heartbeat_success=81.94, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-28T00:01:00+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=78.94, time_since_heartbeat_success=78.99, error=ConnectionError('Deadline exceeded'))
+[modal-client] 2026-07-28T00:01:12+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=91.88, time_since_heartbeat_success=182.05, error=ConnectionError('Deadline exceeded'))
+{'c': 0.1, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 103, 'gaps': 0, 'gap_ts': [], 'minutes': 24.268983829021455}
+[modal-client] 2026-07-28T00:02:38+0000 Modal Client → Modal Worker Heartbeat attempt failed (attempt_dur=95.36, time_since_heartbeat_success=177.00, error=ConnectionError('Deadline exceeded'))
+{'c': 0.15, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 103, 'gaps': 0, 'gap_ts': [], 'minutes': 23.910490012168886}
+{'c': 0.2, 't_lo': np.float64(-0.9980000000000149), 't_hi': np.float64(0.9979999999999425), 'anchors': 101, 'gaps': 0, 'gap_ts': [], 'minutes': 23.645037825902303}
+{'c': 0.4, 't_lo': np.float64(-1.0080000000000147), 't_hi': np.float64(1.0079999999999423), 'anchors': 106, 'gaps': 0, 'gap_ts': [], 'minutes': 23.56028802394867}
+{'c': 0.425, 't_lo': np.float64(-1.0080000000000147), 't_hi': np.float64(1.0079999999999423), 'anchors': 99, 'gaps': 0, 'gap_ts': [], 'minutes': 15.729875226815542}
+{'c': 0.65, 't_lo': np.float64(-0.898000000000017), 't_hi': np.float64(0.8979999999999446), 'anchors': 94, 'gaps': 1, 'gap_ts': [0.87355], 'minutes': 15.812455825010936}
+{'c': 0.675, 't_lo': np.float64(-0.8480000000000181), 't_hi': np.float64(0.8479999999999457), 'anchors': 86, 'gaps': 0, 'gap_ts': [], 'minutes': 14.66095978418986}
+{'c': 0.825, 't_lo': np.float64(-0.568000000000024), 't_hi': np.float64(0.5679999999999517), 'anchors': 65, 'gaps': 0, 'gap_ts': [], 'minutes': 12.360533034801483}
+{'c': 0.85, 't_lo': np.float64(-0.523000000000025), 't_hi': np.float64(0.5229999999999526), 'anchors': 66, 'gaps': 0, 'gap_ts': [], 'minutes': 12.911687684059142}
+{'c': 0.9, 't_lo': np.float64(-0.4380000000000268), 't_hi': np.float64(0.4379999999999544), 'anchors': 56, 'gaps': 0, 'gap_ts': [], 'minutes': 12.085169772307077}
+{'c': 0.975, 't_lo': np.float64(-0.3130000000000295), 't_hi': np.float64(0.3129999999999571), 'anchors': 42, 'gaps': 0, 'gap_ts': [], 'minutes': 8.247881972789765}
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gavincrooks/main/ap-cshK67e8pJnEdsw79ZH1m1

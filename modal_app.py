@@ -82,15 +82,30 @@ def line(c: float):
     return xcover.walk_line(c)
 
 
+@app.function(gpu="A100", image=image, timeout=3600)
+def patch_line(c: float):
+    import warnings
+    warnings.filterwarnings("ignore")
+    import xcover
+
+    xcover.certified_triple_sweep = _gpu_sweep_fn()
+    return xcover.walk_line(c, delta_min=2e-4, n_starts=20000,
+                            rebuild_every=5)
+
+
 @app.local_entrypoint()
-def main(lines: str = ""):
-    if not lines:
+def main(lines: str = "", patch: str = ""):
+    if patch:
+        cs = [float(x) for x in patch.split(",")]
+        for r in patch_line.map(cs):
+            print(r, flush=True)
+    elif lines:
+        cs = [float(x) for x in lines.split(",")]
+        for r in line.map(cs):
+            print(r, flush=True)
+    else:
         rows = bench.remote()
         print("delta | CPU boxes/time | GPU cold | GPU warm | suspects")
         for (d, b1, tc, n1, b2, tg, tg2, n3) in rows:
             print(f"{d:g} | {b1} boxes {tc:.2f}s | {tg:.2f}s | {tg2:.2f}s "
                   f"| cpu {n1} gpu {n3}")
-    else:
-        cs = [float(x) for x in lines.split(",")]
-        for r in line.map(cs):
-            print(r)

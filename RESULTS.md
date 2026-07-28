@@ -805,6 +805,31 @@ dominant kernel with zero rigor loss; the walker's CPU parts now
 dominate anchor cost, and batching those (many anchors' polishes per
 GPU call) is the next order of magnitude.
 
+## Result 24 — the X-cover closed gap-free; Layer 3 complete
+
+The Modal patch pass (27 gap lines re-walked with delta_min 2e-4, 20k
+rebuilds, 5-anchor cadence; ~$8) collapsed the 27 sliver-bearing lines
+to THREE residual points; local continuation anchors (11 per sliver at
+delta 1.3e-4, tracked-K) then closed all three — 33/33 anchors, zero
+residual. **The Szollosi region D is covered by certified anchors with
+no gaps.**
+
+The three stubborn loci were identified before closing: alpha = 0 is a
+FOURIER-FAMILY crossing (fingerprint 36/36 sixth-roots with the -1-rich
+F structure — the F and X families intersect at the region's center),
+and alpha ~ +-(0.874 + 0.65i) are rational special points of the same
+kind (14/36 sixth roots). The walker had stumbled on enumeration
+artifacts at the crossings; the certificates themselves pass cleanly.
+
+**Layer-3 status: COMPLETE across every known triple territory in
+dimension six.** Fourier family — literature (Thm 7.7). Hermitian arc —
+Results 19-20 (Bjorck to Bjorck). Dita arc — Result 21. Szollosi region
+— Results 22-24, gap-free. Remaining bookkeeping for the eventual
+theorem: the anchor certificates cover overlapping parameter intervals
+by construction; promoting interval-chains to a stated continuum
+theorem is assembly, not computation. Total cloud spend for the entire
+X-campaign: ~$29.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

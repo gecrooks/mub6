@@ -27,7 +27,8 @@ DELTA_MAX = 2e-2
 REBUILD_EVERY = 8
 
 
-def walk_line(c, delta_line=1.5e-2, log=None):
+def walk_line(c, delta_line=1.5e-2, log=None, delta_min=DELTA_MIN,
+              n_starts=9000, rebuild_every=REBUILD_EVERY):
     # find D-extent at this c by scanning
     ts = np.arange(-1.7, 1.7, 5e-3)
     inside = [t for t in ts if in_D(t + 1j * c)]
@@ -39,6 +40,7 @@ def walk_line(c, delta_line=1.5e-2, log=None):
     delta = DELTA0
     covered = t_lo
     anchors = gaps = since_rebuild = 0
+    gap_ts = []
     K = None
     while covered < t_hi:
         a = t + 1j * c
@@ -46,7 +48,7 @@ def walk_line(c, delta_line=1.5e-2, log=None):
             covered = t + delta
             t = covered + delta
             continue
-        need_rebuild = (K is None) or (since_rebuild >= REBUILD_EVERY)
+        need_rebuild = (K is None) or (since_rebuild >= rebuild_every)
         ok = False
         try:
             H, _ch, dH = szollosi_map(a, choice=CHOICE)
@@ -57,7 +59,7 @@ def walk_line(c, delta_line=1.5e-2, log=None):
                 if unbiasedness_defect(H, K) > 1e-9:
                     need_rebuild = True
             if need_rebuild:
-                _H, Ks, _nv = triples_at(a, n_starts=9000, seed=anchors)
+                _H, Ks, _nv = triples_at(a, n_starts=n_starts, seed=anchors)
                 if Ks:
                     K = Ks[0]
                     since_rebuild = 0
@@ -72,7 +74,7 @@ def walk_line(c, delta_line=1.5e-2, log=None):
             K1 = track_K(H1, K)
             rate = (np.max(np.abs(H1 - H)) + np.max(np.abs(K1 - K))) / eps
             d = delta
-            while d >= DELTA_MIN:
+            while d >= delta_min:
                 try:
                     n_sus, _m, _nb = certified_triple_sweep(
                         H, K, hslop=PAD * rate * d, wmin=2e-3,
@@ -84,7 +86,7 @@ def walk_line(c, delta_line=1.5e-2, log=None):
                     ok = True
                     break
                 d *= 0.5
-            delta = max(d, DELTA_MIN)
+            delta = max(d, delta_min)
         except RuntimeError:
             ok = False
         if ok:
@@ -95,11 +97,13 @@ def walk_line(c, delta_line=1.5e-2, log=None):
             delta = min(delta * 1.4, DELTA_MAX)
         else:
             gaps += 1
+            gap_ts.append(round(float(t), 5))
             K = None                      # force rebuild next anchor
-            covered = t + DELTA_MIN
-            t = covered + DELTA_MIN
-            delta = max(delta, 4 * DELTA_MIN)
+            covered = t + delta_min
+            t = covered + delta_min
+            delta = max(delta, 4 * delta_min)
     res = dict(c=c, t_lo=t_lo, t_hi=t_hi, anchors=anchors, gaps=gaps,
+               gap_ts=gap_ts,
                minutes=(time.time() - t0c) / 60)
     if log:
         with open(log, "a") as f:
