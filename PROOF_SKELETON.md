@@ -121,10 +121,9 @@ contradicts a 6-clique. QED (tile).
 
 ## 4. Assumption ledger (current)
 
-1. Sweep pointwise floats: libm sin/cos faithful to <= ~1e-13 on the
-   evaluation set; budgeted against SLOP = 1e-11 by the static
-   rounding lemma (Result 15). Removal path: self-contained trig
-   kernel (Cody-Waite + certified minimax) in the C/GPU checker.
+1. Sweep pointwise floats: CLOSED (Result 32) — in-repo certified
+   trig kernel (E_TRIG = 3e-13, proven by exact coefficient algebra)
+   in every sweep; ~10 calls/test <= 3e-12 vs SLOP = 1e-11.
 2. Near-cusp valley tube handoff (3/22 validation valleys): sampled
    shell formula + PAD. Removal path: R8b routes (component-wise
    growth mu_inf; radial shell chaining; valley slant taxes).
