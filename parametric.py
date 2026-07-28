@@ -314,16 +314,22 @@ def zoned_sweep(H0, roots, coef0, coef1, guards, far_tax,
                 if not sel.any():
                     continue
                 if oracles is not None and oracles.get(i) is not None:
-                    o = oracles[i]
-                    d = _torus_delta(C[sel], o["th0"])
-                    tb = d @ o["w"]
-                    yb = d @ o["Wc"]
-                    tW = W[sel] @ np.abs(o["w"])
-                    yW = W[sel] @ np.abs(o["Wc"])
-                    yc = np.stack([np.interp(tb, o["tgrid"], o["Yc"][:, j])
-                                   for j in range(4)], axis=1)
-                    fine = ((np.abs(tb) + tW <= o["T"]) &
-                            ((np.abs(yb - yc) + yW <= o["rho_y"]).all(axis=1)))
+                    olist = oracles[i]
+                    if not isinstance(olist, list):
+                        olist = [olist]
+                    fine = np.zeros(int(sel.sum()), dtype=bool)
+                    for o in olist:
+                        d = _torus_delta(C[sel], o["th0"])
+                        tb = d @ o["w"]
+                        yb = d @ o["Wc"]
+                        tW = W[sel] @ np.abs(o["w"])
+                        yW = W[sel] @ np.abs(o["Wc"])
+                        yc = np.stack(
+                            [np.interp(tb, o["tgrid"], o["Yc"][:, j])
+                             for j in range(4)], axis=1)
+                        fine |= ((np.abs(tb) + tW <= o["T"]) &
+                                 ((np.abs(yb - yc) + yW
+                                   <= o["rho_y"]).all(axis=1)))
                     collected[np.where(sel)[0][fine]] = True
                 else:
                     collected |= sel
@@ -474,6 +480,36 @@ def partition_certificate(O0, G, tubes, h, n_colors=5, verbose=True):
 # driver
 # ---------------------------------------------------------------------------
 
+def _octant_valley_split(beta, th0, hv):
+    """Mode-B rescue: certify a soft valley on the 8 common octants of
+    the beta box at hv/2 each (fresh rates, re-polished root, full R7
+    consistency demanded per octant). Returns {octant: cert} or None."""
+    from fold import valley_certificate
+    from rates import certified_rates
+    hv2 = np.asarray(hv, float) / 2.0
+    out = {}
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            for sz in (-1, 1):
+                sb = (beta[0] + sx * hv2[0], beta[1] + sy * hv2[1],
+                      beta[2] + sz * hv2[2])
+                Hs = karlsson_map(*sb)
+                th_s = polish_root(Hs, th0)
+                cr = certified_rates(sb, hv2)
+                vt = cr["far_tax"] * (1.0 / np.sqrt(6.0) + 0.06)
+                try:
+                    c = valley_certificate(sb, th_s, hv2, vt,
+                                           cert_rates=cr)
+                except RuntimeError:
+                    return None
+                cc = c.get("cert")
+                if (min(c["self_mins"]) <= 0.05 or cc is None
+                        or not cc.get("consistent")):
+                    return None
+                out[(sx, sy, sz)] = c
+    return out
+
+
 def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     """Attempt the full tile certificate at half-width h. Roots whose own
     slope ceiling is within 2.5x of the requested h (or sigma_min <
@@ -537,17 +573,40 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             np.abs(np.linalg.lstsq(J, Gb, rcond=None)[0]) @ hv)) / h
         h_ceiling = sv[-1] / (PAD * SQ3 * (HESS_ROW_TH * Sn_est + gb_rate))
         if sv[-1] < fold_cut or h_ceiling < 2.5 * h:
+            cert = None
+            err = None
             try:
                 cert = valley_certificate(beta, th0, hv, valley_tax,
                                           cert_rates=cert_rates)
+                if min(cert["self_mins"]) <= 0.05:
+                    err = (f"dip self-overlap "
+                           f"{min(cert['self_mins']):.3f} too small")
+                    cert = None
             except RuntimeError as e:
+                err = str(e)
+            if cert is None and cert_rates is not None:
+                # MODE-B RESCUE: soft valleys whose structure sprays
+                # across the beta box get a common-OCTANT beta split:
+                # 8 sub-certificates at hv/2 (cliques live at fixed
+                # beta, so downstream coloring runs per octant)
+                subs = _octant_valley_split(beta, th0, hv)
+                if subs is None:
+                    return dict(ok=False, h=h, seconds=time.time() - t0,
+                                reason=f"valley {i}: {err} "
+                                       f"(octant split also failed)")
+                fold_certs[i] = {"octants": subs}
+                oracles[i] = [s["oracle"] for s in subs.values()]
+                guards[i] = np.max([s["guard"] for s in subs.values()],
+                                   axis=0) + 0.02
+                coef0[i] = np.inf
+                coef1[i] = np.inf
+                if verbose:
+                    print(f"    root {i}: VALLEY beta-SPLIT 8x "
+                          f"sig={sv[-1]:.4f}", flush=True)
+                continue
+            if cert is None:
                 return dict(ok=False, h=h, seconds=time.time() - t0,
-                            reason=f"valley {i}: {e}")
-            if min(cert["self_mins"]) <= 0.05:
-                return dict(ok=False, h=h, seconds=time.time() - t0,
-                            reason=f"valley {i}: dip self-overlap "
-                                   f"{min(cert['self_mins']):.3f} too small "
-                                   f"(clique collapse unsound)")
+                            reason=f"valley {i}: {err}")
             fold_certs[i] = cert
             oracles[i] = cert["oracle"]
             guards[i] = cert["guard"]
@@ -585,7 +644,10 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                            rad_g=rad_g, RJ_extra=RJx)
         tax_est = coef0[i] + coef1[i] * 0.6 + 4e-4
         gj = 1.8 * np.abs(Vt.T) @ (tax_est / sv)
-        guards[i] = np.clip(gj + 0.01, 0.03, 0.5)
+        # guard cap scales with h: at large h the tax radius outgrows a
+        # fixed 0.5 cap, stranding boxes between guard edge and
+        # tax-excludable territory (the mode-A stuck-box wall)
+        guards[i] = np.clip(gj + 0.01, 0.03, max(0.5, 600.0 * h))
 
     # STAGE A: coarse sweep (wmin 0.02). Unresolved coarse boxes are
     # either near-guard shells (stage B refines them) or un-excludable
@@ -721,10 +783,30 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
                 drift = PAD * float(np.abs(G[a, b]).sum()) * h
                 tube = (rho_arr[a].sum() + rho_arr[b].sum()) / 6.0
                 lo[a, b] = O0[a, b] - drift - tube - SLOP
+    split_rows = {}
     if fold_certs:
         from fold import certified_dip_rows
         centers = _uvec(np.array(roots))
         for i, cert in fold_certs.items():
+            if "octants" in cert:
+                # beta-split valley: rows exist per octant; coloring
+                # runs per octant below (cliques live at fixed beta)
+                rows_o = {}
+                for okey, sub in cert["octants"].items():
+                    crows, cselfs = certified_dip_rows(sub["cert"],
+                                                       centers)
+                    if min(cselfs) <= 0.05:
+                        return dict(ok=False, h=h,
+                                    seconds=time.time() - t0,
+                                    reason=f"valley {i} octant {okey}: "
+                                           f"self-overlap")
+                    rows_o[okey] = (np.min(np.vstack(crows), axis=0)
+                                    - rho_arr.sum(axis=1) / 6.0 - SLOP)
+                split_rows[i] = rows_o
+                lo[i, :] = 1.0
+                lo[:, i] = 1.0
+                lo[i, i] = 1.0
+                continue
             rows = fold_overlap_rows(cert, centers)
             row = rows.min(axis=0) - rho_arr.sum(axis=1) / 6.0 - SLOP
             cc = cert.get("cert")
@@ -752,7 +834,27 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             lo[i, :] = row
             lo[:, i] = row
             lo[i, i] = 1.0
-    ok, n_conf, _ = color_conflicts(lo)
+    if split_rows:
+        # per-octant coloring: every octant's conflict graph must
+        # 5-color (base rows tile-wide; split valleys use their
+        # octant's certified rows)
+        n_conf = 0
+        ok = True
+        octs = list(next(iter(split_rows.values())).keys())
+        for okey in octs:
+            lo_o = lo.copy()
+            for i, rows_o in split_rows.items():
+                row = rows_o[okey]
+                lo_o[i, :] = np.minimum(lo_o[i, :], row)
+                lo_o[:, i] = np.minimum(lo_o[:, i], row)
+                lo_o[i, i] = 1.0
+            ok_o, nc, _ = color_conflicts(lo_o, verbose=False)
+            n_conf = max(n_conf, nc)
+            if not ok_o:
+                ok = False
+                break
+    else:
+        ok, n_conf, _ = color_conflicts(lo)
     dt = time.time() - t0
     if verbose:
         print(f"  ==> {'TILE CERTIFIED (prototype)' if ok else 'FAILED at coloring'}"

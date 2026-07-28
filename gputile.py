@@ -43,11 +43,13 @@ def zoned_sweep_xp(H0, roots, coef0, coef1, guards, far_tax,
         for i, o in oracles.items():
             if o is None:
                 continue
-            orc[i] = dict(th0=xp.asarray(o["th0"]), w=xp.asarray(o["w"]),
-                          Wc=xp.asarray(o["Wc"]),
-                          tgrid=xp.asarray(o["tgrid"]),
-                          Yc=xp.asarray(o["Yc"]),
-                          rho_y=float(o["rho_y"]), T=float(o["T"]))
+            olist = o if isinstance(o, list) else [o]
+            orc[i] = [dict(th0=xp.asarray(q["th0"]),
+                           w=xp.asarray(q["w"]), Wc=xp.asarray(q["Wc"]),
+                           tgrid=xp.asarray(q["tgrid"]),
+                           Yc=xp.asarray(q["Yc"]),
+                           rho_y=float(q["rho_y"]), T=float(q["T"]))
+                      for q in olist]
     if init_C is None:
         stack_C = [xp.full((1, 5), _np.pi)]
         stack_W = [xp.full((1, 5), _np.pi)]
@@ -131,15 +133,18 @@ def zoned_sweep_xp(H0, roots, coef0, coef1, guards, far_tax,
                 if not bool(sel.any()):
                     continue
                 if i in orc:
-                    o = orc[i]
-                    d = torus(C[sel] - o["th0"])
-                    tb = d @ o["w"]
-                    yb = d @ o["Wc"]
-                    tW = W[sel] @ xp.abs(o["w"])
-                    yW = W[sel] @ xp.abs(o["Wc"])
-                    yc = xp.stack([xp.interp(tb, o["tgrid"], o["Yc"][:, j])
-                                   for j in range(4)], axis=1)
-                    fine = ((xp.abs(tb) + tW <= o["T"]) &
+                    fine = xp.zeros(int(sel.sum()), dtype=bool)
+                    for o in orc[i]:
+                        d = torus(C[sel] - o["th0"])
+                        tb = d @ o["w"]
+                        yb = d @ o["Wc"]
+                        tW = W[sel] @ xp.abs(o["w"])
+                        yW = W[sel] @ xp.abs(o["Wc"])
+                        yc = xp.stack(
+                            [xp.interp(tb, o["tgrid"], o["Yc"][:, j])
+                             for j in range(4)], axis=1)
+                        fine = fine | (
+                            (xp.abs(tb) + tW <= o["T"]) &
                             ((xp.abs(yb - yc) + yW
                               <= o["rho_y"]).all(axis=1)))
                     collected[xp.where(sel)[0][fine]] = True
