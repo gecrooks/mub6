@@ -101,6 +101,79 @@ certified beta — infeasibility of the 4-basis graded LP at a single
 point, verified in interval arithmetic, would be the bridgehead: a
 new-mathematics kill of the campaign's cost problem.
 
+## 4.5 First experimental cut (2026-07-29): the 1/6 is a CLASS GAP
+
+Probe at the group point F6: the 48 MU vectors of {I, F6} have
+pairwise |<v,w>|^2 organized into sharp spectral classes
+(counts/1128): 0 x300, 1/36 x18, 2/36 x72, 3/36 x72, 5/36 x72,
+**1/6 x216**, 10/36 x288, 1/3 x90 — a few classes carry small
+Bjorck-phase irrational offsets, but the 0 and 1/6 classes are
+exact. Reading: a fourth basis needs a 6-clique in the ORTHOGONAL
+class; the certified {5^3,1} wall-at-1/6 is the best sixth vector
+landing in the 1/6 (mutually-unbiased) class instead — **the wall is
+the spectral gap between the 0-class and the 1/6-class of a
+near-rigid few-class overlap system**. This is association-scheme
+shaped: exactly what Delsarte LP formalizes. The deformation
+program: track the class structure as beta leaves F6 into K6^(3)
+(classes deform continuously; the certified walls along the family
+are conjecturally this same gap), and write the graded LP whose dual
+face pins the gap at 1/d. Next experiments: (a) clique analysis of
+the 0-class graph at F6 (does it top out at 5 + why); (b) the same
+spectrum at a certified Karlsson beta — do the classes survive with
+deformed values and does the 0-to-MU gap stay >= 1/6 - o(1)?
+
+## 4.6 Second cut: clique structure and the two-regime picture
+
+(a) F6 0-class max clique = 6 — as it must be: the 6-cliques ARE the
+partner bases of the known triples. The wall therefore lives one
+level up: a quadruple needs TWO disjoint 6-cliques with all 36
+cross-pairs in the 1/6 class; the class spectrum forces an expelled
+cross-pair to 0 or 1/3 — both at distance EXACTLY 1/6 from the MU
+class. The certified defect-1/6 is the class-neighbor distance in a
+rigid overlap scheme, at the two-basis level.
+
+(b) Generic Karlsson point (certified reference beta): the
+structure collapses — 24 orthogonal pairs (vs 300), max clique 2,
+only 98 pairs near 1/6. Matches the tile machine's ubiquitous
+"clique <= 2" colorings.
+
+**Two-regime consequence (potentially bigger than the bridge):**
+precision is only needed near the group/F-strata, where
+near-quadruples almost assemble and the 1/6 scheme-gap operates —
+the natural domain of exact Delsarte/character arguments plus a
+certified perturbative collar. The generic bulk needs only "max
+orthogonal set <= 5" — clique STARVATION, provable with far coarser
+and cheaper certificates than 1/6-precision tiles. The campaign
+cost model assumed uniform fine precision; a two-regime proof
+(scheme rigidity near strata, coarse starvation certificates
+elsewhere) could collapse it by orders of magnitude. Next: map how
+the 0-class population decays moving from F6 into the family
+(where does clique 6 -> 2 happen), and price a coarse
+starvation-certificate tile.
+
+## 4.7 The collar is thin (decay map, one ray)
+
+The Fourier locus sits ON the theta=0 branch face of the Karlsson
+chart at beta_F ~ (0, 2.0412, pi) — the chart's degeneracy, the
+branch-margin hot zone, and the rigidity zone are THE SAME PLACE.
+Walking off the face along theta at (., 2.0412, pi):
+
+  theta:   0.001  0.003  0.01  0.03  0.1  0.3  0.8  1.5
+  clique:      6      4     4     2    2    2    2    2
+
+The 6-clique (candidate-basis) structure dies within theta ~
+0.001-0.003; fully generic by 0.03. If this holds across loci and
+directions (CAVEAT: one ray, one locus, multistart enumeration —
+needs the same census at other F/Bjorck/S6 strata and transverse
+directions), the two-regime split is: a collar of a few percent of
+the domain needing fine machinery (or the scheme argument), and a
+>= 97% bulk needing only clique-starvation certificates, whose
+open design question is root-set control over FAT tiles (h ~
+0.01-0.05) — the overlap bounds themselves survive such widths
+easily (drift O(1) vs margins 0.16). Cost impact if it works:
+bulk tile count ~1e5-1e6 instead of 1e10; the campaign becomes a
+$1e3-1e4 object plus a collar theorem.
+
 ## 5. What would falsify the bridge
 
 - R-B LPs with optimum strictly below the certified gap (relaxation
