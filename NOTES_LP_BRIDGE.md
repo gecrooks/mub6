@@ -151,6 +151,29 @@ the 0-class population decays moving from F6 into the family
 (where does clique 6 -> 2 happen), and price a coarse
 starvation-certificate tile.
 
+## 4.7 The collar is thin (decay map, one ray)
+
+The Fourier locus sits ON the theta=0 branch face of the Karlsson
+chart at beta_F ~ (0, 2.0412, pi) — the chart's degeneracy, the
+branch-margin hot zone, and the rigidity zone are THE SAME PLACE.
+Walking off the face along theta at (., 2.0412, pi):
+
+  theta:   0.001  0.003  0.01  0.03  0.1  0.3  0.8  1.5
+  clique:      6      4     4     2    2    2    2    2
+
+The 6-clique (candidate-basis) structure dies within theta ~
+0.001-0.003; fully generic by 0.03. If this holds across loci and
+directions (CAVEAT: one ray, one locus, multistart enumeration —
+needs the same census at other F/Bjorck/S6 strata and transverse
+directions), the two-regime split is: a collar of a few percent of
+the domain needing fine machinery (or the scheme argument), and a
+>= 97% bulk needing only clique-starvation certificates, whose
+open design question is root-set control over FAT tiles (h ~
+0.01-0.05) — the overlap bounds themselves survive such widths
+easily (drift O(1) vs margins 0.16). Cost impact if it works:
+bulk tile count ~1e5-1e6 instead of 1e10; the campaign becomes a
+$1e3-1e4 object plus a collar theorem.
+
 ## 5. What would falsify the bridge
 
 - R-B LPs with optimum strictly below the certified gap (relaxation
