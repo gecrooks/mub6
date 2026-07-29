@@ -211,3 +211,18 @@ NEXT: instrument fat_sweep (per-level counts, exclusion fraction,
 RSS), find the explosion level, then either add coarse blob-oracles
 (collect first, certify blob-pairs after) or stream survivors to
 disk. The two-regime economics stand or fall on this number.
+
+## 4.10 Bulk feasibility MEASURED (streaming wmin scan, h = 3e-3)
+
+Survivor volume fraction at the bulk test point: 1.3e-2 (wmin 0.1)
+-> 5.8e-4 (0.05) -> 4.1e-5 (0.025) — ~x20 per halving, i.e. ~w^4:
+thin shells around 1-DIM TRENCH CURVES (codim 4 in the 5-torus).
+Sweep cost trivial: 23M boxes / 16 s single-core CPU at the finest
+rung (the earlier OOM was probe survivor-hoarding, not math).
+Economics: ~7e7 bulk tiles at h=3e-3, sub-second GPU sweeps ->
+~$1-3k for the whole bulk; h=0.01 if tolerable -> ~$100.
+REMAINING DESIGN: segment the surviving filaments (~0.2 rad pieces,
+overlap drift ~0.1 vs margins 0.4), certify segment-graph clique
+<= 5 via interval overlap bounds (census: actual bulk cliques <= 4).
+Then: bulk = starvation tiles, collar = existing fine machinery on
+<1% volume, and the full-domain theorem prices at ~$10^3.
