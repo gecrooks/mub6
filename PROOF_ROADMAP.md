@@ -362,6 +362,18 @@ R9. B-arc branch slivers — DONE 2026-07-28 (Result 31, `slivers.py`):
     s^2 chart, 3 anchors total, both branch points covered inclusive;
     the B-arc is complete end to end.
 R10. Compactness root-count argument written out.
+H-PUSH STATUS (2026-07-29 end): MODE A CLOSED (Result 34 — first-
+order sweep taxes + oracle collection margin; the mode-A survey
+point certifies at 7e-4 = 2.7x its survey ceiling; pt-8 aniso
+regression passes). NEW CEILING: 1e-3 walls on subdivision
+economics (2.5e8 boxes insufficient, sweep grinding not converging)
+— not a budget knob; next lever there would be second-order per-box
+taxes or coarse-exclusion pre-passes. Remaining h-push threads:
+mode B (branch-aware y-solves), re-survey (~$3) to measure the new
+h_max distribution and refresh the cost model (naive scaling:
+best-stratum 2.7x fewer tiles; full-domain estimate ~$1M ->
+~$200-400k; slab economics improve proportionally).
+
 H-PUSH R&D (2026-07-29, after the survey killed the flat campaign):
 mode A (sweep drowning at h >= 7e-4): stuck boxes are 100% WITHIN
 guard radii — the R33 thin-oracle halo stops self-excluding as taxes
