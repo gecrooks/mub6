@@ -63,4 +63,4 @@ art: Karlsson's K₆⁽³⁾ parametrization (arXiv:1003.4177), the
 McNulty–Weigert review (arXiv:2410.23997), Matolcsi–Weiner /
 Jaming et al. on LP methods, Grassl, Brierley–Weigert, and
 Bengtsson et al.'s Hadamard catalogue. Contact: Gavin Crooks
-([threeplusone.com](https://threeplusone.com)).
+(gavincrooks@gmail.com).
