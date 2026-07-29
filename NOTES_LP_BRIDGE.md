@@ -122,6 +122,35 @@ the 0-class graph at F6 (does it top out at 5 + why); (b) the same
 spectrum at a certified Karlsson beta — do the classes survive with
 deformed values and does the 0-to-MU gap stay >= 1/6 - o(1)?
 
+## 4.6 Second cut: clique structure and the two-regime picture
+
+(a) F6 0-class max clique = 6 — as it must be: the 6-cliques ARE the
+partner bases of the known triples. The wall therefore lives one
+level up: a quadruple needs TWO disjoint 6-cliques with all 36
+cross-pairs in the 1/6 class; the class spectrum forces an expelled
+cross-pair to 0 or 1/3 — both at distance EXACTLY 1/6 from the MU
+class. The certified defect-1/6 is the class-neighbor distance in a
+rigid overlap scheme, at the two-basis level.
+
+(b) Generic Karlsson point (certified reference beta): the
+structure collapses — 24 orthogonal pairs (vs 300), max clique 2,
+only 98 pairs near 1/6. Matches the tile machine's ubiquitous
+"clique <= 2" colorings.
+
+**Two-regime consequence (potentially bigger than the bridge):**
+precision is only needed near the group/F-strata, where
+near-quadruples almost assemble and the 1/6 scheme-gap operates —
+the natural domain of exact Delsarte/character arguments plus a
+certified perturbative collar. The generic bulk needs only "max
+orthogonal set <= 5" — clique STARVATION, provable with far coarser
+and cheaper certificates than 1/6-precision tiles. The campaign
+cost model assumed uniform fine precision; a two-regime proof
+(scheme rigidity near strata, coarse starvation certificates
+elsewhere) could collapse it by orders of magnitude. Next: map how
+the 0-class population decays moving from F6 into the family
+(where does clique 6 -> 2 happen), and price a coarse
+starvation-certificate tile.
+
 ## 5. What would falsify the bridge
 
 - R-B LPs with optimum strictly below the certified gap (relaxation
