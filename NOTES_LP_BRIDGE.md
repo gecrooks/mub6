@@ -181,3 +181,18 @@ $1e3-1e4 object plus a collar theorem.
 - A certified point with defect wall NOT at a 1/6 multiple (none
   found in ~30 results, but the survey's h<3e-4 territory has not
   been wall-measured).
+
+## 4.8 Census verdict (60 points, census_2026-07-29.log)
+
+The rigidity zone is the ENTIRE theta=0 branch face (clique-6
+regions extend across large 2-D swaths of (phi, lam) at theta=0.002
+— the face is the (near-)group-Hadamard locus, plausibly the
+Fourier family as the chart boundary), but it is THIN transversally:
+every ray tested collapses to clique 2 by theta ~ 0.017. Dangerous
+volume: face x [0, ~0.02] < 1% of the domain. The bulk never
+exceeds clique 4 (only 6 kills). Even on the face, clique 6 alone
+is benign (the known triples); quadruple danger needs two cross-MU
+6-cliques simultaneously. TWO-REGIME PLAN CONFIRMED at enumeration
+grade. Next: fat-tile starvation certificate design (bulk), and the
+collar handled by anisotropic thin-in-theta tiles + the s^2 branch
+chart (both already built) or the scheme argument.
