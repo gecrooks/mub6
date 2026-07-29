@@ -212,7 +212,7 @@ def zoned_sweep(H0, roots, coef0, coef1, guards, far_tax,
                 zone_R=0.85, wmin=1e-4, chunk=20_000, max_boxes=6e7,
                 init_C=None, init_W=None, s_drift=0.0, oracles=None,
                 beta_rate=None, cache=None, beta_unit=0.0,
-                stuck_out=None):
+                stuck_out=None, fo=None):
     """Global sweep with per-box tax = min(plain threading, slanted bound of
     any root within zone_R): tax_i(box) = coef0_i + coef1_i * reach_i.
     Boxes componentwise inside a root's guard box are collected for that
@@ -272,6 +272,21 @@ def zoned_sweep(H0, roots, coef0, coef1, guards, far_tax,
             # per-component beta tax: |dg_k| <= 2|s_k| ||dh_k|| |dbeta|,
             # with |s_k| widened over the box and tile
             beta_tax = beta_rate * np.minimum(smod_w, 1.0)
+            if fo is not None:
+                # FIRST-ORDER tax: the box's own signed beta-gradient
+                # D0_jk = 2 Re(conj(s_k) <u, dH_k/dbeta_j>) carries the
+                # cancellation the sup-tax wastes; certified remainder
+                # from gradient deviation (WD) and |s| drift.
+                smod1 = np.minimum(smod_w, 1.0)
+                t1 = np.zeros_like(beta_tax)
+                for j in range(3):
+                    sb = u @ fo["dH0c"][j]
+                    d0g = 2.0 * np.real(np.conj(s) * sb)
+                    t1 += fo["hv"][j] * (np.abs(d0g)
+                                         + 2.0 * fo["s_drift"]
+                                         * np.abs(sb)
+                                         + 2.0 * smod1 * fo["WD"][j])
+                beta_tax = np.minimum(beta_tax, t1 + SLOP)
             tax_arr = np.minimum(beta_tax, tax_box[:, None])
         else:
             beta_tax = None
@@ -654,10 +669,16 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     # birth blobs with no center root -> phantom anchors.
     stuck_boxes = []
     try:
+        fo = None
+        if cert_rates is not None:
+            fo = dict(dH0c=[np.conj(cert_rates["dH0"][j])
+                            for j in range(3)],
+                      WD=cert_rates["WD"], hv=hv, s_drift=s_drift)
         stuck, D0, nboxes = zoned_sweep(H0, roots, coef0, coef1, guards,
                                         far_tax, s_drift=s_drift,
                                         oracles=oracles, beta_rate=beta_rate,
-                                        stuck_out=stuck_boxes, wmin=0.02)
+                                        stuck_out=stuck_boxes, wmin=0.02,
+                                        fo=fo)
     except RuntimeError as e:
         return dict(ok=False, h=h, seconds=time.time() - t0,
                     reason=f"zoned sweep A: {e}")
@@ -717,7 +738,7 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             stuck, D0b, nb2 = zoned_sweep(
                 H0, roots, coef0, coef1, guards, far_tax, s_drift=s_drift,
                 oracles=oracles, beta_rate=beta_rate,
-                init_C=pC, init_W=pW)
+                init_C=pC, init_W=pW, fo=fo)
             nboxes += nb2
         except RuntimeError as e:
             return dict(ok=False, h=h, seconds=time.time() - t0,

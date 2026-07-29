@@ -23,9 +23,15 @@ def zoned_sweep_xp(H0, roots, coef0, coef1, guards, far_tax,
                    zone_R=0.85, wmin=1e-4, chunk=1_000_000, max_boxes=6e7,
                    init_C=None, init_W=None, s_drift=0.0, oracles=None,
                    beta_rate=None, cache=None, beta_unit=0.0,
-                   stuck_out=None, xp=None):
+                   stuck_out=None, xp=None, fo=None):
     if xp is None:
         xp = _np
+    fo_d = None
+    if fo is not None:
+        fo_d = dict(dH0c=[xp.asarray(a) for a in fo["dH0c"]],
+                    WD=[xp.asarray(w) for w in fo["WD"]],
+                    hv=[float(x) for x in fo["hv"]],
+                    s_drift=float(fo["s_drift"]))
     R = xp.asarray(_np.array(roots))
     n = int(R.shape[0])
     Hc = xp.asarray(H0.conj())
@@ -92,6 +98,18 @@ def zoned_sweep_xp(H0, roots, coef0, coef1, guards, far_tax,
         margin = xp.abs(g) - L * sw[:, None]
         if beta_rate_d is not None:
             beta_tax = beta_rate_d * xp.minimum(smod_w, 1.0)
+            if fo_d is not None:
+                smod1 = xp.minimum(smod_w, 1.0)
+                t1 = xp.zeros_like(beta_tax)
+                for j in range(3):
+                    sb = u @ fo_d["dH0c"][j]
+                    d0g = 2.0 * xp.real(xp.conj(s) * sb)
+                    t1 += fo_d["hv"][j] * (xp.abs(d0g)
+                                           + 2.0 * fo_d["s_drift"]
+                                           * xp.abs(sb)
+                                           + 2.0 * smod1
+                                           * fo_d["WD"][j])
+                beta_tax = xp.minimum(beta_tax, t1 + SLOP)
             tax_arr = xp.minimum(beta_tax, tax_box[:, None])
         else:
             beta_tax = None

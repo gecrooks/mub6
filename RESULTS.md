@@ -1092,6 +1092,35 @@ certified floors + interval dip rows — zero sampled fallbacks.**
 The tile-certificate assumption ledger is now EMPTY: no PAD, no
 sampling, no libm anywhere in the tile chain.
 
+## Result 34 — first-order sweep taxes: mode A closed, h-ceiling up
+
+The survey's cost verdict (flat campaign ~$1M at measured h_max ~
+5e-4) is being attacked lever-by-lever. The mode-A wall (sweep
+drowning at h >= 7e-4; 9.5M stuck boxes, all within guard radii,
+missing exclusion by whiskers — median 1.2e-3, p95 2e-5) fell to
+TWO changes:
+
+1. **First-order sweep taxes**: per-box signed beta-gradient
+   d0g_jk = 2 Re(conj(s_k) <u, dH_k/dbeta_j>) (3 extra matmuls per
+   chunk against the center-gradient matrices dH0 from the dual
+   substrate) + certified remainder from the gradient's tile
+   enclosure deviation (WD — the dual enclosure IS the curvature
+   bound; no second derivatives needed) + |s|-drift cross term.
+   Taken as min() with the sup-tax: never worse by construction.
+   Effect at the mode-A point, h=7e-4: stuck boxes 9,510,553 -> 107.
+2. **Collection margin**: the 107 survivors were a razor ring at one
+   valley's oracle boundary (y-dist 0.031 vs rho 0.035, box widths
+   pushing the membership test over). The certified ball floors
+   already cover y-offsets to rho + r_t, so the oracle now collects
+   to rho + 0.9 r_t — sound with no certificate change. 107 -> 0.
+
+Both landed in CPU and GPU sweeps in lockstep. Reference tile
+regression exact; the mode-A survey point **certifies at h = 7e-4**
+(2.7x the tile volume of its 5e-4 survey ceiling); at 1e-3 it now
+fails only on the 6e7 box budget (not stuck boxes). Campaign-cost
+impact if 7e-4 holds broadly: ~2.7x fewer tiles in the best
+stratum; re-survey to quantify.
+
 ## Where a proof (not a counterexample) might come from
 
 Per the review's closing strategy list: Lasserre/SDP hierarchies (memory

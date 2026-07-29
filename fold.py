@@ -556,8 +556,14 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
 
     guard_hull = np.abs(w) * tgrid[-1] + np.abs(Wc) @ np.full(4, ymax + rho_y) \
         + 0.02
+    # certified mode: the ball floors cover y-offsets to rho_y + r_t
+    # (+ drift), so the oracle may COLLECT slightly beyond rho_y into
+    # territory the certificate already covers — this closes the
+    # razor-ring of near-boundary boxes that otherwise stick at big h
+    rho_collect = rho_y + (0.9 * 0.5 * (tgrid[1] - tgrid[0])
+                           if cert_rates is not None else 0.0)
     oracle = dict(th0=th0.copy(), w=w.copy(), Wc=Wc.copy(),
-                  tgrid=tgrid.copy(), Yc=Yc.copy(), rho_y=rho_y,
+                  tgrid=tgrid.copy(), Yc=Yc.copy(), rho_y=rho_collect,
                   T=float(tgrid[-1]))
     cert = None
     if cert_rates is not None:

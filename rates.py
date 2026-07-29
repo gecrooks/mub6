@@ -65,9 +65,27 @@ def certified_rates(beta, h):
                                       + e1[j, l, k] / SQ6)
     RJ = float((dJj * hv[:, None, None]).sum(axis=0).max())
     s_drift = float((1.0 / SQ6) * (c1 * hv[:, None]).sum(axis=0).max())
+    # first-order sweep-tax data: center beta-gradient of H (point
+    # evaluation) + certified deviation of the gradient over the tile
+    # (enclosure minus point, componentwise; the curvature term needs
+    # no second derivatives — the dual enclosure IS the bound)
+    Hp = dual_karlsson(IV(beta[0]), IV(beta[1]), IV(beta[2]))
+    dH0 = np.zeros((3, 6, 6), complex)
+    WD = np.zeros((3, 6))
+    for j in range(3):
+        for i in range(6):
+            for k in range(6):
+                pe = Hp[i][k].d[j]
+                pc = complex(0.5 * (pe.re.lo + pe.re.hi),
+                             0.5 * (pe.im.lo + pe.im.hi))
+                dH0[j, i, k] = pc
+                te = Hd[i][k].d[j]
+                dev = (max(te.re.hi - pc.real, pc.real - te.re.lo)
+                       + max(te.im.hi - pc.imag, pc.imag - te.im.lo))
+                WD[j, k] += dev / SQ6
     return dict(beta_rate_vec=BR, beta_unit_vec=BU, far_tax=float(BR.max()),
                 gb=float(GB.max()), RJ_extra=RJ, hmag=hmag,
-                c1=c1, s_drift=s_drift)
+                c1=c1, s_drift=s_drift, dH0=dH0, WD=WD)
 
 
 def chain_certified_rates(beta, h, span, axis=0):
