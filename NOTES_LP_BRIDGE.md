@@ -101,6 +101,27 @@ certified beta — infeasibility of the 4-basis graded LP at a single
 point, verified in interval arithmetic, would be the bridgehead: a
 new-mathematics kill of the campaign's cost problem.
 
+## 4.5 First experimental cut (2026-07-29): the 1/6 is a CLASS GAP
+
+Probe at the group point F6: the 48 MU vectors of {I, F6} have
+pairwise |<v,w>|^2 organized into sharp spectral classes
+(counts/1128): 0 x300, 1/36 x18, 2/36 x72, 3/36 x72, 5/36 x72,
+**1/6 x216**, 10/36 x288, 1/3 x90 — a few classes carry small
+Bjorck-phase irrational offsets, but the 0 and 1/6 classes are
+exact. Reading: a fourth basis needs a 6-clique in the ORTHOGONAL
+class; the certified {5^3,1} wall-at-1/6 is the best sixth vector
+landing in the 1/6 (mutually-unbiased) class instead — **the wall is
+the spectral gap between the 0-class and the 1/6-class of a
+near-rigid few-class overlap system**. This is association-scheme
+shaped: exactly what Delsarte LP formalizes. The deformation
+program: track the class structure as beta leaves F6 into K6^(3)
+(classes deform continuously; the certified walls along the family
+are conjecturally this same gap), and write the graded LP whose dual
+face pins the gap at 1/d. Next experiments: (a) clique analysis of
+the 0-class graph at F6 (does it top out at 5 + why); (b) the same
+spectrum at a certified Karlsson beta — do the classes survive with
+deformed values and does the 0-to-MU gap stay >= 1/6 - o(1)?
+
 ## 5. What would falsify the bridge
 
 - R-B LPs with optimum strictly below the certified gap (relaxation
