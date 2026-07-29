@@ -196,3 +196,18 @@ is benign (the known triples); quadruple danger needs two cross-MU
 grade. Next: fat-tile starvation certificate design (bulk), and the
 collar handled by anisotropic thin-in-theta tiles + the s^2 branch
 chart (both already built) or the scheme argument.
+
+## 4.9 Fat-sweep probe status (inconclusive — OOM)
+
+First feasibility probes of the bulk starvation sweep (starve.py, no
+collection machinery) died by OOM at h in {0.003, 0.01} — the LIFO
+stack balloons where the fine-tile sweeps held 450 MB, i.e. the
+fat-tax exclusion profile differs qualitatively from the analytical
+model (exclusion is NOT biting at the expected widths somewhere).
+Hypotheses: missing coarse root-collection (every root/trench
+neighborhood grinds to the floor with no oracle to swallow it), or
+a genuine stack-growth pathology of the plain sweep at fat taxes.
+NEXT: instrument fat_sweep (per-level counts, exclusion fraction,
+RSS), find the explosion level, then either add coarse blob-oracles
+(collect first, certify blob-pairs after) or stream survivors to
+disk. The two-regime economics stand or fall on this number.
