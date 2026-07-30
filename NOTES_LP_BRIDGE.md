@@ -346,3 +346,21 @@ Build: union-find branches -> root_data2 per branch ->
 certified_curve_residual at hv=(3e-3)^3 -> parallelepiped pair
 bounds -> coloring + wild count. The open empirical question is the
 wild fraction per bulk tile.
+
+## 4.16 Roots-first fat tubes: correlated bounds WORK; architecture
+##      converges back to certify_tile-in-coarse-mode
+
+At bulk point 1 (9 s total): 54 roots (4k survivor polishes), 37
+S-sloped tubes, pair-bound COLORING = 2 — matching the census's
+clique <= 2: the beta-correlated machinery works and is nearly free.
+Wild (deep-sigma) roots: 17/54 = 31% — the open front; the crude
+bound colors + wild = 19 is useless until wilds get their stage-2
+treatment (they do not actually clique). Survivor "coverage" by
+tubes is the wrong criterion (survivors are un-excluded territory,
+not candidate roots); the right completeness semantics is the fine
+machine's: sweep-with-collection. CONCLUSION: the fat bulk
+certificate = certify_tile in COARSE MODE (first-order taxes +
+coarse wmin + S-fat tube collection + valley windows for wilds) —
+retrofit, not a parallel codebase. Next session: coarse-mode
+certify_tile at h = 1e-3..3e-3 on the survey points; the pre-
+Result-34 1e-3 wall deserves a rematch with the new taxes.
