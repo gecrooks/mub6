@@ -364,3 +364,17 @@ coarse wmin + S-fat tube collection + valley windows for wilds) —
 retrofit, not a parallel codebase. Next session: coarse-mode
 certify_tile at h = 1e-3..3e-3 on the survey points; the pre-
 Result-34 1e-3 wall deserves a rematch with the new taxes.
+
+## 4.17 Coarse-mode certify_tile at h = 1e-3: the architecture stands
+
+With stage-B wmin lifted to 5e-3 (Result-34 taxes active): the tile
+certifies except 45,572 stuck boxes = vol frac 4e-11 (!) clustering
+into 48 WILD BLOBS whose polished roots all have sigma in
+0.03-0.10 — precisely the R7 valley-window class. No budget
+blowout (the pre-R34 "1e-3 impossible" is overturned in coarse
+mode). Coarse-mode bulk tile = coarse sweep + S-fat tubes
+(coloring 2) + ~48 valley windows. NEXT (first experiment of next
+session): valley windows at fat h (iso 1e-3 -> 3e-3) — how many of
+the 48 certify with existing R7 floors, and what does the per-tile
+cost settle at; then the h=3e-3 version (7e7 tiles) prices the
+bulk for real.
