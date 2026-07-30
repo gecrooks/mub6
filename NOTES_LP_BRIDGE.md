@@ -324,3 +324,25 @@ are group-type and the classical Delsarte/scheme machinery applies;
 the LP is a collar tool, the machine covers the bulk. Coherent with
 the two-regime split; the bulk's fate rests on the beta-correlated
 blob certificate (4.12).
+
+## 4.15 Stage-1 branch build: failure diagnosis and the corrected design
+
+Static parametric Krawczyk FAILS for fat Karlsson tiles — root cause:
+4.12's contraction estimate used the B-N arc rate (~0.6); Karlsson
+entry rates are ~10x hotter, so root MOTION over the beta box
+(S h ~ 0.03-0.3) rivals any contractible box and the H-ball
+perturbation (L_HG * entry-drift ~ 0.06-0.2) swamps sigma*rho.
+Also cluster_suspects(link) fragments the filaments (451k clusters
+from 1.4M boxes) — branch decomposition needs true union-find over
+touching survivor boxes.
+
+CORRECTED DESIGN — FAT Q-TUBES (all machinery exists):
+per branch, localize the root as theta(beta) in theta0 + S dbeta +-
+(TM curve residual + pad): residual scales h^3 (measured 2.2e-8 at
+3e-4 => ~2e-5 at 3e-3 — negligible); pair bounds between branches
+i,j pay only ||(S_i - S_j) row||_1 * h / 6 (~0.001-0.03 vs 0.4
+margins). Deep roots (S undefined/huge) stay WILD pending stage 2.
+Build: union-find branches -> root_data2 per branch ->
+certified_curve_residual at hv=(3e-3)^3 -> parallelepiped pair
+bounds -> coloring + wild count. The open empirical question is the
+wild fraction per bulk tile.
