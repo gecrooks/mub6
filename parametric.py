@@ -590,8 +590,22 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
         if sv[-1] < fold_cut or h_ceiling < 2.5 * h:
             cert = None
             err = None
+            vt_loc = valley_tax
+            if cert_rates is not None and "dH0" in cert_rates:
+                # first-order valley need (Result 34 semantics: nearby
+                # sweep boxes pay min(sup, signed-gradient) taxes)
+                uv = np.concatenate(([1.0], np.exp(1j * th0))) \
+                    / np.sqrt(6.0)
+                sc = uv.conj() @ H0
+                t1 = 0.0
+                for j in range(3):
+                    sbj = uv.conj() @ cert_rates["dH0"][j]
+                    t1 += hv[j] * (np.abs(2.0 * np.real(np.conj(sc)
+                                                        * sbj))
+                                   + 2.0 * cert_rates["WD"][j])
+                vt_loc = min(valley_tax, float(np.max(t1)) + SLOP)
             try:
-                cert = valley_certificate(beta, th0, hv, valley_tax,
+                cert = valley_certificate(beta, th0, hv, vt_loc,
                                           cert_rates=cert_rates)
                 if min(cert["self_mins"]) <= 0.05:
                     err = (f"dip self-overlap "

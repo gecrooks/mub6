@@ -124,7 +124,8 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
                    if k > 0 else 0.0)
         R_ball = r_t + rho_tube + 0.5 * drift_k
         uvec = np.concatenate(([1.0], np.exp(1j * th_k))) * inv6
-        s_hat = np.abs(uvec.conj() @ H0)          # (6,)
+        s_hat_c = uvec.conj() @ H0                # (6,) complex
+        s_hat = np.abs(s_hat_c)                   # (6,)
 
         # losses at the ball radius (quad constant over the cell ball)
         s_enc = np.minimum(
@@ -140,6 +141,20 @@ def certified_valley_floors(beta, hv, th0, w, Wc, tgrid, Yc, cert_rates,
         # per-component beta losses, |s|-local; g-components 1..5
         rate = (2.0 * inv6) * s_enc[None, :] * c1        # (3, 6)
         bcol = (rate * hvv[:, None]).sum(axis=0)[1:6]    # (5,)
+        if "dH0" in cert_rates:
+            # FIRST-ORDER valley taxes (Result 34's trick, retrofitted):
+            # signed anchor gradient d0g_jk = 2 Re(conj(s) <u, dH_j>_k)
+            # + deviation (WD) and |s|-drift remainders; min() with the
+            # sup tax — never worse.
+            uvec_c = uvec.conj()
+            bfo = np.zeros(6)
+            for j in range(3):
+                sbj = uvec_c @ cert_rates["dH0"][j]
+                d0g = 2.0 * np.real(np.conj(s_hat_c) * sbj)
+                bfo += hvv[j] * (np.abs(d0g)
+                                 + 2.0 * s_beta.max() * np.abs(sbj)
+                                 + 2.0 * s_enc * cert_rates["WD"][j])
+            bcol = np.minimum(bcol, bfo[1:6] + SLOPV)
         cb_F = float(np.linalg.norm(bcol))
         cb_phi = float(np.linalg.norm(np.abs(u_k).T @ bcol))
         # split radius: minimal r* clearing the F-side (margin linear
@@ -429,8 +444,9 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
         env = np.min(np.abs(phi), axis=0)
         # far_tax arrives pre-padded (trench-local rate); modest headroom
         need = 1.2 * far_tax + PAD * res_max + 1e-4
-        if env[0] > need and env[-1] > need:
-            if sampled_ok is None:
+        env_ok = env[0] > need and env[-1] > need
+        if env_ok or cert_rates is not None:
+            if env_ok and sampled_ok is None:
                 sampled_ok = (tgrid, phi, Y, res_max)
             if cert_rates is not None:
                 # R7: escalate T until the PAD-free floors also clear;
@@ -468,6 +484,8 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
                     T += 0.35
                     continue
                 cert_T = cT
+                accepted = (tgrid, phi, Y, res_max)
+                break
             accepted = (tgrid, phi, Y, res_max)
             break
         T += 0.35

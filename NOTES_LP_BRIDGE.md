@@ -392,3 +392,23 @@ viability at 3e-3 set the per-tile cost; then assemble the single
 "coarse_certify_tile" entry point and re-survey. The road from the
 survey's $1M through Result 34 and the two-regime program now ends
 at a measured, working per-tile recipe.
+
+## 4.19 The valley-h wall is real beta-motion; recursive splitting
+##      is the architecture; fast-mover fraction is the price
+
+First-order valley taxes (retrofitted into floors + T-gate) and
+floors-first acceptance (the env-vs-far-tax gate is vestigial in
+coarse mode — R33's dissolution one level up; implemented) do NOT
+move the 3e-3 wall: probe of the binding valley (sv =
+[.32,.32,.23,.071,.054], floors -0.06 at the ends) shows its trench
+genuinely translates ~0.05 rad across the beta box — more than its
+wall height. Not tax conservatism: real structure motion. Treatment:
+RECURSIVE per-valley beta-splitting to each valley's working-h
+(octant split generalized; fine work concentrates on fast movers
+only). Bulk pricing now reduces to ONE measurable: the fast-mover
+fraction per fat tile (valley 11 was the first failure of ~50; if
+~5-10/50 need 1e-3-depth recursion, coarse tiles at 3e-3 cost
+~3-5x less valley work than all-1e-3, times chain amortization).
+NEXT SESSION: (1) count fast movers per tile at 3e-3 across the
+survey points; (2) implement recursive valley split; (3) valley
+chain-amortization; then re-price.
