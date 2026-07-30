@@ -226,3 +226,23 @@ overlap drift ~0.1 vs margins 0.4), certify segment-graph clique
 <= 5 via interval overlap bounds (census: actual bulk cliques <= 4).
 Then: bulk = starvation tiles, collar = existing fine machinery on
 <1% volume, and the full-domain theorem prices at ~$10^3.
+
+## 4.11 Union starvation certificate: NEGATIVE result
+
+The cheap bulk certificate (union-over-beta survivor segments +
+pairwise Lipschitz overlap bounds + coloring) FAILS decisively:
+at the first bulk point, 82k segments, 1.9e8 possible-orthogonality
+edges, coloring bound 14 >> 5 (min self-coherence fine, 0.877).
+Cause: the union relaxation discards the fixed-beta correlation the
+census exploits — filaments sweep continuous vector families whose
+mutual overlaps traverse near-zero broadly, even though at every
+FIXED beta the discrete root set has clique <= 4. Lesson recorded:
+bulk starvation needs beta-CORRELATED structure (per-branch root
+counting + same-beta cross-branch bounds), which is fine-tile-like
+machinery — OR the bulk simply runs the existing tile certificates
+at their post-Result-34 ceiling (7e-4..1e-3), a 13-37x saving over
+the 3e-4 flat plan rather than 1000x. Current honest cost picture:
+bulk at ~1e-3 + thin collar fine => ~$30-80k full domain; the
+$1e3 figure required the union certificate that just died. The
+beta-correlated blob design remains open (genuinely promising, but
+research, not engineering).
