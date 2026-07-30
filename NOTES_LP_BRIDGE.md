@@ -290,3 +290,18 @@ connectivity at wmin 0.025 (components may merge through junctions,
 weakening per-branch uniqueness — split at junctions by sigma
 profile). Next build: branch decomposition + class R fat-Krawczyk
 end-to-end at one bulk point.
+
+## 4.13 Graded LP: the naive grading fails at exactly 1/sqrt2
+
+Projection test at the certified reference beta: the unbiasedness
+kernels h_k h_k^H have off-graded Frobenius fraction 0.7071 under
+the plain (a - a') grading — exactly half the mass. Signature: the
+H2-blocks are GAUGE-TWISTED F2's (internal diagonal phases from
+Karlsson's parametrization), so the correct object is a gauged /
+cocycle grading. NEXT COMPUTATION (decisive, afternoon-scale):
+optimize diagonal gauges d in U(1)^6 (and/or a ZZ_2 cocycle) to
+minimize the joint off-graded mass of all six kernels; if a gauge
+zeroes it, assemble the LP in that gauge and test quadruple
+infeasibility at one certified beta; if no gauge exists, this
+bridge route is falsified (the two-regime machine path stands
+regardless).
