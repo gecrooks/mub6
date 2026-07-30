@@ -378,3 +378,17 @@ session): valley windows at fat h (iso 1e-3 -> 3e-3) — how many of
 the 48 certify with existing R7 floors, and what does the per-tile
 cost settle at; then the h=3e-3 version (7e7 tiles) prices the
 bulk for real.
+
+## 4.18 The coarse-mode tile closes end-to-end at h = 1e-3
+
+The 48 wild blobs -> 48 distinct valley roots -> R7 valley windows
+at hv = (1e-3)^3: 47 fully consistent certified floors, 1 sampled-
+mode fallback, 0 hard failures, 69 s total (~1.4 s/window). The
+bulk tile architecture is thus COMPLETE at 1e-3: coarse sweep +
+S-fat correlated tubes (colors 2) + valley windows for the deep
+class. Remaining for the bulk pricing: the same assembly at
+h = 3e-3 (7e7 tiles for the domain) — valley count and window
+viability at 3e-3 set the per-tile cost; then assemble the single
+"coarse_certify_tile" entry point and re-survey. The road from the
+survey's $1M through Result 34 and the two-regime program now ends
+at a measured, working per-tile recipe.
