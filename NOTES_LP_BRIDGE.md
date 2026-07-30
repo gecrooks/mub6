@@ -246,3 +246,47 @@ bulk at ~1e-3 + thin collar fine => ~$30-80k full domain; the
 $1e3 figure required the union certificate that just died. The
 beta-correlated blob design remains open (genuinely promising, but
 research, not engineering).
+
+## 4.12 Beta-correlated blob certificate: DESIGN
+
+The union failure (4.11) dictates the architecture: pair bounds must
+compare roots AT THE SAME beta. Design ("fat-tube tile"):
+
+1. COARSE sweep (16 s, wmin 0.025) -> survivor filaments; connected
+   components = branches S_1..S_m (~50-100).
+2. Branch classes, each with a beta-localization statement:
+   R (regular, sigma_min >~ 0.1): parametric Krawczyk with fat box
+     (rho ~ 0.05-0.1) — CONTRACTS at h = 3e-3 (q ~ ||J^-1||(RJ(rho)
+     + L_HJ rate h) ~ 0.2): theta_i(beta) unique in the box for all
+     beta. Localization ~ rho.
+   D (deep but continuable, sigma_min ~ 0.01-0.1): 1-param beta-
+     continuation (bnrates frame-split machinery, 3 params): motion
+     ~ rate*h ~ 0.015 — localization excellent IF sigma_5 clears the
+     J-drift over the motion (the known frontier).
+   W (wild: near-fold in beta over the box): dip-localization along
+     the trench (valley machinery) or per-branch union fallback.
+3. Same-beta pair matrix: f_ij(beta) >= f_ij(beta0) - |grad f|_cert
+   * h*sqrt3 - (loc_i + loc_j)/6 - SLOP, where f_ij(beta0) is the
+   center-root overlap (the tile machine's O0) and |grad f| from
+   certified root-motion rates (du/dbeta = -J^-1 dg/dbeta, already
+   built). Overlap tolerance is LOOSE (~0.1-0.2 theta), which is
+   why fat localization suffices.
+4. Coloring of {f_lower <= 0} + <=1-vertex-per-branch-at-fixed-beta
+   (from uniqueness in R/D; W branches contribute their dip count).
+   Need <= 5 colors; census says actual cliques <= 4 in the bulk.
+
+Cost model: per tile = coarse sweep (seconds) + m Krawczyk/
+continuation certificates (ms each) + m^2/2 pair bounds (vectorized)
+— SECONDS per tile instead of 30-100 s, and at h = 3e-3 instead of
+3e-4: the fine sweep (the actual cost center) disappears from the
+bulk entirely. If W-branch handling holds, bulk ~ 7e7 tiles x
+seconds-CPU ~ $1-3k on CPU fleets alone; even h = 1e-3 with fat
+tubes beats the $30-80k fallback by ~10x. The h-ceiling becomes
+W-branch economics, not sweep economics.
+
+RISKS: W-branch fraction in the bulk (census suggests deep roots
+are common but folds-in-beta over 3e-3 boxes may be rare); branch
+connectivity at wmin 0.025 (components may merge through junctions,
+weakening per-branch uniqueness — split at junctions by sigma
+profile). Next build: branch decomposition + class R fat-Krawczyk
+end-to-end at one bulk point.
