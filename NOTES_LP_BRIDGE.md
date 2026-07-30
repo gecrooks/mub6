@@ -305,3 +305,22 @@ zeroes it, assemble the LP in that gauge and test quadruple
 infeasibility at one certified beta; if no gauge exists, this
 bridge route is falsified (the two-regime machine path stands
 regardless).
+
+## 4.14 Graded LP: FALSIFIED in all simple forms
+
+Gauge probes at three beta (bulk + near-face): phase gauge U(1)^5
+reduces off-graded mass 0.50 -> 0.327; full U(2)^3 block gauge adds
+NOTHING (identical plateau); the plateau is family-wide and near the
+face equals 1/3 to 7e-6. Z3-circulant gradings on both tensor
+factorizations also fail (0.40, 0.50). Conclusion: Karlsson kernels
+admit no plain group-difference grading in any gauge — an
+independent structural confirmation of the literature's "LP cannot
+reach K6(3)". The exact gauge-invariant 1/3 is recorded as an open
+curiosity (graded sector is exactly half the Hermitian space; naive
+off-mass 1/2; the gauge recovers exactly 1/6 more — why 1/3 is
+irreducible deserves a short algebra session someday).
+SURVIVING LP SCOPE: the collar — ON the branch face the Hadamards
+are group-type and the classical Delsarte/scheme machinery applies;
+the LP is a collar tool, the machine covers the bulk. Coherent with
+the two-regime split; the bulk's fate rests on the beta-correlated
+blob certificate (4.12).
