@@ -139,3 +139,43 @@ contradicts a 6-clique. QED (tile).
 5. libm in certified constants: CLOSED (Result 30, mpmath.iv).
 
 Everything else in the certificate chain is certified arithmetic.
+
+## 5. The two-regime architecture (2026-07-30/31 program)
+
+The uniform-tile campaign of section 3 is superseded by a measured
+two-regime decomposition (full diary: NOTES_LP_BRIDGE.md 4.5-4.26):
+
+**Bulk (>= ~99% of the fundamental domain).** Coarse tiles at
+h ~ 1.5e-3-3e-3 prove the Layer-1 claim (no MU triple through
+{I, H(beta)} — strictly stronger than the theorem needs, and TRUE
+off the triple-carrying strata). Certificate composition per tile:
+coarse sweep with first-order taxes (Result 34) -> S-sloped
+correlated tubes (pair coloring, typically 2-5 colors) -> batched
+valley windows with one-level beta-recursion -> wild roots as
+colored vertices with measured localization -> w^4 whisker-tail
+refinement fallback -> blob-coverage against the root list
+(enumeration is never trusted; missed roots surface as uncovered
+blobs). Validated 6/6 census points; chained along beta with a
+first-order exclusion cache (measured amortization ~3x, re-anchor
+cadence ~5; window sub-caching and GPU sweeps are the remaining
+mechanical multipliers).
+
+**Collar (< ~1%: neighborhoods of the triple-carrying strata,
+concentrated at the theta=0 branch face = the group-Hadamard
+locus).** Here triples EXIST, the Layer-1 claim is false, and the
+statement switches to the quadruple level: no fourth basis extends
+the strata's triples. This is the Layer-3 family machinery
+(complete, gap-free along the B-arc/Dita/Szollosi slices)
+THICKENED transversally via the s^2 branch chart and the certified
+K-drift substrate (bnrates). Status: ingredients built and
+measured; the thickened certificates are the remaining new build.
+
+**Seam.** The regimes self-delimit: bulk tiles fail loudly exactly
+where triples appear, so the collar's extent is discovered by the
+machine, not assumed.
+
+Assumption ledger deltas vs section 4: the coarse composition
+reintroduces PROTOTYPE-grade elements (batched-Newton anchors are
+definitional and residual-checked; measured wild localizations and
+the refinement fallback are sampled-grade pending their certified
+pass). The fine-tile chain (sections 1-4) remains assumption-free.

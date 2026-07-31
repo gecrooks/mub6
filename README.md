@@ -24,7 +24,7 @@ main finding was that the naive full campaign is a ~$10⁶ object.
 | Same for the Diţă arc and the full two-parameter Szöllősi region | **Certified, gap-free** (same grade) |
 | Pointwise anchors: S₆, Björck's C, K₃ points, F₆ quadruple wall at exactly 1/6 | **Certified** |
 | Tile certificates (3-param Karlsson boxes): machinery | **Assumption-free**: no PAD, no sampled constants, no libm, no enumeration trust (`PROOF_SKELETON.md` §4) |
-| The target theorem over the full fundamental domain | **NOT proven** — requires the tile campaign: ~10⁹–10¹⁰ tiles ≈ $10⁵–10⁶ of compute at current certificate radii (measured, not guessed: see Results 34 and the survey) |
+| The target theorem over the full fundamental domain | **NOT proven** — two-regime program (PROOF_SKELETON.md §5): bulk coarse tiles validated 6/6 and chain-certified, ~$25–50k CPU at current amortization with mechanical multipliers pending; collar = thickened Layer-3 (ingredients built, certificates to come) |
 
 ## Read first
 
