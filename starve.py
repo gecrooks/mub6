@@ -26,6 +26,11 @@ from trig_kernel import kexp_i
 warnings.filterwarnings("ignore")
 
 
+def _rss_gb():
+    import resource
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2**30
+
+
 def fat_sweep(beta, h, wmin=0.1, chunk=200_000, max_boxes=1.2e8):
     r = certified_rates(beta, (h, h, h))
     H0 = karlsson_map(*beta)
@@ -49,6 +54,18 @@ def fat_sweep(beta, h, wmin=0.1, chunk=200_000, max_boxes=1.2e8):
         total += len(C)
         if total > max_boxes:
             raise RuntimeError("box budget")
+        if total % 4_000_000 < chunk:
+            n_stack = sum(len(x) for x in stack_C)
+            n_surv = sum(len(x) for x in surv_C)
+            wmax = float(W.max())
+            print(f"    [{total/1e6:.0f}M] stack {n_stack/1e6:.1f}M "
+                  f"surv {n_surv/1e6:.2f}M w~{wmax:.3f} "
+                  f"rss {_rss_gb():.1f}G", flush=True)
+            if _rss_gb() > 5.0 or n_stack > 4e7:
+                raise RuntimeError(
+                    f"ABORT: stack {n_stack/1e6:.1f}M rss "
+                    f"{_rss_gb():.1f}G at w~{wmax:.3f}, "
+                    f"total {total/1e6:.0f}M")
         u = np.empty((len(C), 6), complex)
         u[:, 0] = inv6
         u[:, 1:] = kexp_i(C) * inv6
@@ -122,3 +139,80 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def fat_sweep_hulls(beta, h, wmin=0.025, chunk=1_000_000,
+                    max_boxes=1.5e9, cell=0.1):
+    """Streaming variant: survivors aggregate into grid-cell hulls on
+    the fly — memory O(#cells), unbounded box budget territory.
+    Returns (cell_centers, cell_radii, counts, total)."""
+    r = certified_rates(beta, (h, h, h))
+    Hc = karlsson_map(*beta).conj()
+    BR, s_drift = r["beta_rate_vec"], r["s_drift"]
+    dH0c = [np.conj(r["dH0"][j]) for j in range(3)]
+    WD = r["WD"]
+    inv6 = 1.0 / np.sqrt(6.0)
+    sC = [np.full((1, 5), np.pi)]
+    sW = [np.full((1, 5), np.pi)]
+    hulls = {}
+    total = 0
+    while sC:
+        C = sC.pop()
+        W = sW.pop()
+        if len(C) > chunk:
+            sC.append(C[chunk:])
+            sW.append(W[chunk:])
+            C, W = C[:chunk], W[:chunk]
+        total += len(C)
+        if total > max_boxes:
+            raise RuntimeError("box budget")
+        u = np.empty((len(C), 6), complex)
+        u[:, 0] = inv6
+        u[:, 1:] = kexp_i(C) * inv6
+        s = u @ Hc
+        g = np.abs(s) ** 2 - 1.0 / 6.0
+        sw = W.sum(axis=1)
+        smod = np.minimum(np.abs(s) + sw[:, None] / 6.0 + s_drift, 1.0)
+        margin = np.abs(g) - (2.0 * smod / 6.0) * sw[:, None]
+        tax = BR * smod
+        t1 = np.zeros_like(tax)
+        for j in range(3):
+            sb = u @ dH0c[j]
+            t1 += h * (np.abs(2.0 * np.real(np.conj(s) * sb))
+                       + 2.0 * s_drift * np.abs(sb)
+                       + 2.0 * smod * WD[j])
+        tax = np.minimum(tax, t1 + SLOP)
+        keep = ~(margin > SLOP + tax).any(axis=1)
+        C, W = C[keep], W[keep]
+        small = W.max(axis=1) <= wmin
+        if small.any():
+            Cs, Ws = C[small], W[small]
+            keys = np.round(Cs / cell).astype(np.int64)
+            uq, inv = np.unique(keys, axis=0, return_inverse=True)
+            for ki in range(len(uq)):
+                m = inv == ki
+                lo = (Cs[m] - Ws[m]).min(axis=0)
+                hi = (Cs[m] + Ws[m]).max(axis=0)
+                cnt = int(m.sum())
+                key = tuple(uq[ki])
+                if key in hulls:
+                    l0, h0, c0 = hulls[key]
+                    hulls[key] = (np.minimum(l0, lo),
+                                  np.maximum(h0, hi), c0 + cnt)
+                else:
+                    hulls[key] = (lo, hi, cnt)
+        Cb, Wb = C[~small], W[~small]
+        if len(Cb):
+            j = np.argmax(Wb, axis=1)
+            rows = np.arange(len(Cb))
+            Wn = Wb.copy()
+            Wn[rows, j] /= 2.0
+            Cl, Cr = Cb.copy(), Cb.copy()
+            Cl[rows, j] -= Wn[rows, j]
+            Cr[rows, j] += Wn[rows, j]
+            sC.append(np.vstack([Cl, Cr]))
+            sW.append(np.vstack([Wn, Wn]))
+    cen = np.array([0.5 * (l + hh) for l, hh, _ in hulls.values()])
+    rad = np.array([0.5 * (hh - l) for l, hh, _ in hulls.values()])
+    cnt = np.array([c for _, _, c in hulls.values()])
+    return cen, rad, cnt, total

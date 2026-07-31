@@ -479,3 +479,21 @@ also flag it for the tile-cost distribution tail. Timings/tile:
 46-208 s un-amortized CPU (sweep 30-164 s dominates; GPU 41x on it;
 windows 13-40 s; enum 4 s). Chain mode remains the one unmeasured
 lever between the measured $30-60k raw and the $3-6k target.
+
+## 4.24 CENSUS CLOSED 6/6 — the coarse tile is real
+
+The fat-filament holdout CERTIFIES at the adaptive rung (h = 1.5e-3,
+colors 2, coverage exact) — exactly the campaign driver's designed
+response; no new machinery needed. FINAL SCOREBOARD, coarse_certify_
+tile v1 across all six census points: 6/6 CERTIFIED (five at 3e-3,
+one at 1.5e-3), colors 2-5, coverage exact everywhere, 46-208 s
+un-amortized CPU per tile. The night's engineering: 60-110x valley
+windows (batched floors/profile/lite corners), one-level recursion
+(x8, measured), measured per-wild localization (colors 6->2), wilds
+as colored vertices, streaming hull sweep (written; wiring proven at
+1.5e-3), adaptive h as the fat-filament response. Remaining to the
+campaign: chain mode (the 10-15x, sole unmeasured lever), collar
+tiles, driver wiring, coarse-mode lemma prose, and the certified-
+grade pass over tonight's sampled-grade pieces (wild locs, batched
+anchors are definitional — mostly bookkeeping). Pricing: $30-60k
+raw, $3-6k with chains, at 3e-3/adaptive.
