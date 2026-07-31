@@ -24,7 +24,6 @@ from mub import find_mu_vectors
 from parametric import polish_root, root_data2, _g_and_J
 from fold import valley_certificate
 from rates import certified_rates
-from starve import fat_sweep
 
 warnings.filterwarnings("ignore")
 
@@ -123,8 +122,9 @@ def coarse_certify_tile(beta, h=3e-3):
     t_pair = time.time() - t0p
     # stage 4: coverage — coarse sweep stuck blobs must polish into roots
     t0s = time.time()
-    C, W, swept = fat_sweep(beta, h, wmin=0.025, max_boxes=8e8)
-    cl = cluster_suspects(C, W, link=0.1)
+    from starve import fat_sweep_hulls
+    cen_h, rad_h, cnt_h, swept = fat_sweep_hulls(beta, h, wmin=0.025)
+    cl = cluster_suspects(cen_h, rad_h, link=0.15)
     uncovered = 0
     R = np.array(roots)
     for cc_, rr_, _ in cl:
