@@ -193,6 +193,9 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
     n_del = int((dele | dele.T).sum() // 2)
 
     def chi(a):
+        best = n + 1
+        # greedy by degree, then DSATUR — both upper-bound chi;
+        # take the smaller (soundness only needs an upper bound)
         order = np.argsort(-a.sum(axis=1))
         col = -np.ones(n, dtype=int)
         for v in order:
@@ -201,7 +204,20 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
             while c in used:
                 c += 1
             col[v] = c
-        return int(col.max()) + 1
+        best = min(best, int(col.max()) + 1)
+        col = -np.ones(n, dtype=int)
+        deg = a.sum(axis=1)
+        for _ in range(n):
+            sat = np.array([len(set(col[a[v]]) - {-1})
+                            if col[v] < 0 else -1 for v in range(n)])
+            v = int(np.lexsort((-deg, -sat))[0])
+            used = set(col[a[v]]) - {-1}
+            c = 0
+            while c in used:
+                c += 1
+            col[v] = c
+        best = min(best, int(col.max()) + 1)
+        return best
 
     c_before, c_after = chi(adj), chi(adj2)
     ok = c_after <= 5

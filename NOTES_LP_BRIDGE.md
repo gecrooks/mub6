@@ -745,3 +745,20 @@ The pi/3 band arc, in order of discovery (all measured today):
   NO valley-window composition needed. The signed-rate structure
   IS the certified-grade design (dual-AD first-order pair data +
   second-order remainders replace the sampled FD/S continuation).
+
+## 4.35 48/48: the collar census closes completely
+
+The two residual census cells (b3 = 1.043, b2 = 0.3 and 1.92)
+were not margin failures:
+  (0.3, 1.043):  closes with hf3 = 2.5e-4 (chi 5).
+  (1.92, 1.043): breaking edges were fine all along (o ~ 0.0025,
+      tax ~ 4e-5, theta-growth certified) and correctly deleted —
+      the residual chi 6 was the GREEDY COLORING being suboptimal
+      on the thinned 108-edge graph. Adding a DSATUR upper bound
+      (soundness needs any proper coloring, so min(greedy, DSATUR)
+      is valid) gives chi 5. Wall-exact and generic regressions
+      unchanged (chi 2).
+With the final configuration (signed analytic rates, adaptive
+delta ladder, hf 5e-3, hf3 2.5e-4, greedy+DSATUR): the 48-point
+collar census certifies 48/48 — no open cells anywhere in the
+collar, band and walls included, ~6 s/tile at demo grade.
