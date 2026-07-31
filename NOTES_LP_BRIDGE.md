@@ -579,3 +579,32 @@ tooling:
 Remaining measurement: margin-vs-theta scaling in the collar (sets
 the dyadic tile count); remaining builds: collar tiler + face walk
 — both compositions of existing machinery.
+
+## 4.29 Collar scaling law: defect = c(beta_face) * theta — collar is log-cheap
+
+Measured (pool of 48 polished MU vectors, min nonzero pairwise
+overlap = the near-clique defect the collar must resolve):
+  - theta-scan at (2.0412, pi): 0.0001 @ 0.01, 0.0002 @ 0.02,
+    0.0003 @ 0.04, 0.0007 @ 0.08 — linear in theta.
+  - in-face scan at fixed theta: every defect at theta=0.005 is
+    EXACTLY half its theta=0.01 value across b2 in [1.94, 2.20]
+    and b3 in [pi-0.2, pi+0.1] (e.g. 4.29e-4 -> 2.14e-4,
+    0.81e-4 -> 0.40e-4).  So defect = c(b2,b3)*theta with smooth
+    c ~ 0.005-0.075, and the IN-FACE gradient of the defect is
+    itself O(theta).
+Design consequence: collar tiles need theta-scaled precision only
+in the theta direction (dyadic slabs, drift taxes prop. to slab
+thickness); in-face resolution is theta-INDEPENDENT (set by c's
+O(1)-scale variation).  Collar tile = bulk-grade coarse tile +
+certified edge-deletion on the near-clique pairs (root-local
+overlap lower bound  c*theta  vs taxes prop. theta — scales match
+at every level).  Cost: (log2(theta_max/theta_0) ~ 2-5 levels) x
+(one bulk slab), i.e. NEGLIGIBLE vs bulk.  theta_0 = tube radius
+of the face-family certificate (Layer-3 walk on the theta=0
+2-param group-Hadamard face — the Jaming-Matolcsi-Mora-Szollosi
+locus, which the literature already excludes pointwise; we need
+the tube version via K-drift).
+Residual risk: c has an interior minimum (~0.005 near b2=2.10 at
+b3=pi); if c -> 0 anywhere on the face that point is a deeper
+stratum (codim-2) needing its own scaled chart.  Next: map c over
+the face.
