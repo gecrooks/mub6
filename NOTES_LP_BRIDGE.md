@@ -514,3 +514,28 @@ stage ~22-40 s/step is now binding; sub-window caching is the next
 $25-40k CPU; the remaining gap to $3-6k = window sub-caching + GPU
 sweeps + enumeration warm-tracking, all mechanical. Next: collar
 validation.
+
+## 4.26 The collar is THICKENED LAYER-3, not coarse tiles
+
+Collar probes near the face FAIL at colors 7 with mass wilds — and
+correctly so: the face carries genuine TRIPLES whose partner bases
+are 6-cliques, so the Layer-1 tile claim ("no MU triple through
+{I, H(beta)}" — deliberately stronger than the theorem) is FALSE
+there and no tile-side tuning can fix it. The collar statement must
+be the QUADRUPLE level: no fourth basis extending the strata's
+triples — exactly what the Layer-3 family certificates prove along
+the arcs (B-arc, Dita, Szollosi: done, gap-free). THE COLLAR =
+LAYER-3 THICKENED TRANSVERSALLY: extend each triple-carrying
+stratum's arc certificate by the transverse beta-directions (the
+s^2 branch chart + the bnrates certified K-drift substrate are its
+ingredients, both already built/measured). Anatomy of the full
+theorem, now explicit:
+  bulk (>= 99%):  coarse no-triple tiles (certified chain, working);
+  collar (< 1%):  thickened Layer-3 no-fourth-basis certificates
+                  around the triple strata (new build, ingredients
+                  ready);
+  seam:           the tile claim's validity boundary = where triples
+                  appear = detectable by the tiles themselves
+                  (they fail loudly exactly there).
+This also explains the sixth census point's appetite and closes the
+conceptual design of the two-regime proof.
