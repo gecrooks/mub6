@@ -936,3 +936,19 @@ hf3 ~ 0.2 theta^1.5. The demo tier is now honest through second
 order everywhere except the corner core (its curvature constant is
 unmeasured; its widths 2e-6 make any plausible charge ~1e-12-1e-6
 — headroom, but measure before the campaign).
+
+## 4.45 Corner core second-order safe; 4.42 pricing stands
+
+Breaking-edge derivatives AT the corner (0.005, pi/3, pi/3),
+o0 = 2.28e-3:
+  theta: rate 0.456, curv 0.05      — supertame, growth law holds
+  b2:    rate 81.5,  curv 6.0e3
+  b3:    rate 43.4,  curv 7.9e6
+The pair-CORRELATED rates are ~1000x below the per-root 1/theta^2
+rates (8.8e4) — the signed cancellation persists at the corner.
+At hf = 2e-6: first-order taxes 7.5e-4 (dominant), second-order
+charges 2.4e-8 + 3.2e-5 — 70x headroom. Corner widths are
+FIRST-order-limited at ~5e-6; the demonstrated 2e-6 grid and the
+4.42 pricing (~$100-500 parallel) stand with second order charged.
+All curvature constants in the collar are now measured; nothing
+in the demo tier rests on an unmeasured second-order term.
