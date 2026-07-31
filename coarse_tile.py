@@ -56,19 +56,28 @@ def coarse_certify_tile(beta, h=3e-3):
     t0w = time.time()
     slow = rec = 0
     wild = []
+    wild_loc = {}
     for th in roots:
         if _window_ok(beta, th, h):
             slow += 1
             continue
         offs = [-h / 2, h / 2]
-        all_ok = all(
-            _window_ok((beta[0] + dx, beta[1] + dy, beta[2] + dz),
-                       th, h / 2)
-            for dx, dy, dz in itertools.product(offs, offs, offs))
+        all_ok = True
+        spread = 0.0
+        for dx, dy, dz in itertools.product(offs, offs, offs):
+            sb = (beta[0] + dx, beta[1] + dy, beta[2] + dz)
+            th_s = polish_root(karlsson_map(*sb), th)
+            spread = max(spread, float(np.abs(
+                (th_s - th + np.pi) % (2 * np.pi) - np.pi).sum()))
+            if all_ok and not _window_ok(sb, th, h / 2):
+                all_ok = False
         if all_ok:
             rec += 1
         else:
             wild.append(th)
+            # measured per-wild localization: observed sub-beta root
+            # spread (l1) doubled + pad (sampled-grade)
+            wild_loc[tuple(np.round(th, 6))] = 2.0 * spread + 0.15
     t_win = time.time() - t0w
     # stage 3: S-tube pair coloring
     t0p = time.time()
@@ -90,10 +99,9 @@ def coarse_certify_tile(beta, h=3e-3):
     cols = 0
     if n:
         cen = np.array([t[0] for t in tubes])
-        WILD_LOC = 0.75          # blanket theta-l1 localization for
-                                 # wild vertices (their blob extent)
         drift = np.array([
-            (np.abs(t[1]).sum() * h if t[1] is not None else WILD_LOC)
+            (np.abs(t[1]).sum() * h if t[1] is not None
+             else wild_loc.get(tuple(np.round(t[0], 6)), 0.75))
             for t in tubes])
         inv6 = 1.0 / np.sqrt(6.0)
         u = np.empty((n, 6), complex)
@@ -115,7 +123,7 @@ def coarse_certify_tile(beta, h=3e-3):
     t_pair = time.time() - t0p
     # stage 4: coverage — coarse sweep stuck blobs must polish into roots
     t0s = time.time()
-    C, W, swept = fat_sweep(beta, h, wmin=0.025)
+    C, W, swept = fat_sweep(beta, h, wmin=0.025, max_boxes=8e8)
     cl = cluster_suspects(C, W, link=0.1)
     uncovered = 0
     R = np.array(roots)

@@ -463,3 +463,19 @@ chain mode (enum warm-tracking + window T-caching, the 10-15x),
 collar tiles, driver integration, and the coarse-mode lemma prose
 in PROOF_SKELETON. Pricing at v1 measured numbers: ~$30-60k raw,
 $3-6k with chains — the original tweet's number, reached honestly.
+
+## 4.23 End of night: coarse tile 5/6 census points, measured wilds
+
+Per-wild MEASURED localization (sub-beta root spread from the
+recursion polishes, x2 + pad) replaced the 0.75 blanket: the
+colors-6 failure dropped to colors 2 — wild roots barely MOVE
+(their windows fail on wall height, not motion); the blanket
+overcharged ~5x. Census scoreboard for coarse_certify_tile v1 at
+h = 3e-3: **5 of 6 points CERTIFIED end-to-end** (colors 2-5,
+coverage exact everywhere). The sixth has ~10x fatter filaments and
+OOMs the in-RAM survivor collection at 8e8 boxes — needs the
+streaming-collection engineering (chain-mode list), not new math;
+also flag it for the tile-cost distribution tail. Timings/tile:
+46-208 s un-amortized CPU (sweep 30-164 s dominates; GPU 41x on it;
+windows 13-40 s; enum 4 s). Chain mode remains the one unmeasured
+lever between the measured $30-60k raw and the $3-6k target.
