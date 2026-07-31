@@ -885,3 +885,23 @@ still ~ CPU-days). Remaining certified-grade links after this:
 interval Hessian for the theta-ball Lipschitz of dg/dbeta, and
 wiring the curvature charge into the tile's tax line — both
 existing-substrate moves.
+
+## 4.42 Driver lesson: the corner core is 2-D theta^2-fine (~$100s parallel, not CPU-hours)
+
+collar_driver.py walked the hardest line (b2 = pi/3 exactly,
+b3 across the corner +-3e-3, slab [0.005, 0.015]) with an
+auto-laddering rung schedule. Result: 200/1501 positions
+certified in 72 min — every success at the finest rung, and the
+ladder's bottom (hf = 1e-4, hf3 = 2e-6) was WRONG for this line:
+on b2 = pi/3 the funnel needs theta^2 widths in BOTH in-face
+coordinates (|S_b2| = 2.2/theta^2 is the LARGER rate; the earlier
+corner success 4.39 used 2e-6 x 2e-6). Rung added.
+CORRECTED corner pricing (4.38's "CPU-hours" was wrong): the 2-D
+core |beta - (pi/3, pi/3)| <~ few 1e-3 at widths ~ 0.05 theta^2
+is ~ 5e6-1e7 tiles ~ CPU-MONTHS single-core = ~$100-500
+embarrassingly parallel at cloud CPU rates — still negligible
+against the bulk, but three orders bigger than the old estimate.
+Driver fixes queued: warm-start the rung ladder at the previous
+position's rung (the 4-attempts-per-position tax dominated the
+72 min), and treat the corner core as its own scheduled patch
+rather than line-walking through it.
