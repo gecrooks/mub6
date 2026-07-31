@@ -952,3 +952,29 @@ FIRST-order-limited at ~5e-6; the demonstrated 2e-6 grid and the
 4.42 pricing (~$100-500 parallel) stand with second order charged.
 All curvature constants in the collar are now measured; nothing
 in the demo tier rests on an unmeasured second-order term.
+
+## 4.46 HONEST CORRECTION: the corner core has a fractal tail — one genuinely open piece
+
+8x8 corner patch at hf 2e-6 (slab [0.005, 0.01], measured-curv
+charged): 41/64 at 1.61 s/tile — but the 23 failures trace CURVED
+1-D sub-loci through the patch (a full b2-row, a b3-arc), and the
+rung-down to 5e-7 closes only 1/5 sampled failures. Worse, on the
+sub-loci root_data2's continuation itself breaks (36/48 roots
+gated at one cell -> complete-graph chi 37). Interpretation: the
+funnel has self-similar sub-structure — the breaking edge changes
+identity across these curves and both candidates are small at the
+crossings; each specialization level reveals thinner loci.
+POINTWISE TILING HAS NOT BEEN SHOWN TO TERMINATE at the corner
+core below ~1e-5.
+Status revision of 4.39: "no open cells" holds everywhere EXCEPT
+the corner core (pi/3, pi/3) at scales < ~1e-5 x theta in
+(0, 0.02] — codim-3, measure-zero, but a proof needs it. Candidate
+treatments, in order of plausibility:
+  (i)  family-level certificates over the sub-locus curves (the
+       valley/fold + s^2-chart machinery — built, unwired here);
+  (ii) exact algebraic analysis at beta = (pi/3, pi/3): a highly
+       special Hadamard slice, plausibly tractable by hand or by
+       the Layer-3 pointwise methods that did S6/Bjorck's C;
+  (iii) a deeper measured scaling law organizing the sub-loci.
+This is the machine finding its own next problem — the honest
+boundary of today's demonstration tier.
