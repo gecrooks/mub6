@@ -978,3 +978,30 @@ treatments, in order of plausibility:
   (iii) a deeper measured scaling law organizing the sub-loci.
 This is the machine finding its own next problem — the honest
 boundary of today's demonstration tier.
+
+## 4.47 Corner treatment plan: a 12th-root arc + walked sub-curves
+
+The corner slice H(theta, pi/3, pi/3) dephases to a 1-parameter
+deformation of an EXACT 12th-roots-of-unity Hadamard: row 1 is
+exactly (0, pi, pi/3, -2pi/3, pi/6, -5pi/6) and theta-INDEPENDENT;
+rows 2-5 carry the theta-drift in symmetric pairs; quad-product
+phase invariants sit on the pi/6 lattice. The theta -> 0 limit is
+a specific 12th-root matrix (identify against the catalog — Dita
+slice? — worth an hour).
+Treatment (the concrete version of 4.46 option (i)+(ii)):
+  1. Walk the corner COLUMN as a 1-param arc (the Layer-3
+     pattern: per-theta anchors, S_theta ~ 1 is supertame,
+     certified transverse tube). Measured tube radius from the
+     breaking edge: r ~ 0.456 theta / (3 * 124) ~ 1.2e-3 * theta
+     — at theta = 0.005 that is 6e-6, JUST short of the ~1e-5
+     funnel sub-loci.
+  2. The sub-loci are themselves curves (per 4.46 they are where
+     the breaking edge changes identity): walk EACH as its own
+     arc with its own margins — the same machinery one level in.
+     If the curve census is finite per level and margins hold,
+     the tail terminates; measure before building.
+  3. Fallback: exact analysis of the 12th-root limit matrix
+     (pointwise Layer-3 did S6 and Bjorck's C — same weight
+     class).
+Bounded, concrete, all on existing patterns — tomorrow's first
+problem.
