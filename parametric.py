@@ -312,6 +312,21 @@ def zoned_sweep(H0, roots, coef0, coef1, guards, far_tax,
                 cache["W"].append(W[cacheable].astype(np.float32))
                 cache["E"].append(eb[cacheable].astype(np.float32))
                 cache["R"].append((bu * sm[cacheable]).astype(np.float32))
+                if fo is not None and "D1" in cache:
+                    # FIRST-ORDER CACHE: signed margin gradient of the
+                    # certifying column along beta — coarse chains
+                    # re-verify with E + D1.dbeta - curv*dist^2
+                    kc = kb[cacheable]
+                    rc = np.arange(len(C))[cacheable]
+                    sgn = np.sign(g[rc, kc])
+                    D1 = np.zeros((len(rc), 3), np.float32)
+                    for j in range(3):
+                        sbj = u[rc] @ fo["dH0c"][j]
+                        d0g = 2.0 * np.real(
+                            np.conj(s[rc, kc]) * sbj[
+                                np.arange(len(rc)), kc])
+                        D1[:, j] = (sgn * d0g).astype(np.float32)
+                    cache["D1"].append(D1)
             rest = excl & ~cacheable
             if rest.any():
                 cache["SC"].append(C[rest].astype(np.float32))

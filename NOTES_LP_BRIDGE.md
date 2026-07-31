@@ -497,3 +497,20 @@ tiles, driver wiring, coarse-mode lemma prose, and the certified-
 grade pass over tonight's sampled-grade pieces (wild locs, batched
 anchors are definitional — mostly bookkeeping). Pricing: $30-60k
 raw, $3-6k with chains, at 3e-3/adaptive.
+
+## 4.25 First certified coarse chain (anchor + 6 steps, all OK)
+
+coarse_chain.py: anchor (160 s) then six 1.6h steps at 30-67 s, ALL
+CERTIFIED (colors 2-3, coverage 0 — the w^4 whisker-tail blobs now
+get a refinement fallback: mini-sweep at a finer floor; exclusion is
+exclusion). The engineering ladder inside: FIRST-ORDER CACHE (signed
+margin gradient D1 per cached box; E + D1.db - curv dist^2) cut
+re-verify failures 17x; PERSISTENT BLOBS (clustered once, steps
+re-associate reps + refinement fallback) removed the per-step stuck
+re-sweep. Cache degradation measured: failures 378k -> 3.0M across
+6 steps => re-anchor cadence ~5-6. Net amortization ~3x (window
+stage ~22-40 s/step is now binding; sub-window caching is the next
+~2x). Honest campaign math at today's state: ~50 s/tile chained ->
+$25-40k CPU; the remaining gap to $3-6k = window sub-caching + GPU
+sweeps + enumeration warm-tracking, all mechanical. Next: collar
+validation.
