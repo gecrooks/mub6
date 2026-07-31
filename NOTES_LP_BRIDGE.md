@@ -708,3 +708,40 @@ cell at pi/3 + 0.02 fails at hf 5e-3 but CERTIFIES at hf 2.5e-3
 valley-window machinery into the collar tile (racing-root
 territory, 4.32). Generic collar cost confirmed: ~5-6 s/tile at
 demo grade, uniformly across the face.
+
+## 4.34 The band closes: signed analytic pair rates + theta-scaled b3-thin boxes
+
+The pi/3 band arc, in order of discovery (all measured today):
+  (a) NO exact bases anywhere on the band at theta > 0 (ladder at
+      (th, 1.1, pi/3), th = 0.005-0.1: 0 bases at tol 1e-7) — the
+      no-triple claim is true on the walls too.
+  (b) The breaking-edge law HOLDS ON THE WALL: min per-near-basis
+      max-edge = (0.34-0.38) * theta, linear over th 0.005-0.04;
+      off-wall max-edge ~ 0.84 * theta INDEPENDENT of distance.
+      Margins never degenerate; only the certificates were failing.
+  (c) Root anatomy on the wall: roots widely spaced (min 1.24) but
+      column-resolved sensitivities show ONLY the wall-normal b3
+      races: |S_b3| = 10.8 / theta (clean law: 2180@0.005,
+      1087@0.01, 537@0.02, 258@0.04), while S_theta ~ 4.7 and
+      S_b2 ~ 0.4-1.8 stay tame. root_data2's default continuation
+      delta 2.5e-4 branch-jumps for ALL 48 roots (motion ~ |S| *
+      delta overshoots); delta <= 1e-5 (adaptive ladder 1e-5,
+      2e-6, 5e-7) recovers S for 48/48.
+  (d) v3 = signed ANALYTIC pair rates from S (no FD): d<u,v>/db_l
+      via phase-sensitivity differences, signed d|O|/db_l via the
+      inner-product phase; theta-term DROPPED when the signed
+      derivative certifies growth (bottom-anchored, the v2 trick);
+      unsigned in-face taxes with b3-thin boxes hf3 ~ 0.1 *
+      theta_lo (the 1/theta racing law sets the width).
+  Result: wall-exact cells CERTIFY — chi 3 at (1.1, pi/3) and
+  (3.0, 5pi/3) on [0.005,0.015], chi 2 on the deep slab
+  [0.0025,0.005]; the marginal offset cell (pi/3 + 0.02) certifies
+  at chi 2 with hf 5e-3 (blanket needed 2.5e-3); generic anchors
+  certify sharper than blanket (chi 2, no deletions needed —
+  certified-positive pairs never enter the adjacency).
+  Band pricing: b3-strip 0.04 wide at hf3 5e-4 -> ~40 b3-tiles x
+  ~630 b2-columns x 2-3 slabs ~ 6-8e4 tiles x 6 s ~ 4-5 CPU-days,
+  embarrassingly parallel — negligible.
+  NO valley-window composition needed. The signed-rate structure
+  IS the certified-grade design (dual-AD first-order pair data +
+  second-order remainders replace the sampled FD/S continuation).

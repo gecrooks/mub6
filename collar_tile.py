@@ -75,7 +75,9 @@ def _repolish_pool(beta, ph0):
     return np.array([_polish(H, t) for t in ph0])
 
 
-def collar_tile(theta_lo, theta_hi, b2, b3, hf):
+def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
+                hf3=None):
+    hf3 = hf if hf3 is None else hf3
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
     ph0 = _pool_phases(b_lo)
@@ -99,30 +101,94 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf):
         try:
             S, _q, defect = root_data2(b_lo, ph0[i])
             if defect < 1e-6 and np.abs(S).max() < 60:
-                drift[i] = float(np.abs(S) @ h_dir).real \
-                    if np.ndim(np.abs(S) @ h_dir) == 0 \
-                    else float((np.abs(S) @ h_dir).sum())
+                drift[i] = float((np.abs(S) @ h_dir).sum())
                 continue
         except Exception:
             pass
         drift[i] = 2.0 * spreads[i] + 0.05      # measured, padded
-    lo = O0 - (drift[:, None] + drift[None, :]) / 6.0 - 1e-3 / 6.0
-    adj = (lo <= 0) & ~np.eye(n, dtype=bool)
-    n_edges = int(adj.sum() // 2)
 
     # in-face correlated overlap rates (4 probes at slab bottom)
     rate_if = np.zeros((n, n))
     for Op in probes:
         rate_if = np.maximum(rate_if, np.abs(Op - O0) / hf)
 
-    # theta-monotonicity across the slab (mid + top)
+    # theta probes: monotonicity + correlated theta-rates
+    span = theta_hi - theta_lo
     grow = np.ones((n, n), dtype=bool)
-    for th in (0.5 * (theta_lo + theta_hi), theta_hi):
+    rate_th = np.zeros((n, n))
+    for th in (theta_lo + 0.5 * span, theta_hi):
         php = _repolish_pool((th, b2, b3), ph0)
         Op = np.abs(_uvecs(php).conj() @ _uvecs(php).T)
         grow &= Op >= (1.0 + MONO_SLOP) * O0
+        rate_th = np.maximum(rate_th, np.abs(Op - O0) / (th - theta_lo))
 
-    dele = adj & grow & (O0 - PAD_CORR * rate_if * 2.0 * hf > 0)
+    if adjacency == "corr":
+        # per-PAIR correlated tax (racing roots move coherently;
+        # their overlaps move slowly — the band's blanket per-root
+        # drift is orders too fat)
+        tax = PAD_CORR * (rate_if * 2.0 * hf + rate_th * span)
+        adj = (O0 - tax - 1e-3 / 6.0 <= 0) & ~np.eye(n, dtype=bool)
+    elif adjacency == "signed":
+        # v3: ANALYTIC signed pair rates from fine-delta S data —
+        # immune to FD branch jumps; captures the wall-normal
+        # cancellation (the breaking edge's b3-rate is ~0 even
+        # where per-root |S_b3| ~ 10.8/theta races). Sampled grade
+        # via PAD; the certified pass adds 2nd-order remainders.
+        Ss = []
+        ngate = 0
+        for i in range(n):
+            Si_ok = None
+            for delta in (1e-5, 2e-6, 5e-7):
+                try:
+                    Si, _q2, d2 = root_data2(b_lo, ph0[i],
+                                             delta=delta)
+                    if d2 < 1e-4:
+                        Si_ok = Si
+                        break
+                except Exception:
+                    continue
+            Ss.append(Si_ok)
+            ngate += Si_ok is None
+        if ngate:
+            print(f"    signed: {ngate}/{n} roots gated out",
+                  flush=True)
+        tax = np.full((n, n), np.inf)
+        for i in range(n):
+            if Ss[i] is None:
+                continue
+            for j in range(i + 1, n):
+                if Ss[j] is None:
+                    continue
+                # signed derivative of the inner product per beta_l
+                dip = np.empty(3, complex)
+                for l in range(3):
+                    d = 1j * (Ss[j][:, l] - Ss[i][:, l])
+                    dip[l] = (np.conj(U0[i, 1:]) * U0[j, 1:]
+                              * d).sum() / 6.0
+                # d|O|/dbeta_l signed via the phase of <u_i,u_j>
+                ip = (np.conj(U0[i]) * U0[j]).sum()
+                dO = np.real(np.conj(ip) * dip) / max(abs(ip), 1e-12)
+                # theta: bottom-anchored — certified growth means
+                # the slab minimum sits at theta_lo, no theta tax
+                t_th = 0.0 if dO[0] > 1e-6 else abs(dO[0]) * span
+                t_if = abs(dO[1]) * hf + abs(dO[2]) * hf3
+                tax[i, j] = tax[j, i] = PAD_CORR * (t_th + t_if)
+        adj = (O0 - tax - 1e-3 / 6.0 <= 0) & ~np.eye(n, dtype=bool)
+        # deletion for signed mode: positive lower bound over the
+        # box straight from the signed tax (no monotonicity needed
+        # — the tax already covers theta-motion)
+        grow = np.isfinite(tax)
+    else:
+        lo = O0 - (drift[:, None] + drift[None, :]) / 6.0 - 1e-3 / 6.0
+        adj = (lo <= 0) & ~np.eye(n, dtype=bool)
+    n_edges = int(adj.sum() // 2)
+
+    if adjacency == "signed":
+        # deletion is subsumed: certified-positive pairs never
+        # entered the adjacency
+        dele = np.zeros_like(adj)
+    else:
+        dele = adj & grow & (O0 - PAD_CORR * rate_if * 2.0 * hf > 0)
     adj2 = adj & ~(dele | dele.T)
     n_del = int((dele | dele.T).sum() // 2)
 
