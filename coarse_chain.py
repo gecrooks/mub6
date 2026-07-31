@@ -195,11 +195,39 @@ def chain_step(state, beta_new):
     wild = []
     locs1 = []
     classes1 = []
-    for th, cl0 in zip(roots1, state["classes"]):
+    for th, cl0, lc0 in zip(roots1, state["classes"], state["locs"]):
         if cl0 == "slow" and _win_ok(beta_new, th, h, cr):
             classes1.append("slow")
             locs1.append(0.0)
             slow += 1
+            continue
+        if cl0 == "rec":
+            # known fast mover: skip the doomed full-tile attempt
+            offs = [-h / 2, h / 2]
+            ok8 = all(_win_ok((beta_new[0] + dx, beta_new[1] + dy,
+                               beta_new[2] + dz), th, h / 2)
+                      for dx in offs for dy in offs for dz in offs)
+            if ok8:
+                classes1.append("rec")
+                locs1.append(lc0)
+                rec += 1
+                continue
+        if cl0 == "wild":
+            # cached wild: re-measure spread cheaply (polish only)
+            spread = 0.0
+            offs = [-h / 2, h / 2]
+            for dx in offs:
+                for dy in offs:
+                    for dz in offs:
+                        sb = (beta_new[0] + dx, beta_new[1] + dy,
+                              beta_new[2] + dz)
+                        th_s = polish_root(karlsson_map(*sb), th)
+                        spread = max(spread, float(np.abs(
+                            (th_s - th + np.pi) % (2 * np.pi)
+                            - np.pi).sum()))
+            classes1.append("wild")
+            locs1.append(2.0 * spread + 0.15)
+            wild.append(th)
             continue
         cl, lc = _classify(beta_new, th, h, cr)
         classes1.append(cl)

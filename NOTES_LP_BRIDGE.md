@@ -539,3 +539,22 @@ theorem, now explicit:
                   (they fail loudly exactly there).
 This also explains the sixth census point's appetite and closes the
 conceptual design of the two-regime proof.
+
+## 4.27 Shift close: chain validated 3 points / 18 steps, pricing
+##      consolidated
+
+Multi-point chains: 3 anchors + 14 steps, ALL CERTIFIED (colors
+2-3, coverage 0 everywhere); class-cached windows lifted the
+hardest point from 3.2x to 4.4x; amortization 4.0-5.0x across
+territories. MEASURED per-tile at 3e-3, re-anchor cadence ~5:
+~45-55 s CPU today -> 7e7 bulk tiles ~ $30-50k spot CPU. Named
+mechanical multipliers not yet applied: GPU anchor sweeps (the
+100-130 s sweep inside each 134-160 s anchor -> ~4 s at the
+measured 41x), transverse-line enum reuse, recursion sub-window
+caching — realistic post-stack bulk: **$5-15k**. (The earlier
+$3-6k assumed steeper window amortization than measured; numbers
+move as measurements land — that is the point of measuring.)
+Collar (thickened Layer-3): the remaining new build, unpriced
+until designed. The bulk machine, as of this shift: architecture
+closed, certified end-to-end, chained, and priced from
+measurements at every stage.
