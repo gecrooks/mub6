@@ -844,3 +844,23 @@ certified-grade pass (dual-AD pair rates + 2nd-order remainders,
 interval enumeration coverage), driver integration, and the bulk
 campaign — the only expensive item ($5-50k depending on the
 mechanical multipliers).
+
+## 4.40 Certified signed pair rates: enclosures 0.05-1% wide, FD inside
+
+certpair.py — the certified-grade path for the v3 primitive:
+Krawczyk root enclosures (existing) -> J at center + HESS_ROW
+ball pad -> dg/dbeta from dual_karlsson certified partials
+(theta-ball dependence PAD-sampled, the one prototype-grade link)
+-> S enclosure via midpoint-inverse residual bound -> pair-rate
+interval. Measured at the breaking edges:
+  generic (0.005, 1.0, 2.0):  rate (0.0802, 0.0003, 0.0484)
+      +- 4.3e-5  (0.05% fat), FD reference inside;
+  wall (0.005, 1.1, pi/3):    rate (0.0660, 0.00026, 0.4519)
+      +- 4.3e-3  (~1% fat), FD inside — the wall's per-root
+      |S| ~ 2000 does NOT poison the enclosure because the
+      Krawczyk balls are ~1e-12 and kappa stays ~1.
+Conclusion: the certified collar pass costs essentially nothing
+in tax fatness. Remaining certified-grade links: the theta-ball
+Lipschitz of dg/dbeta (replace sampled PAD with the interval
+Hessian machinery) and second-order pair-rate remainders over the
+box — both standard moves in the existing substrate.
