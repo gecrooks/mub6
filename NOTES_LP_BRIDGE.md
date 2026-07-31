@@ -1080,3 +1080,16 @@ expected to fall the same way), the theta = 0 corner face anchor
 question: a compactness/termination argument that the recursion
 bottoms out in finitely many levels (the displacements shrink
 with theta; margins never degenerate — the shape is there).
+
+## 4.50 At the crossing, only the certified path survives — 48/48 enclosed
+
+The line-crossing point (pi/3 - 6e-6, pi/3 + 1e-5): root_data2's
+FD continuation gates out 48/48 roots at every delta in the
+ladder — the sampled machinery is DEAD there (|S| ~ 2.7e5,
+another 1/theta factor deep). But certpair.certified_S (Krawczyk
+ball + analytic J + dual-AD dg/dbeta + residual bound — no FD
+anywhere) encloses ALL 48 roots with ~0.3% relative width
+(err ~ 6e2-9.5e2 on |S| ~ 2.7e5). The crossing tiles are a
+certified-grade job by necessity, not just by preference: the
+deepest stratum of the domain is reachable ONLY by the rigorous
+substrate. A fitting place for the demonstration tier to end.
