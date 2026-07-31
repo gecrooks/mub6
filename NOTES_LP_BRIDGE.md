@@ -917,3 +917,22 @@ loud failures + JSONL ledger. The corner core remains a separate
 scheduled patch (4.42). Note the certified-grade pass will charge
 the 4.41 curvature term and push wall cells one rung down — which
 is exactly what the ladder is for.
+
+## 4.44 Second-order charge wired in; dyadic slabs + theta^1.5 widths verify at all depths
+
+collar_tile now charges t2 = curv0*span^2 + curv1*hf^2 +
+curv2*hf3^2 in the signed tax line, with per-stratum constants
+(CURV_GENERIC = (10,10,10); walls: slab-scaled curv3 = 4.8 /
+theta_lo^2 = 4x the measured 1.2/theta^2). Verified with the
+charge ON:
+  generic anchor:      chi 4, hf3 2.5e-4              CERTIFIED
+  wall [0.0025,0.005]: chi 4, hf3 2e-5                CERTIFIED
+  wall [0.005,0.01]:   chi 4, hf3 1e-4 (both walls)   CERTIFIED
+  wall [0.01,0.02]:    chi 4, hf3 2e-4                CERTIFIED
+Two structural consequences, both already in the design's shape:
+slabs must be DYADIC [theta, 2theta] (the span^2 charge kills the
+2:3 slab [0.005,0.015] at the wall), and wall widths follow
+hf3 ~ 0.2 theta^1.5. The demo tier is now honest through second
+order everywhere except the corner core (its curvature constant is
+unmeasured; its widths 2e-6 make any plausible charge ~1e-12-1e-6
+— headroom, but measure before the campaign).

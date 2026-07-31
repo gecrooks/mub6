@@ -44,6 +44,12 @@ from parametric import root_data2
 
 PAD_CORR = 3.0    # pad on FD in-face correlated rates
 MONO_SLOP = 0.2   # overlap must grow by >20% of itself across slab
+# sampled pair-overlap curvature sups per stratum (4.41): theta ~
+# 2-6 everywhere; b2 ~ 0; b3 ~ 0 generic but 1/theta^2 on the
+# walls. Passed per tile — the certified pass derives per-tile
+# enclosures instead.
+CURV_GENERIC = (10.0, 10.0, 10.0)
+CURV_WALL = (10.0, 10.0, 1e5)
 
 
 def _polish(H, th):
@@ -76,7 +82,7 @@ def _repolish_pool(beta, ph0):
 
 
 def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
-                hf3=None, pool=None):
+                hf3=None, pool=None, curv=CURV_GENERIC):
     hf3 = hf if hf3 is None else hf3
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
@@ -172,7 +178,12 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 # the slab minimum sits at theta_lo, no theta tax
                 t_th = 0.0 if dO[0] > 1e-6 else abs(dO[0]) * span
                 t_if = abs(dO[1]) * hf + abs(dO[2]) * hf3
-                tax[i, j] = tax[j, i] = PAD_CORR * (t_th + t_if)
+                # second-order charge (4.41): per-stratum sampled
+                # curvature sups (certified pass: per-tile
+                # enclosures)
+                t2 = (curv[0] * span ** 2 + curv[1] * hf ** 2
+                      + curv[2] * hf3 ** 2)
+                tax[i, j] = tax[j, i] = PAD_CORR * (t_th + t_if) + t2
         adj = (O0 - tax - 1e-3 / 6.0 <= 0) & ~np.eye(n, dtype=bool)
         # deletion for signed mode: positive lower bound over the
         # box straight from the signed tax (no monotonicity needed
