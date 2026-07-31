@@ -445,3 +445,21 @@ PRICING NOW: ~60 s CPU per un-amortized 3e-3 tile x 7e7 tiles ~
 $35-58k; the chain lever (windows: skip T-escalation; enumeration:
 warm-tracked roots; rates: incremental) at its expected 10-15x
 lands $3-6k. Chain mode is the ONE unmeasured lever left.
+
+## 4.22 coarse_certify_tile v1: COMPLETE fat tiles certify at 3e-3
+
+The assembled entry point (coarse_tile.py: enumerate -> batched
+windows with one-level recursion -> pair coloring WITH wild vertices
+included at blanket 0.75 theta-l1 localization -> coarse sweep with
+blob-coverage-vs-root-list semantics) CERTIFIES complete tiles at
+h = 3e-3, including the census's worst point (0/52 fat valleys;
+colors 3) and a mixed point (colors 4). Coverage exact (0 uncovered
+blobs). 47-99 s/tile un-amortized CPU (sweep 30-70 s -> ~2 s on
+GPU; windows 13-25 s; enum 4 s). The key conceptual close: wild
+roots need no special certificate — they are colored VERTICES with
+fat localization, and the overlap-class margins absorb them.
+Remaining to the campaign: robustness across more points (running),
+chain mode (enum warm-tracking + window T-caching, the 10-15x),
+collar tiles, driver integration, and the coarse-mode lemma prose
+in PROOF_SKELETON. Pricing at v1 measured numbers: ~$30-60k raw,
+$3-6k with chains — the original tweet's number, reached honestly.
