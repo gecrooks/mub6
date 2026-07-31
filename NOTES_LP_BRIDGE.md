@@ -1046,3 +1046,11 @@ finitely many crossings; the countable tree with geometrically
 shrinking measure is compactness-argument shaped. The corner
 remains the one open piece, but it is now a REGULAR object with a
 concrete finite-looking attack, not a pathology.
+
+Addendum (final probe of the shift): the breaking-edge law holds
+ON all three lines — min per-basis max-edge = 0.44 theta
+(b2-line), 0.81 theta (b3-line), 0.63 theta (diagonal), 8
+near-bases each. As at every level of this hierarchy, the margins
+never degenerate; only the axis-aligned pointwise taxes do. The
+line walk needs line-adapted boxes (thin transverse to each
+line), and the margins to pay for them are measured and fat.
