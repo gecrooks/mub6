@@ -76,11 +76,11 @@ def _repolish_pool(beta, ph0):
 
 
 def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
-                hf3=None):
+                hf3=None, pool=None):
     hf3 = hf if hf3 is None else hf3
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
-    ph0 = _pool_phases(b_lo)
+    ph0 = _pool_phases(b_lo) if pool is None else np.asarray(pool)
     n = len(ph0)
     U0 = _uvecs(ph0)
     O0 = np.abs(U0.conj() @ U0.T)

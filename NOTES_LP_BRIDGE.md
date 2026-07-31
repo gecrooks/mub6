@@ -778,3 +778,26 @@ every seam:
   bulk  theta > 0.02          (coarse tiles, 6/6 + chains)
 Every piece runs on demonstrated machinery at ~5-6 s/tile; the
 face-collar handoff is double-covered on [0.0025, 0.005].
+
+## 4.37 Collar chains 4-5x; the (pi/3, pi/3) corner is the last special object
+
+collar_chain.py: warm pools (re-polish previous roots + 500-start
+top-up; count change falls back loudly to full enumeration).
+Measured on [0.005, 0.015], 20 tiles per line:
+  generic line (b3=2.0):  20/20 certified, 0 fallbacks,
+                          1.23 s/tile (4.9x vs 6 s cold)
+  wall line (b3=pi/3):    18/20, 1 fallback, 1.51 s/tile
+Collar campaign re-price at 1.2-1.5 s/tile: band ~6-8e4 tiles ->
+~1 CPU-day; full collar << 1 CPU-week single-core. Negligible.
+
+The 2 wall-line failures are NOT warm-pool artifacts (identical
+cold): they sit at b2 = 1.04-1.05 ~ pi/3 — the CORNER where a
+b2 = pi/3 locus crosses the b3 = pi/3 wall. Probes:
+  b2 = pi/3 OFF-wall (b3 = 2.0, 5.0): CERTIFIED chi 2 — the b2
+      surface is not special by itself;
+  corner cells (~pi/3, pi/3): FAIL box-size-independently even at
+      hf 5e-4 x hf3 2.5e-4 (792-878 edges, chi 14-23, 10/48 roots
+      gated at delta 5e-7) — deeper-than-1/theta degeneracy,
+      codim-3 point stratum (a point in the face x the theta
+      interval). Characterization running; measure-zero, bespoke
+      treatment affordable whatever it is.
