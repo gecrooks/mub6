@@ -412,3 +412,20 @@ fraction per fat tile (valley 11 was the first failure of ~50; if
 NEXT SESSION: (1) count fast movers per tile at 3e-3 across the
 survey points; (2) implement recursive valley split; (3) valley
 chain-amortization; then re-price.
+
+## 4.20 Fast-mover census (3 points, h = 3e-3): recursion alone
+##      is not enough; amortization is load-bearing
+
+Fast fractions 42/48, 22/56, 29/56 (88/39/52%) — heterogeneous;
+tube-class (sigma > 0.12) EMPTY at all three points: bulk roots are
+soft nearly everywhere. Pricing: recursive splitting buys only
+~1-2.5x over all-1e-3 valley work. THE remaining levers, in order:
+(1) CHAIN AMORTIZATION of valley windows along beta (windows vary
+smoothly; profile once, re-verify cheap — the cache.py pattern,
+expected 5-20x, now load-bearing); (2) window batching (30k tiny
+solves/tile in python loops, ~10x constant factor); (3) census cost
+itself says the per-window 1.4 s must drop for any plan. Bulk cost
+today: ~1e-3-equivalent valley work ~ $30k-scale before levers;
+with (1)+(2) plausibly $2-6k. Next session: implement valley window
+chain-reverification and measure its amortization factor — that
+number decides the final price.
