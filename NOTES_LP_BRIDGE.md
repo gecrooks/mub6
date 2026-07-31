@@ -636,3 +636,30 @@ PRICING, COMPLETE (all three pieces now measured):
 The theorem's cost IS the bulk cost.  No structural unknowns
 remain; remaining work is engineering (collar tiler, face walker,
 certified-grade pass, driver integration) and the campaign run.
+
+## 4.31 Collar breaking-edge law + face walk demonstrated (5/5 tiles, 5 s each)
+
+Per-basis breaking edges (the RIGHT collar margin — one certified
+non-orthogonal edge kills a 6-clique; the global min-pair c of the
+4.29 map was measuring irrelevant pairs):
+  max-edge overlap / theta, min over near-bases, constant in theta
+  over 0.0025-0.02:
+    F-point   0.419 (med 0.490)   [worst measured anywhere]
+    c-map-worst (1.1,1.043)  0.74-0.85
+    generic (1.0,2.0)        0.76-0.85
+  So EVERY near-basis clique carries an edge with overlap
+  >= 0.42*theta, ~4000x the worst global-min pair; the collar
+  edge-deletion certificate has fat, perfectly linear margins.
+  Deeper-collar bonus: near-basis count drops 8 -> 2 beyond
+  theta ~ 0.005 at generic points, and the face unbiasedness
+  defect GROWS with theta (0.166 -> 0.19 at 0.02) — margins only
+  improve away from the face.
+
+Face walk prototype (facewalk.py, sampled-grade rates RATE=0.5 =
+7x the measured 0.07, PAD 1e-3): per-tile = pool + 8-basis
+enumeration + max-MUB-clique sanity + 28 pair-defect lower bounds
+over an hf=0.05 in-face box.  5/5 probe tiles CERTIFIED (margins
+0.055-0.13), ~5 s/tile => full face = (2pi/0.1)^2 ~ 4e3 tiles
+~ 5.5 CPU-HOURS.  The face piece is demonstrated end-to-end at
+prototype grade; certified pass = s^2-chart rates + coverage
+wiring (existing machinery).
