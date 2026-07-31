@@ -37,25 +37,29 @@ def drive_line(theta_lo, theta_hi, b2, b3_start, b3_end,
     ph_prev = None
     ledger = []
     n_tiles = n_cert = 0
+    rung0 = 0                      # warm-started ladder entry
     while b3 < b3_end:
         if ph_prev is None:
             ph = _pool_phases((theta_lo, b2, b3))
         else:
             ph, _n, _fell = _warm_pool((theta_lo, b2, b3), ph_prev)
-        ok_rung = None
-        for hf, hf3 in RUNGS:
+        ok_i = None
+        for i in range(rung0, len(RUNGS)):
+            hf, hf3 = RUNGS[i]
             if collar_tile(theta_lo, theta_hi, b2, b3, hf,
                            adjacency="signed", hf3=hf3, pool=ph):
-                ok_rung = (hf, hf3)
+                ok_i = i
                 break
         n_tiles += 1
-        if ok_rung is None:
+        if ok_i is None:
             step = 2.0 * RUNGS[-1][1]
             ledger.append((b3, step, None))
+            rung0 = max(0, len(RUNGS) - 1)
         else:
             n_cert += 1
-            step = 2.0 * ok_rung[1]
-            ledger.append((b3, step, ok_rung))
+            step = 2.0 * RUNGS[ok_i][1]
+            ledger.append((b3, step, RUNGS[ok_i]))
+            rung0 = max(0, ok_i - 1)   # allow one upshift per step
         b3 += step
         ph_prev = ph
     dt = time.time() - t00

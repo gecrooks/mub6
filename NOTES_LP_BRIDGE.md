@@ -905,3 +905,15 @@ Driver fixes queued: warm-start the rung ladder at the previous
 position's rung (the 4-attempts-per-position tax dominated the
 72 min), and treat the corner core as its own scheduled patch
 rather than line-walking through it.
+
+## 4.43 Driver validated on the wall crossing: 13/13 at 2.2 s/tile
+
+With rung warm-start (ladder resumes one rung above the previous
+success), the b2 = 1.1 wall crossing (b3 = pi/3 +- 3e-3, slab
+[0.005, 0.015]) drives 13/13 CERTIFIED in 29 s — all at the
+coarsest rung (5e-3, 2.5e-4), no downshifts needed. The adaptive
+driver is the collar campaign's shape: warm pools + rung ladder +
+loud failures + JSONL ledger. The corner core remains a separate
+scheduled patch (4.42). Note the certified-grade pass will charge
+the 4.41 curvature term and push wall cells one rung down — which
+is exactly what the ladder is for.
