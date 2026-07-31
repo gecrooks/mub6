@@ -429,3 +429,19 @@ today: ~1e-3-equivalent valley work ~ $30k-scale before levers;
 with (1)+(2) plausibly $2-6k. Next session: implement valley window
 chain-reverification and measure its amortization factor — that
 number decides the final price.
+
+## 4.21 Night of engineering: 60x windows; recursion depth = 1 level
+
+Batched valley machinery (foldbatch.py): floors 40x (251->6 ms,
+sound regardless of Newton convergence — Fres is measured), block-
+warm batched profile, lite corners: 110 ms/window vs 6.5-12.6 s
+(~60-110x). Parity 11/13 on the check set (2 marginal windows
+become recursion candidates — cost, not soundness). Wide census
+(6 fresh points): 89% fast at 3e-3 with heavy variance — BUT
+recursion-depth measurement at the worst point (0/52 fat): 11/12
+fast movers certify at ONE octant level (8 subs at 1.5e-3); one
+root resists to 3.75e-4 (wild-file). True fast multiplier = 8.
+PRICING NOW: ~60 s CPU per un-amortized 3e-3 tile x 7e7 tiles ~
+$35-58k; the chain lever (windows: skip T-escalation; enumeration:
+warm-tracked roots; rates: incremental) at its expected 10-15x
+lands $3-6k. Chain mode is the ONE unmeasured lever left.
