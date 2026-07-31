@@ -819,3 +819,28 @@ dyadic level, a theta^2-scaled core box + a ring handing off to
 wall-scaling (1/theta) boxes. Cost hinges on the basin constant
 (where wall-scaling resumes) — being measured. The corner is a
 POINT in the face: even a generous ring count prices in CPU-hours.
+
+## 4.39 COMPLETE: every stratum of the domain certifies at demo grade
+
+Basin interior follows the theta^2 law exactly: d = 0.01 certifies
+at hf 1e-4, d = 0.005 at hf 2e-5, and the EXACT corner column
+(pi/3, pi/3) at hf 2e-6 (chi 2, 52 edges) — the width ladder
+matches |S_inface| ~ 2.2/theta^2 with the same 0.1-margin rule
+used everywhere else. Basin edge measured at ~theta_hi from the
+corner; ring counts O(100)/level; whole corner ~ CPU-hours.
+
+STATUS OF THE DEMONSTRATION TIER (2026-07-31, one day):
+  bulk          6/6 census + chains (amortized ~3x)      [prior]
+  generic collar 48/48 census, chains 1.23 s/tile (4.9x) [today]
+  walls +-pi/3  1/theta law, chi 2-3, in-census          [today]
+  corner basin  theta^2 law, chi 2                        [today]
+  exact corner  hf 2e-6, chi 2                            [today]
+  face + tubes  10/10 incl. walls, seam double-covered    [today]
+No open cells. No unpriced pieces. The three-piece architecture
+of 4.28 survived contact with every special locus it met; each
+special object yielded to a measured scaling law + the same
+signed-rate tile. Remaining work is now genuinely mechanical:
+certified-grade pass (dual-AD pair rates + 2nd-order remainders,
+interval enumeration coverage), driver integration, and the bulk
+campaign — the only expensive item ($5-50k depending on the
+mechanical multipliers).
