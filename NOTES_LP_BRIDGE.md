@@ -558,3 +558,24 @@ Collar (thickened Layer-3): the remaining new build, unpriced
 until designed. The bulk machine, as of this shift: architecture
 closed, certified end-to-end, chained, and priced from
 measurements at every stage.
+
+## 4.28 FINAL ARCHITECTURE: triples live ONLY on the face
+
+Existence ladder at (theta, 2.0412, pi): 48 MU vectors but ZERO
+orthonormal bases among them at theta = 0.001, 0.005, 0.02, 0.05,
+0.1 — triples exist only AT theta = 0 (the group-Hadamard face).
+Therefore the no-triple claim is TRUE throughout the open collar;
+the colors-7 probe failures were certifiability (fat drift bounds
+vs near-clique margins), not truth. Thickened Layer-3 is NOT needed
+for the collar. The theorem's final anatomy, all on existing
+tooling:
+  1. BULK: coarse no-triple tiles (chained, certified, priced).
+  2. COLLAR (0 < theta <~ 0.02): dyadic theta-scaled anisotropic
+     no-triple tiles (precision ~ margins, which shrink toward the
+     face; log-many dyadic levels x in-face tiling).
+  3. FACE (theta = 0): a 2-parameter Hadamard family = a Layer-3
+     no-fourth-basis walk, exactly the (complete) Szollosi-region
+     pattern; also the locus where classical LP/Delsarte applies.
+Remaining measurement: margin-vs-theta scaling in the collar (sets
+the dyadic tile count); remaining builds: collar tiler + face walk
+— both compositions of existing machinery.
