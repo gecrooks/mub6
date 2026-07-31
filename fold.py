@@ -386,7 +386,8 @@ def _rho_certified(fr, far_tax, cert_rates, r_t):
 
 
 def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
-                       verbose=False, cert_rates=None):
+                       verbose=False, cert_rates=None,
+                       corners_mode="full"):
     """Certify a shallow-valley (or fold) root over the tile.
 
     Searches a window half-length T such that the trench floor |phi| at
@@ -402,11 +403,15 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
     fr = fold_frame(H0, th0)
     u, P, w, Wc = fr["u"], fr["P"], fr["w"], fr["Wc"]
 
+    corner_set = [(1, 1, 1), (1, 1, -1), (1, -1, 1), (-1, 1, 1),
+                  (1, -1, -1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1)]
+    if corners_mode == "lite" and cert_rates is not None:
+        # floors-first mode: corners feed only the tube-radius
+        # estimate and the (advisory) sampled env — 2 diagonal
+        # corners suffice; the certified floors use the center only
+        corner_set = [(1, 1, 1), (-1, -1, -1)]
     corners = [np.zeros(3)] + [h * np.array(c, float)
-                               for c in [(1, 1, 1), (1, 1, -1), (1, -1, 1),
-                                         (-1, 1, 1), (1, -1, -1),
-                                         (-1, 1, -1), (-1, -1, 1),
-                                         (-1, -1, -1)]]
+                               for c in corner_set]
 
     def profile(T):
         # scale the grid with T: fixed cell size, else escalation
@@ -440,7 +445,15 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
     cert_T = None
     sampled_ok = None            # first window the SAMPLED test accepts
     while T <= T_cap:
-        tgrid, phi, Y, res_max = profile(T)
+        if cert_rates is not None:
+            n_loc = min(321, max(n_t, 1 + 2 * int(round((n_t - 1)
+                                                        * T / 0.7))))
+            tgrid = np.linspace(-T, T, n_loc)
+            from foldbatch import profile_batch
+            phi, Y, res_max = profile_batch(beta, th0, w, Wc, tgrid,
+                                            corners)
+        else:
+            tgrid, phi, Y, res_max = profile(T)
         env = np.min(np.abs(phi), axis=0)
         # far_tax arrives pre-padded (trench-local rate); modest headroom
         need = 1.2 * far_tax + PAD * res_max + 1e-4
@@ -467,7 +480,8 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
                 # ball quad.
                 rt_ = float(np.max(np.abs(Y - Y[0][None]))) + 0.01
                 rho_true = max(rt_ + 0.01, 0.035)
-                cT = certified_valley_floors(
+                from foldbatch import floors_batch
+                cT = floors_batch(
                     beta, np.broadcast_to(np.asarray(h, float), (3,)),
                     th0, w, Wc, tgrid, Y[0], cert_rates, rho_true)
                 # f_ok is diagnostic only: the floors are pure-phi
@@ -588,7 +602,8 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
         # R7 certified dichotomy floors (report-only for now): same
         # window, PAD-free. Consistency: certified dips must lie within
         # one cell of the sampled enclosures.
-        cert = certified_valley_floors(beta, np.broadcast_to(
+        from foldbatch import floors_batch as _fb
+        cert = _fb(beta, np.broadcast_to(
             np.asarray(h, float), (3,)), th0, w, Wc, tgrid, Yc,
             cert_rates, rho_y)
         # consistency: certified analysis stands alone (edge + F-side
