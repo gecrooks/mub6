@@ -663,3 +663,33 @@ over an hf=0.05 in-face box.  5/5 probe tiles CERTIFIED (margins
 ~ 5.5 CPU-HOURS.  The face piece is demonstrated end-to-end at
 prototype grade; certified pass = s^2-chart rates + coverage
 wiring (existing machinery).
+
+## 4.32 Collar tile demonstrated; the pi/3 branch surface is the corner stratum
+
+collar_tile.py, two designs tried:
+  v1 (center-anchored symmetric tax): 0/4 — provably wrong shape,
+  the breaking overlap c*theta HALVES toward the slab bottom while
+  a symmetric tax stays put.
+  v2 (bottom-anchored + FD theta-monotonicity + in-face-only
+  taxes, PAD 3x): slabs [0.005,0.015] and [0.0025,0.005],
+  hf 5e-3 —
+    F-point:        CERTIFIED, chi 7 -> 2 (both slabs, 110 edges
+                    deleted)
+    generic (1,2):  CERTIFIED, chi 8 -> 5
+    (1.1, 0.90):    CERTIFIED, chi 6 -> 2
+    (1.1, 1.20):    CERTIFIED, chi 6 -> 2
+    (1.1, pi/3):    FAILED — and diagnostically so: 1102 edges,
+                    chi 42, drift median 0.59 (theta-part 0.42,
+                    |S_theta| ~ 40), 132 pairs below overlap 0.01;
+                    root_data2 never fails, roots are isolated but
+                    ILL-CONDITIONED. Splitting hf 4x barely moves
+                    it (chi 9 -> 6): the fat is intrinsic.
+  Dephased-entry check: NOT a group-Hadamard locus (26 distinct
+  phases). Verdict: beta3 = pi/3 is an interior ROOT-DEGENERACY
+  (branch) surface — near-singular Jacobians, racing roots — the
+  same fold/valley anatomy the bulk's valley-window machinery
+  already handles. The collar x branch-surface corner stratum
+  needs the existing valley windows composed into the collar tile
+  (engineering, not new theory), mirroring the ~1-2% branch-aware
+  chart class long budgeted for the bulk.
+  ~5-6 s/tile at demo grade, in line with the face walk.
