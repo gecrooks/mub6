@@ -160,19 +160,39 @@ first-order exclusion cache (measured amortization ~3x, re-anchor
 cadence ~5; window sub-caching and GPU sweeps are the remaining
 mechanical multipliers).
 
-**Collar (< ~1%: neighborhoods of the triple-carrying strata,
-concentrated at the theta=0 branch face = the group-Hadamard
-locus).** Here triples EXIST, the Layer-1 claim is false, and the
-statement switches to the quadruple level: no fourth basis extends
-the strata's triples. This is the Layer-3 family machinery
-(complete, gap-free along the B-arc/Dita/Szollosi slices)
-THICKENED transversally via the s^2 branch chart and the certified
-K-drift substrate (bnrates). Status: ingredients built and
-measured; the thickened certificates are the remaining new build.
+**Collar (0 < theta <= theta_max ~ 0.02 around the branch face).**
+Measured fact (NOTES_LP_BRIDGE 4.28): triples exist ONLY at
+theta = 0 exactly; throughout the open collar the Layer-1 no-triple
+claim is TRUE, with the near-clique margin obeying the scaling law
+defect = c(b2,b3) * theta, c smooth in [~0.005, 0.075], and
+in-face gradient itself O(theta) (4.29). Collar certificate =
+bulk-grade coarse tile + theta-proportional drift taxes +
+certified edge-deletion (root-local pair-overlap lower bounds
+c*theta) on the near-clique pairs; organized as dyadic theta-slabs
+whose in-face resolution is theta-independent. Cost: log-many
+slabs x one bulk slab — negligible against the bulk.
+
+**Face (theta = 0 exactly, the 2-parameter group-Hadamard
+family).** Here triples exist and the statement is quadruple-level:
+no fourth basis. This is a Layer-3 family walk over a 2-parameter
+family (the pattern completed gap-free for the Szollosi region),
+run in the s^2 branch chart with certified K-drift (bnrates)
+supplying a positive transverse tube radius theta_0; the dyadic
+collar descends to theta_0 and the architecture closes finitely.
+Measured structure (4.30): 48 MU vectors, exactly 8 extra bases,
+and the max mutually-unbiased clique among them is ONE — a fourth
+MUB is obstructed at the basis-PAIR level with defect margin
+0.09-0.17 (median exactly 1/6, the class gap of 4.22). Margins of
+order 1e-1 against O(10) drift rates give theta_0 ~ 1e-2 and
+in-face steps ~1e-2: the face walk is thousands of tiles, and the
+dyadic collar needs only ~1-2 levels.
+(The face is the Jaming-Matolcsi-Mora-Szollosi Fourier-family
+locus — excluded pointwise in the literature; the tube version is
+what the theorem needs.)
 
 **Seam.** The regimes self-delimit: bulk tiles fail loudly exactly
-where triples appear, so the collar's extent is discovered by the
-machine, not assumed.
+where near-cliques appear, so the collar's extent is discovered by
+the machine, not assumed.
 
 Assumption ledger deltas vs section 4: the coarse composition
 reintroduces PROTOTYPE-grade elements (batched-Newton anchors are

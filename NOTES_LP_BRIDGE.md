@@ -608,3 +608,31 @@ Residual risk: c has an interior minimum (~0.005 near b2=2.10 at
 b3=pi); if c -> 0 anywhere on the face that point is a deeper
 stratum (codim-2) needing its own scaled chart.  Next: map c over
 the face.
+
+## 4.30 Face obstruction measured: pair-level, margin ~ 1/6 — face walk is trivial
+
+At theta = 1e-6 (face proxy; theta=0 is the branch-chart
+singularity), both the F-point (2.0412, pi) and a generic face
+point (1.0, 2.0): 48 MU vectors containing exactly 8 orthonormal
+bases, and the maximum mutually-unbiased clique among those bases
+is 1 — NO pair of extra bases is mutually unbiased.  Since any 4th
+MUB alongside {I, H} requires TWO pairwise-unbiased extra bases,
+the obstruction sits at the basis-pair level with defect margin
+(max entrywise ||<u,v>|^2 - 1/6|, min over the 28 pairs):
+  F-point:  min 0.0917, median 0.1666 (= 1/6, the class gap of
+            4.22 — the LP bridge surfaces as the face margin!)
+  generic:  min 0.1649, median 0.1662
+Certificate per face tile: root-list coverage (existing fat-sweep
+machinery) + 8-basis enumeration + 28 certified pair-defect lower
+bounds.  Margins ~ 1e-1 vs drift rates O(10) -> in-face steps and
+transverse tube radius theta_0 both ~ 1e-2.  Face walk ~ 1e3-1e4
+cheap tiles; dyadic collar needs ~1-2 levels (theta_max 0.02 ->
+theta_0 ~ 1e-2).
+
+PRICING, COMPLETE (all three pieces now measured):
+  bulk   $30-50k CPU today, $5-15k post mechanical stack;
+  collar ~ 1-2 x one bulk slab (negligible);
+  face   ~ 1e3-1e4 pair-defect tiles (negligible).
+The theorem's cost IS the bulk cost.  No structural unknowns
+remain; remaining work is engineering (collar tiler, face walker,
+certified-grade pass, driver integration) and the campaign run.
