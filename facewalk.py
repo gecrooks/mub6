@@ -35,6 +35,9 @@ from mub import (bases_matrix, find_bases, find_mu_vectors,
 
 TH_PROXY = 1e-6      # face proxy; karlsson_map is singular at 0
 RATE_FACE = 0.5      # sampled in-face defect drift 0.07, padded 7x
+RATE_TH = 1.0        # sampled theta drift of the unbias defect:
+                     # measured +0.0002 over theta 0-0.02 (~0.01),
+                     # padded 100x — the defect is flat in theta
 PAD = 1e-3           # theta-proxy + enumeration slop (sampled grade)
 
 
@@ -52,9 +55,12 @@ def face_pool(b2, b3, n_starts=6000, seed=3):
     return np.array(ps)
 
 
-def face_tile(b2, b3, hf):
-    """Certify (prototype grade) 'no fourth basis' on the in-face box
-    [b2 +- hf] x [b3 +- hf]. Returns (ok, n_bases, worst_margin)."""
+def face_tile(b2, b3, hf, th_tube=0.0):
+    """Certify (prototype grade) 'no fourth basis' on the box
+    [b2 +- hf] x [b3 +- hf] x theta in [0, th_tube]. The theta-tube
+    is the collar handoff: the collar's dyadic slabs descend to
+    theta_lo = th_tube and this certificate covers the rest.
+    Returns (ok, n_bases, worst_margin)."""
     P = face_pool(b2, b3)
     bases = find_bases(P, tol=1e-5)
     if len(bases) != 8:
@@ -64,7 +70,8 @@ def face_tile(b2, b3, hf):
     for a, b in combinations(range(nb), 2):
         A = bases_matrix(P, bases[a]).conj().T @ bases_matrix(P, bases[b])
         defect = float(np.max(np.abs(np.abs(A) ** 2 - 1.0 / 6.0)))
-        worst = min(worst, defect - RATE_FACE * hf * np.sqrt(2) - PAD)
+        worst = min(worst, defect - RATE_FACE * hf * np.sqrt(2)
+                    - RATE_TH * th_tube - PAD)
     return worst > 0, nb, worst
 
 

@@ -762,3 +762,19 @@ With the final configuration (signed analytic rates, adaptive
 delta ladder, hf 5e-3, hf3 2.5e-4, greedy+DSATUR): the 48-point
 collar census certifies 48/48 — no open cells anywhere in the
 collar, band and walls included, ~6 s/tile at demo grade.
+
+## 4.36 Seam-complete: face theta-tubes meet the collar (10/10)
+
+facewalk.py v2 adds the theta-tube term (RATE_TH = 1.0 = the
+measured theta-drift of the unbias defect ~0.01, padded 100x —
+the defect is flat in theta). 10/10 face tiles CERTIFY with
+tubes 0.0025 and 0.005 at hf 0.05, margins 0.050-0.126,
+INCLUDING both wall points (1.1, pi/3) and (2.3, 5pi/3).
+The domain decomposition is now demonstrated with OVERLAP at
+every seam:
+  face  theta in [0, 0.005]   (tube certificates, 10/10)
+  collar theta in [0.0025, 0.02] (dyadic slabs, census 48/48,
+         deepest slab [0.0025, 0.005] certified)
+  bulk  theta > 0.02          (coarse tiles, 6/6 + chains)
+Every piece runs on demonstrated machinery at ~5-6 s/tile; the
+face-collar handoff is double-covered on [0.0025, 0.005].
