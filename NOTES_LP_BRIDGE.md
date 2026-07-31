@@ -801,3 +801,21 @@ b2 = pi/3 locus crosses the b3 = pi/3 wall. Probes:
       codim-3 point stratum (a point in the face x the theta
       interval). Characterization running; measure-zero, bespoke
       treatment affordable whatever it is.
+
+## 4.38 Corner law: |S_inface| = (2.2, 1.1)/theta^2, S_theta ~ 1
+
+Corner characterization at (theta, pi/3, pi/3):
+  - NOT a group-Hadamard locus (dephased dev 0.5);
+  - NO exact bases at theta = 0.005-0.05 — no-triple TRUE at the
+    corner as everywhere off the theta=0 face;
+  - racing law: med |S_b2| = 2.17/theta^2, |S_b3| = 1.09/theta^2
+    (three-digit fit over theta 0.01-0.04), while S_THETA ~ 1 —
+    supertame in theta;
+  - root_data2 recovers 48/48 with the adaptive delta ladder at
+    theta >= 0.01.
+Treatment: the corner is a self-similar codim-3 funnel walked
+DOWN in theta (S_theta ~ 1 makes theta-steps O(h) cheap): per
+dyadic level, a theta^2-scaled core box + a ring handing off to
+wall-scaling (1/theta) boxes. Cost hinges on the basin constant
+(where wall-scaling resumes) — being measured. The corner is a
+POINT in the face: even a generous ring count prices in CPU-hours.
