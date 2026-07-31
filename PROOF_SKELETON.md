@@ -171,12 +171,17 @@ certified edge-deletion (root-local pair-overlap lower bounds
 c*theta) on the near-clique pairs; organized as dyadic theta-slabs
 whose in-face resolution is theta-independent. Cost: log-many
 slabs x one bulk slab — negligible against the bulk. Demonstrated
-(4.32-4.33): bottom-anchored monotone edge-deletion certifies
-36/48 face-census anchors at ~5 s/tile; the ONLY failures are the
-mirror branch surfaces beta3 = +-pi/3 (root-degeneracy, racing
-roots), whose residual band after adaptive splitting is
-|beta3 -+ pi/3| < ~0.02 — handled by composing the bulk's
-valley-window machinery into the collar tile.
+(4.32-4.34): v2 (bottom-anchored monotone edge-deletion) certifies
+36/48 face-census anchors at ~5 s/tile, failing only on the mirror
+branch surfaces beta3 = +-pi/3 where the wall-normal sensitivity
+races as |S_b3| = 10.8/theta; v3 (signed ANALYTIC pair rates from
+fine-delta S data, theta-term dropped on certified growth,
+b3-thin boxes hf3 ~ 0.1 theta_lo) certifies the wall-exact cells
+too (chi 2-3, both walls, both slab depths) — ONE uniform tile
+design covers the whole collar including the band, no
+valley-window composition needed, ~4-5 CPU-days for the full band
+at demo grade. The signed-rate structure is the certified-grade
+design (dual-AD pair data + second-order remainders).
 
 **Face (theta = 0 exactly, the 2-parameter group-Hadamard
 family).** Here triples exist and the statement is quadruple-level:
