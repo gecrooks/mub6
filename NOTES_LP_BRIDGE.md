@@ -693,3 +693,18 @@ collar_tile.py, two designs tried:
   (engineering, not new theory), mirroring the ~1-2% branch-aware
   chart class long budgeted for the bulk.
   ~5-6 s/tile at demo grade, in line with the face walk.
+
+## 4.33 Collar census: 36/48; the ONLY failures are the beta3 = +-pi/3 surfaces
+
+48-point demo-grade census (6 x 8 grid over the face, slab
+[0.005, 0.015], hf 5e-3): 36 CERTIFIED, and ALL 12 failures sit at
+beta3 in {1.043, 5.257} — the grid points nearest pi/3 and 5pi/3 —
+at EVERY beta2. The degenerate set is exactly the mirror pair of
+branch surfaces beta3 = +-pi/3 (beta2-independent); no other
+special loci at this resolution. Adaptive closure measured: the
+cell at pi/3 + 0.02 fails at hf 5e-3 but CERTIFIES at hf 2.5e-3
+(chi -> 4); so the residual corner stratum is the band
+|beta3 -+ pi/3| < ~0.02, to be handled by composing the bulk's
+valley-window machinery into the collar tile (racing-root
+territory, 4.32). Generic collar cost confirmed: ~5-6 s/tile at
+demo grade, uniformly across the face.
