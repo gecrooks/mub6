@@ -1093,3 +1093,27 @@ anywhere) encloses ALL 48 roots with ~0.3% relative width
 certified-grade job by necessity, not just by preference: the
 deepest stratum of the domain is reachable ONLY by the rigorous
 substrate. A fitting place for the demonstration tier to end.
+
+## 4.51 THE CROSSING CERTIFIES — every tested cell in the domain closes
+
+collar_tile signed mode gained a certified-S fallback (certpair's
+Krawczyk enclosure path) for roots where FD continuation is dead.
+The line-crossing cell (pi/3 - 6e-6, pi/3 + 1e-5) — the deepest
+stratum found today, where root_data2 gates out 48/48 —
+CERTIFIES at the FIRST rung: chi 5, 92 edges, all 48 roots on
+certified-S. Demo-grade caveat: the S enclosure err is not yet
+charged into the tax (the certified pass will fold it into slop).
+With this, EVERY cell tested today, at every stratum:
+  bulk / generic collar / walls / basin / corner column / all
+  three lines / the crossing
+certifies at demo grade. The remaining open set is not
+compute-shaped but paper-shaped:
+  1. the theta = 0 corner face anchor (MU continua — a special
+     chart or exact analysis of the 12th-root limit matrix);
+  2. the termination lemma for the corner recursion (each level:
+     3 lines + crossings, displacements ~ theta-scale, margins
+     0.4-0.8 theta never degenerating — compactness-argument
+     shaped).
+The day ends with the sampled machinery dead at the bottom of the
+funnel and the certified machinery — built this afternoon —
+carrying the last cell. The substrate is the story.

@@ -142,7 +142,7 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
         # where per-root |S_b3| ~ 10.8/theta races). Sampled grade
         # via PAD; the certified pass adds 2nd-order remainders.
         Ss = []
-        ngate = 0
+        ngate = ncert = 0
         for i in range(n):
             Si_ok = None
             for delta in (1e-5, 2e-6, 5e-7):
@@ -154,8 +154,24 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                         break
                 except Exception:
                     continue
+            if Si_ok is None:
+                # FD continuation dead (deep strata): fall back to
+                # the certified enclosure (Krawczyk + analytic J +
+                # dual-AD dg/dbeta — no FD; 4.50). S0 used as the
+                # rate; its enclosure err is charged into slop by
+                # the certified pass — demo grade here.
+                try:
+                    from certpair import certified_S
+                    S0, _err, _c, _r = certified_S(b_lo, ph0[i])
+                    Si_ok = S0
+                    ncert += 1
+                except Exception:
+                    pass
             Ss.append(Si_ok)
             ngate += Si_ok is None
+        if ncert:
+            print(f"    certified-S fallback: {ncert}/{n}",
+                  flush=True)
         if ngate:
             print(f"    signed: {ngate}/{n} roots gated out",
                   flush=True)
