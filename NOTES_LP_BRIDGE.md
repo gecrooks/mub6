@@ -864,3 +864,24 @@ in tax fatness. Remaining certified-grade links: the theta-ball
 Lipschitz of dg/dbeta (replace sampled PAD with the interval
 Hessian machinery) and second-order pair-rate remainders over the
 box — both standard moves in the existing substrate.
+
+## 4.41 Second-order honesty: wall beta3-curvature = 1/theta^2, hf3 ~ theta^1.5
+
+Measured pair-overlap curvatures at the breaking edges (second
+differences through re-polished roots):
+  generic: curv_theta ~ 5.5, in-face ~ 0 — h^2 terms 1e-4-1e-10,
+      negligible at demo widths;
+  wall:    curv_theta ~ 2.2, curv_b2 ~ 0, curv_b3 ~ 4.7e4 ~
+      1/theta_lo^2 — the h^2 term at the demo width hf3 = 2.5e-4
+      is 2.95e-3 > the breaking overlap 1.95e-3(!). The demo
+      census's first-order taxes were silently benefiting from
+      the omitted remainder on the wall strip.
+Honest widths: hf3 <~ sqrt(0.4 theta / (3 curv)) ~ 0.4 theta^1.5
+on the wall (1e-4 at theta_lo 0.005). Verified: wall tiles at
+hf3 = 1e-4 CERTIFY (chi 2, 48-64 edges) with room for the
+explicit curvature charge. Cost impact: ~2.5x more beta3-tiles on
+the wall strip only — pricing unchanged in substance (collar
+still ~ CPU-days). Remaining certified-grade links after this:
+interval Hessian for the theta-ball Lipschitz of dg/dbeta, and
+wiring the curvature charge into the tile's tax line — both
+existing-substrate moves.
