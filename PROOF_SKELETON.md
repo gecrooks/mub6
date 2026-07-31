@@ -170,7 +170,13 @@ bulk-grade coarse tile + theta-proportional drift taxes +
 certified edge-deletion (root-local pair-overlap lower bounds
 c*theta) on the near-clique pairs; organized as dyadic theta-slabs
 whose in-face resolution is theta-independent. Cost: log-many
-slabs x one bulk slab — negligible against the bulk.
+slabs x one bulk slab — negligible against the bulk. Demonstrated
+(4.32-4.33): bottom-anchored monotone edge-deletion certifies
+36/48 face-census anchors at ~5 s/tile; the ONLY failures are the
+mirror branch surfaces beta3 = +-pi/3 (root-degeneracy, racing
+roots), whose residual band after adaptive splitting is
+|beta3 -+ pi/3| < ~0.02 — handled by composing the bulk's
+valley-window machinery into the collar tile.
 
 **Face (theta = 0 exactly, the 2-parameter group-Hadamard
 family).** Here triples exist and the statement is quadruple-level:
