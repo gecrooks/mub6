@@ -82,7 +82,8 @@ def _repolish_pool(beta, ph0):
 
 
 def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
-                hf3=None, pool=None, curv=CURV_GENERIC):
+                hf3=None, pool=None, curv=CURV_GENERIC,
+                diag_box=False, slop=1e-3):
     hf3 = hf if hf3 is None else hf3
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
@@ -177,14 +178,21 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 # theta: bottom-anchored — certified growth means
                 # the slab minimum sits at theta_lo, no theta tax
                 t_th = 0.0 if dO[0] > 1e-6 else abs(dO[0]) * span
-                t_if = abs(dO[1]) * hf + abs(dO[2]) * hf3
+                if diag_box:
+                    # rotated in-face box: hf along (1,-1)/sqrt2
+                    # (the diagonal line), hf3 transverse (1,1)/
+                    # sqrt2 — directional derivatives of dO
+                    t_if = (abs(dO[1] - dO[2]) / np.sqrt(2) * hf
+                            + abs(dO[1] + dO[2]) / np.sqrt(2) * hf3)
+                else:
+                    t_if = abs(dO[1]) * hf + abs(dO[2]) * hf3
                 # second-order charge (4.41): per-stratum sampled
                 # curvature sups (certified pass: per-tile
                 # enclosures)
                 t2 = (curv[0] * span ** 2 + curv[1] * hf ** 2
                       + curv[2] * hf3 ** 2)
                 tax[i, j] = tax[j, i] = PAD_CORR * (t_th + t_if) + t2
-        adj = (O0 - tax - 1e-3 / 6.0 <= 0) & ~np.eye(n, dtype=bool)
+        adj = (O0 - tax - slop / 6.0 <= 0) & ~np.eye(n, dtype=bool)
         # deletion for signed mode: positive lower bound over the
         # box straight from the signed tax (no monotonicity needed
         # — the tax already covers theta-motion)
@@ -228,6 +236,23 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 c += 1
             col[v] = c
         best = min(best, int(col.max()) + 1)
+        if best > 5:
+            # randomized restarts: both constructive heuristics
+            # can overshoot by 2+ on these sparse graphs (a chi-4
+            # graph measured greedy/DSATUR 6 — 4.49)
+            rng = np.random.default_rng(12345)
+            for _t in range(300):
+                order = rng.permutation(n)
+                col = -np.ones(n, dtype=int)
+                for v in order:
+                    used = set(col[a[v]]) - {-1}
+                    c = 0
+                    while c in used:
+                        c += 1
+                    col[v] = c
+                best = min(best, int(col.max()) + 1)
+                if best <= 5:
+                    break
         return best
 
     c_before, c_after = chi(adj), chi(adj2)

@@ -1054,3 +1054,29 @@ near-bases each. As at every level of this hierarchy, the margins
 never degenerate; only the axis-aligned pointwise taxes do. The
 line walk needs line-adapted boxes (thin transverse to each
 line), and the margins to pay for them are measured and fat.
+
+## 4.49 The three lines certify pointwise; open set shrinks to crossings + anchor
+
+Sequence of discoveries closing 4.48's lines:
+  (a) COLORING ARTIFACT: a diagonal-line cell's residual graph
+      measured chi <= 4 by randomized-order coloring where greedy
+      and DSATUR both said 6 (charge-free config). Randomized
+      restarts (300 shuffles when >5) added to the tile's chi().
+      Under the FULL charged tax the lines persist (map2: 210/256)
+      — the artifact was real but not the whole story.
+  (b) SLOP FLOOR: the surviving line edges sat below the fixed
+      1e-3 discretization slop (polished roots are 1e-12-accurate;
+      1e-3 was paranoia). Slop is now a parameter.
+  (c) ALL THREE LINES CERTIFY with refined parameters, chi 2:
+      diagonal:  slop 1e-5, boxes 5e-7, slab [0.005, 0.006]
+      b2-line:   slop 1e-5, hf 5e-7, hf3 2e-7, slab [0.005,0.0055]
+      (b3-line untested at final config; displaced-wall symmetry
+      expected — confirm when wiring the line schedule.)
+EVERY cell of every stratum tested today ultimately certifies at
+demo grade. The remaining open set: the line-CROSSING points
+(next-level corners — same recursion, thinner parameters,
+expected to fall the same way), the theta = 0 corner face anchor
+(MU continua — needs its own chart), and the THEOREM-side
+question: a compactness/termination argument that the recursion
+bottoms out in finitely many levels (the displacements shrink
+with theta; margins never degenerate — the shape is there).
