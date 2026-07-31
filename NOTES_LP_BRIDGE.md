@@ -1005,3 +1005,44 @@ Treatment (the concrete version of 4.46 option (i)+(ii)):
      class).
 Bounded, concrete, all on existing patterns — tomorrow's first
 problem.
+
+## 4.48 The tail decodes: THREE STRAIGHT LINES, not a fractal
+
+16x16 map of the corner core at hf 2e-6 (slab [0.005, 0.01],
+209/256 certified, 1.6 s/tile; rows = b2, cols = b3):
+
+  ##########.#####
+  ##########.##.##
+  ##########.#####
+  ##########.#.###
+  ##########...###
+  #########...####
+  ................
+  ##########...###
+  #########..#####
+  ########.#.#####
+  #######.##.#####
+  ######.###.#####
+  #####.####.#####
+  ####.#####.#####
+  ###.######.#####
+  ##.#######.#####
+
+The fail set is exactly three straight lines:
+  1. b2 = pi/3 - 6e-6      (theta-displaced b2-surface, full row)
+  2. b3 = pi/3 + 1e-5      (theta-displaced wall, full column)
+  3. b2 + b3 = 2pi/3 + 8e-6 (ANTI-DIAGONAL — a third resonance
+     locus, previously unknown; displacements all ~ theta-scale)
+Also: the theta = 0 anchor (pi/3, pi/3) face point has 0 exact
+bases among 48 MU vectors (continua signature — the face walk
+needs a special chart there; naive F6(a,b) phase-multiset fit
+fails at loss 0.93, identification open).
+REVISED VERDICT on 4.46: the tail is STRUCTURED, not fractal —
+three smooth codim-1 curve families per level, crossings = next-
+level corners (same shape recursively, displacements shrinking
+with theta). Treatment: walk the three line-families with the arc
+pattern (each has its own breaking margins), recurse on the
+finitely many crossings; the countable tree with geometrically
+shrinking measure is compactness-argument shaped. The corner
+remains the one open piece, but it is now a REGULAR object with a
+concrete finite-looking attack, not a pathology.
