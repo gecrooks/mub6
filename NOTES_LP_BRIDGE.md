@@ -1117,3 +1117,18 @@ compute-shaped but paper-shaped:
 The day ends with the sampled machinery dead at the bottom of the
 funnel and the certified machinery — built this afternoon —
 carrying the last cell. The substrate is the story.
+
+Addendum to 4.51 (the honest last word): charging the certified-S
+enclosure error into the tax (te = (err_i + err_j) * 5/6 *
+(span + hf + hf3), now in the code, zero for FD-sourced roots)
+FAILS the crossing (complete graph — the err*span term ~0.85
+swamps everything) and the b3-line cell (42/48 on fallback,
+chi 7). The 4.51 crossing certification is therefore demo-grade
+with a REAL open caveat, not a formality: closing it needs
+(a) error-robust growth testing (dO[0] - err > 0 gates the
+span-tax drop; error must not multiply span otherwise), and
+(b) tighter enclosures — err ~900 is kappa * wid with kappa =
+|J0^-1| large at the crossing; the wid side (dual-AD dgdb width
++ prototype theta-ball pad) is where to push. Both are bounded
+certified-substrate work. Every OTHER stratum's certification is
+unaffected (FD-sourced roots carry zero err charge).

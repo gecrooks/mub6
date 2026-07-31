@@ -142,6 +142,7 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
         # where per-root |S_b3| ~ 10.8/theta races). Sampled grade
         # via PAD; the certified pass adds 2nd-order remainders.
         Ss = []
+        Serr = np.zeros(n)
         ngate = ncert = 0
         for i in range(n):
             Si_ok = None
@@ -162,8 +163,9 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 # the certified pass — demo grade here.
                 try:
                     from certpair import certified_S
-                    S0, _err, _c, _r = certified_S(b_lo, ph0[i])
+                    S0, err, _c, _r = certified_S(b_lo, ph0[i])
                     Si_ok = S0
+                    Serr[i] = err
                     ncert += 1
                 except Exception:
                     pass
@@ -207,7 +209,12 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 # enclosures)
                 t2 = (curv[0] * span ** 2 + curv[1] * hf ** 2
                       + curv[2] * hf3 ** 2)
-                tax[i, j] = tax[j, i] = PAD_CORR * (t_th + t_if) + t2
+                # certified-S enclosure error charge (4.51):
+                # |Delta dO| <= (err_i + err_j) * 5/6 per direction
+                te = ((Serr[i] + Serr[j]) * 5.0 / 6.0
+                      * (span + hf + hf3))
+                tax[i, j] = tax[j, i] = \
+                    PAD_CORR * (t_th + t_if + te) + t2
         adj = (O0 - tax - slop / 6.0 <= 0) & ~np.eye(n, dtype=bool)
         # deletion for signed mode: positive lower bound over the
         # box straight from the signed tax (no monotonicity needed
