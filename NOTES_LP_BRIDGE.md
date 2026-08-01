@@ -1132,3 +1132,34 @@ span-tax drop; error must not multiply span otherwise), and
 + prototype theta-ball pad) is where to push. Both are bounded
 certified-substrate work. Every OTHER stratum's certification is
 unaffected (FD-sourced roots carry zero err charge).
+
+## 4.52 Overnight (1)+(2): cone-limit margin measured POSITIVE; anchor is precision-, not structure-limited
+
+(2) TERMINATION LEMMA GROUNDWORK (PROOF_SKELETON §6 drafted —
+cone compactification: rescale (s,t) = (beta - c*)/theta; the
+corner region becomes a compact cylinder K; walls/lines/crossings
+are FIXED subsets of K, so the "recursion" is one finite cover):
+Claim C1 measured: the rescaled breaking-edge margin mu(s,t,theta)
+is theta-INDEPENDENT to 3 digits along every tested ray and
+radius (theta 0.01 -> 0.0025):
+  s-axis 0.32-0.38, t-axis 0.38-0.45, antidiag 0.38-0.43,
+  diag 0.38-0.71, generic 0.38-0.80.
+Measured uniform floor mu_0 >= 0.32. The cone-limit function
+exists and is positive — C1 is empirically true, and the
+termination argument stands on it.
+
+(1) ANCHOR:
+  - Identification: NOT F6 and not the tested F6(a,b) points
+    (permutation-invariant Haagerup multiset differs: the corner
+    limit has phases at odd pi/6-multiples shifted +-0.0326 —
+    F6's are pure pi/3-lattice). The anchor is its own object;
+    first dephased row is exact 12th roots, full invariant is not.
+  - The apparent "root collapse" below theta ~ 2e-3 on the corner
+    column (LM finds nothing under 1e-10) is a DOUBLE-PRECISION
+    ARTIFACT: the residual floor tracks eps_machine * cond(J)
+    (cond ~ 1/theta^2: floor 8.5e-11 at 2e-3, 9e-10 at 5e-4).
+    High-precision (mpmath dps=40) Newton verification running:
+    if roots converge to 1e-32 residual with positive min-sv(J),
+    the column has isolated ill-conditioned roots all the way
+    down (and the earlier "continua" reading at the face anchor
+    needs the same re-examination).
