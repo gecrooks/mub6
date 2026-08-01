@@ -144,11 +144,23 @@ def coarse_certify_tile(beta, h=3e-3):
         if bad.any():
             from coarse_chain import _refine_out
             from rates import certified_rates as _crates
+            cr4 = _crates(beta, (h, h, h))
+            C_bad = C_h[bad]
             W_bad = np.repeat(r_h[bad].max(axis=1)[:, None], 5,
                               axis=1)
-            cr4 = _crates(beta, (h, h, h))
-            if not _refine_out(beta, h, C_h[bad], W_bad, cr4):
-                uncovered = int(bad.sum())
+            # chunked mini-sweeps: bounded memory per call; a
+            # chunk that fails to exclude marks all its cells
+            # uncovered (loud, conservative)
+            CH = 50
+            for k0 in range(0, len(C_bad), CH):
+                try:
+                    ok_ref = _refine_out(beta, h,
+                                         C_bad[k0:k0 + CH],
+                                         W_bad[k0:k0 + CH], cr4)
+                except RuntimeError:
+                    ok_ref = False       # budget blown = loud fail
+                if not ok_ref:
+                    uncovered += len(C_bad[k0:k0 + CH])
     t_swp = time.time() - t0s
     bound = cols                 # wilds are IN the coloring now
     ok = bound <= 5 and uncovered == 0
