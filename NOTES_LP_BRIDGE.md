@@ -1344,3 +1344,24 @@ can't see near-bases at a 3e-3 proxy where wall orthogonality
 defects are ~0.4-0.9 * proxy. face_tile now scales the tolerance
 with the proxy (30 * TH_PROXY), matching the measured wall/corner
 structure (8 near-bases, margins 0.10-0.17). Refine v2 in flight.
+
+## 4.60 FACE COMPLETE: 3969/3969 tiles certified (demo grade)
+
+Final accounting of the full face execution (hf 0.05, theta-tube
+0.005, JSONL ledgers, restart-safe):
+  pass 1 (proxy 1e-6):        3777/3969, min margin 0.0496
+  refine (proxy 3e-3 + proxy-scaled near-basis tolerance
+          + stratum-count cap 100): 112/112 of the remaining
+          tiles, min margin ~0.05 — including the four b3-walls
+          (odd-k: 8 near-bases; even-k: 8-16, count fragile and
+          not load-bearing), the corner rows, and 12 tiles on the
+          pi/3 wall carrying the 70-near-basis F(1/6,0)-class
+          Fourier stratum (richest stratum seen; pair-level
+          obstruction holds there too, as JMMS requires).
+TOTAL: 3969/3969. The face piece of the theorem is EXECUTED at
+demo grade — the first fully executed piece of the domain
+decomposition. Wall-clock ~75 min on 7 cores across passes.
+Certified-pass upgrades needed per tile: dual-AD in-face rates
+(replace RATE_FACE 0.5 sample-pad), interval pair defects,
+enumeration coverage (fat-sweep hulls), and the stable kernel
+(4.57) at the corner rows.

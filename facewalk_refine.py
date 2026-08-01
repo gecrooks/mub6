@@ -1,7 +1,7 @@
 """Refinement pass over the face-walk ledger: rerun failed tiles
 at the safe proxy theta = 3e-3 (wall/corner tiles break the
 1e-6-proxy enumeration via the 1/theta wall racing — NOTES 4.58).
-Appends results to facewalk_ledger2.jsonl."""
+Appends results to facewalk_ledger3.jsonl."""
 
 import json
 import time
@@ -29,7 +29,7 @@ def tile_job(args):
 
 def main():
     fails = []
-    for line in open("facewalk_ledger.jsonl"):
+    for line in open("facewalk_ledger2_pass1.jsonl"):
         d = json.loads(line)
         if not d["ok"]:
             fails.append((d["b2"], d["b3"]))
@@ -37,7 +37,7 @@ def main():
           flush=True)
     n_ok = n_bad = 0
     t0 = time.time()
-    with open("facewalk_ledger2.jsonl", "w") as led:
+    with open("facewalk_ledger3.jsonl", "w") as led:
         with ProcessPoolExecutor(max_workers=7) as ex:
             for r in ex.map(tile_job, fails, chunksize=4):
                 led.write(json.dumps(r) + "\n")
@@ -47,7 +47,7 @@ def main():
           f"{n_bad} still failing [{time.time()-t0:.0f}s]",
           flush=True)
     if n_bad:
-        for line in open("facewalk_ledger2.jsonl"):
+        for line in open("facewalk_ledger3.jsonl"):
             d = json.loads(line)
             if not d["ok"]:
                 print("  ", {k: d[k] for k in d

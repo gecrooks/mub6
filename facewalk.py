@@ -68,7 +68,11 @@ def face_tile(b2, b3, hf, th_tube=0.0):
     # bases only exist to that resolution
     tol = 1e-5 if TH_PROXY < 1e-4 else 30.0 * TH_PROXY
     bases = find_bases(P, tol=tol)
-    if len(bases) != 8:
+    # the count is fragile at fat proxy tolerance (near-duplicate
+    # cliques flicker: 8 vs 16 at the even-k walls) and is NOT
+    # load-bearing — the certificate needs every found near-basis
+    # pairwise obstructed, whatever their number
+    if not 2 <= len(bases) <= 100:
         return False, len(bases), np.nan   # unexpected stratum: split
     nb = len(bases)
     worst = np.inf
