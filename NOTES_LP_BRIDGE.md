@@ -1229,3 +1229,24 @@ covered by the face certificate (margin >= 0.10 at the corner
 point itself), and the finite-cover conclusion of SKELETON §6.
 Remaining for (2): certified-grade continuity of the rescaled
 family (s^2-chart / interval map — substrate work, not geometry).
+
+## 4.55 Identification correction and honest final state
+
+CORRECTION to 4.54 item 1: the "27 F6(a,b) matches" used an
+INVALID hand-rolled F6(a,b) (row-varying column phases — not even
+Hadamard). Redone with the repo's true fourier_family(x1, x2):
+  - the corner limit's full Haagerup multiset matches the TRUE
+    Fourier family at 216 lattice points (all x2 at odd twelfths,
+    etc.) — the invariant is constant along large family chunks
+    and does not pin a point;
+  - direct permutation-dephasing equivalence FAILS for the 4
+    nearest candidates (F(0,1/12), F(0,1/4), F(1/12,0),
+    F(1/12,1/12)) and their transposes.
+Honest identification state: the anchor shares the Fourier
+family's Haagerup invariant exactly; it is either an untested
+Fourier parameter point or a non-Fourier Hadamard with the same
+invariant. NOT LOAD-BEARING either way: the anchor's measured
+no-4th-basis structure (4.54 item 2 — 8 near-bases, clique 1,
+margin 0.101, median exactly 1/6) is what the face certificate
+uses, and it is face-ordinary. The identification is a paper
+footnote, not a proof dependency.
