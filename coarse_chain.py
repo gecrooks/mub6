@@ -81,6 +81,9 @@ def _pair_colors(beta, roots, classes, locs, h):
     O = np.abs(u.conj() @ u.T)
     lo = O - (drift[:, None] + drift[None, :]) / 6.0 - 5e-3 / 6.0 - SLOP
     adj = (lo <= 0) & ~np.eye(n, dtype=bool)
+    if n == 0:
+        return 99          # fail-closed: empty enumeration
+                           # is never a certificate (finding 5)
     order = np.argsort(-adj.sum(axis=1))
     color = -np.ones(n, dtype=int)
     for v in order:
@@ -128,7 +131,7 @@ def anchor(beta, h):
     print(f"  ANCHOR ({beta[0]:.3f},..): {'OK' if ok else 'FAIL'} "
           f"roots {n} colors {cols} stuck {st} cached {len(C)} "
           f"[{time.time()-t0:.0f}s]", flush=True)
-    return dict(beta=np.array(beta), h=h, roots=roots,
+    return dict(beta=np.array(beta), h=h, roots=roots, ok=ok,
                 classes=classes, locs=locs, C=C, W=W, E=E, R=R,
                 D1=D1, blobs=blobs, t_anchor=time.time() - t0)
 
@@ -166,16 +169,28 @@ def _refine_out(beta, h, boxes_C, boxes_W, cr):
 
 
 def _coverage_blobs(H0, roots, blobs, beta=None, h=None, cr=None):
+    """BOX-WISE coverage (review finding 1): every member box of
+    every blob must individually lie in a known root's
+    neighborhood — polish from ITS center, and the box (center
+    +- W) must fit inside the localization radius. A blob with
+    even one unexplained box goes to the refinement fallback, and
+    failing that counts uncovered (loud)."""
     R = np.array(roots)
+    R_LOC = 0.05
     unc = 0
     for cc_, picks, bC, bW in blobs:
-        covered = False
-        for p in [cc_] + list(picks):
-            th = polish_root(H0, np.asarray(p))
+        boxes = np.atleast_2d(np.asarray(bC))
+        wids = np.atleast_2d(np.asarray(bW))
+        covered = True
+        for c, w in zip(boxes, wids):
+            th = polish_root(H0, np.asarray(c))
             d = np.abs((th - R + np.pi) % (2 * np.pi)
                        - np.pi).max(axis=1)
-            if d.min() <= 0.05:
-                covered = True
+            dc = np.abs((np.asarray(c) - R + np.pi) % (2 * np.pi)
+                        - np.pi).max(axis=1)
+            if not (d.min() <= 1e-4
+                    and dc.min() + float(np.max(w)) <= R_LOC):
+                covered = False
                 break
         if not covered and cr is not None:
             covered = _refine_out(beta, h, bC, bW, cr)
@@ -186,6 +201,10 @@ def _coverage_blobs(H0, roots, blobs, beta=None, h=None, cr=None):
 
 def chain_step(state, beta_new):
     t0 = time.time()
+    if not state.get("ok", False):
+        raise RuntimeError(
+            "chain_step on a FAILED anchor state — the chain must "
+            "re-anchor or stop (review finding 2)")
     h = state["h"]
     H1 = karlsson_map(*beta_new)
     roots1 = [polish_root(H1, th) for th in state["roots"]]
@@ -241,7 +260,12 @@ def chain_step(state, beta_new):
     db = np.asarray(beta_new) - state["beta"]
     dist = float(np.linalg.norm(db))
     # first-order cache re-verify: E + D1.db - curv*dist^2, sup fallback
-    CURV = 5.0
+    # EXPERIMENTAL (review finding 3): CURV is a sampled
+    # constant with no enclosure — the cache shortcut is an
+    # amortization EXPERIMENT; certified runs must re-verify
+    # every accepted box (interval Hessian) or disable via
+    # CACHE_GRADE.
+    CURV = 5.0             # SAMPLED, unproved over the step
     fo_ok = (state["E"] + state["D1"] @ db.astype(np.float32)
              - CURV * dist * dist > 1e-4)
     okm = fo_ok | (state["E"] > state["R"] * dist * 1.05 + 1e-9)
