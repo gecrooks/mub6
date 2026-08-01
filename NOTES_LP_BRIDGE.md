@@ -1304,3 +1304,18 @@ widths: 4.6e-10 @ th=0.01 (naive map 7.0e-8), 4.6e-6 @ 1e-4
 the pi/6 constant (house style), irrelevant at campaign box
 widths. Remaining to wire: use iv_stable_z3sq inside iv_karlsson
 (and the z2 chain via the same z3sq), mechanical.
+
+## 4.58 Face walk (full domain) in flight; TWO NEW WALLS surface
+
+facewalk_run.py: 3969 tiles (hf 0.05, tube 0.005), 7 workers.
+Interim (first 200 tiles): 188 certified (margins >= 0.0591), and
+the 12 failures are exactly the tiles containing b3 in
+{pi/3, 2pi/3, 4pi/3, 5pi/3} — the wall set, INCLUDING two walls
+(2pi/3, 4pi/3) the collar census grid never sampled (its b3 grid
+missed them by ~0.2). Failure mode: at proxy theta = 1e-6 the
+wall racing (|S_b3| ~ 10.8/theta ~ 1e7) breaks the enumeration
+(2-6 bases found instead of 8) — same cure as the corner tiles:
+safe proxy theta = 3e-3. Refinement pass over the ledger queued
+for when the walk lands. By the symmetry group the full wall set
+b3 = k pi/3 (k = 1, 2, 4, 5) was expected — good that the
+machine surfaces it loudly on its own.
