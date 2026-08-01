@@ -1163,3 +1163,37 @@ termination argument stands on it.
     the column has isolated ill-conditioned roots all the way
     down (and the earlier "continua" reading at the face anchor
     needs the same re-examination).
+
+## 4.53 THE DEEP PATHOLOGY WAS FLOAT NOISE: map error = eps/theta^3 at the corner
+
+Measured float-map error vs a 40-digit mpmath port (mp_karlsson):
+  corner column: 5.1e-11 @ th=0.01, 7.6e-8 @ 1e-3, 5.4e-5 @ 1e-4,
+      1.4e-2 @ 1e-5 — a clean eps_machine/theta^3 law (third-order
+      catastrophic cancellation in the Moebius quotients at the
+      corner).
+  OFF-corner it is tiny: generic/wall/F-point <= 9e-10 even at
+      th = 1e-6, <= 3.3e-8 at 1e-9.
+Consequences, in order of importance:
+  1. ALL slab-level demo work STANDS (th >= 0.0025: error <= 4e-9,
+     orders below every margin and tax used).
+  2. facewalk's TH_PROXY = 1e-6 is SAFE at generic face points
+     (error <= 9e-10) — but its (pi/3, pi/3) reading ("0 bases",
+     "continua") was NOISE, as were all anchor probes at
+     th <= 1e-6 (the +-0.0326 Haagerup jitter, the "empty pool",
+     the LM residual floors ~ eps*cond, the root_data2 gating on
+     the deep column).
+  3. On the TRUE map (mp Newton, dps 40): the corner column at
+     th = 1e-4 has ISOLATED, WELL-CONDITIONED roots — 12 found,
+     min-sv(J) = 0.05-0.09, residuals < 1e-32. No continua, no
+     intrinsic ill-conditioning. The deep funnel is GENERIC-grade
+     geometry evaluated through a numerically bad chart.
+  4. TRUE corner limit (mp, th = 1e-12): an EXACT pi/6-lattice
+     Hadamard — Haagerup phases {0, pi/6, pi/3, pi/2, 2pi/3,
+     5pi/6, pi} — and NOT F6 (pure pi/3 lattice). Catalog
+     comparison vs Dita/Bjorck/S6 in flight.
+  5. The certified campaign needs the corner region evaluated via
+     the interval map (ivkarlsson, which BOUNDS its own error) or
+     a cancellation-free algebraic rewrite of the Moebius
+     quotients near (pi/3, pi/3); the slab-level racing laws
+     (1/theta, 1/theta^2 at th >= 0.0025) are chart-real and
+     their treatments stand.
