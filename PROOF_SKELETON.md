@@ -210,3 +210,48 @@ reintroduces PROTOTYPE-grade elements (batched-Newton anchors are
 definitional and residual-checked; measured wild localizations and
 the refinement fallback are sampled-grade pending their certified
 pass). The fine-tile chain (sections 1-4) remains assumption-free.
+
+## 6. Corner termination (cone compactification) — drafted 2026-08-01
+
+The one remaining geometric residue (NOTES 4.46-4.51) is the corner
+c* = (b2, b3) = (pi/3, pi/3), where certificate TAXES (not margins)
+degenerate through an apparently recursive hierarchy: walls ->
+lines -> crossings. The termination argument is a compactness
+statement in cone coordinates:
+
+**Setup.** For theta in (0, theta_max] define s = (b2 - pi/3)/theta,
+t = (b3 - pi/3)/theta. The corner region {|beta - c*| <= R theta}
+is the image of the compact cylinder K = D_R x [0, theta_max],
+where the theta = 0 face is the blow-up limit. The Karlsson map is
+analytic in beta away from theta = 0, and H(theta, c* + theta(s,t))
+composed with the rescaling extends continuously (with all
+certificate ingredients) to theta = 0 on K. [VERIFY: smoothness of
+the rescaled family at theta = 0 — the map's theta = 0 singularity
+is in the CHART, and the s^2 chart handles it; the cone-limit
+matrix is the anchor Hadamard.]
+
+**Claim C1 (measured, to be certified).** The rescaled breaking-edge
+margin mu(s, t, theta) = (min over near-bases of the max edge
+overlap)/theta is bounded below by mu_0 > 0 on all of K — including
+the axis and diagonal directions that generate the line/crossing
+hierarchy. Measured range so far: 0.34-0.85 at every tested point
+of every level (walls, lines, crossings, exact corner column).
+
+**Claim C2 (structure).** At each point of K some certificate from
+the finite catalog (signed-rate tile with per-direction anisotropy;
+certified-S enclosures where FD continuation degenerates) has
+positive slack, because the taxes are continuous on K and the
+margin floor mu_0 dominates them after suitable anisotropy choice.
+
+**Conclusion.** By compactness of K, finitely many certifying tiles
+cover it; pulled back to beta-coordinates these are the theta- and
+theta^2-scaled tiles observed empirically. The recursion TERMINATES
+because it was never a recursion in K — walls, lines and crossings
+are fixed subsets of the compact cylinder, resolved once.
+
+**Status.** C1 is measured at demo grade along the hierarchy's
+generating directions; the cone-limit margin function's positivity
+on the full disk is tonight's measurement target. C2 requires the
+certified-grade tax continuity — the same certified-substrate work
+as the crossing caveat (NOTES 4.51 addendum). The theta = 0 face of
+K is the anchor analysis (continua) — section 7 when it exists.
