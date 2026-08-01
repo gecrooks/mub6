@@ -1319,3 +1319,13 @@ safe proxy theta = 3e-3. Refinement pass over the ledger queued
 for when the walk lands. By the symmetry group the full wall set
 b3 = k pi/3 (k = 1, 2, 4, 5) was expected — good that the
 machine surfaces it loudly on its own.
+
+Addendum 4.57 (hybrid completes the float map): stable_karlsson
+now routes z2 through an mp(dps 30) fallback when |den2| < 1e-3
+(the corner basin), pending the exact next-order expansion of
+N = zeta*bigden*Q - bignum*P. Full-map accuracy at the corner:
+1.8e-12 @ th=1e-4 (naive 5.4e-5), 1.8e-10 @ 1e-6, 4.0e-9 @ 1e-8
+— accurate at EVERY depth. Cost: 0.25 ms/call in the basin vs
+0.031 ms generic (basin tiles only). The float-map story is
+closed; remaining: wire iv_stable_z3sq + an interval z2 treatment
+into iv_karlsson for the certified side.

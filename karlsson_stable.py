@@ -63,6 +63,26 @@ def stable_z3sq(theta, phi, lam):
                                       - z1 * np.conj(A11)) * Q)
 
 
+def _mp_z2(theta, phi, lam):
+    from mpmath import mp, mpc, sqrt as msqrt, exp as mexp, \
+        cos as mcos, sin as msin
+    with mp.workdps(30):
+        I = mpc(0, 1)
+        c, s = mcos(theta), msin(theta)
+        A11 = mp.mpf(-1) / 2 + I * (msqrt(3) / 2) * (
+            c + mexp(-I * phi) * s)
+        A12 = mp.mpf(-1) / 2 + I * (msqrt(3) / 2) * (
+            mexp(I * phi) * s - c)
+        B11, B12 = -1 - A11, -1 - A12
+        w = mexp(2 * I * lam)
+        cj = lambda z: z.conjugate()
+        z3sq = (A11 ** 2 - w * A12 ** 2) / (cj(A12) ** 2
+                                            - w * cj(A11) ** 2)
+        z2 = msqrt((B11 ** 2 - z3sq * cj(B12) ** 2)
+                   / (B12 ** 2 - z3sq * cj(B11) ** 2))
+        return complex(z2)
+
+
 def stable_karlsson(theta, phi, lam):
     """Karlsson map with the stable z3^2 kernel; z4, z2 as in the
     naive map (z4 has no corner degeneracy; z2 inherits stability
@@ -80,8 +100,16 @@ def stable_karlsson(theta, phi, lam):
     z4sq = (B11 ** 2 - w * B12 ** 2) / (np.conj(B12) ** 2
                                         - w * np.conj(B11) ** 2)
     z3, z4 = np.sqrt(z3sq), np.sqrt(z4sq)
-    z2 = np.sqrt((B11 ** 2 - z3sq * np.conj(B12) ** 2)
-                 / (B12 ** 2 - z3sq * np.conj(B11) ** 2))
+    den2 = B12 ** 2 - z3sq * np.conj(B11) ** 2
+    if abs(den2) < 1e-3:
+        # corner basin: den2 ~ theta^2 and the subtraction z2sq =
+        # num2/den2 loses eps/theta^2 even with stable z3sq.
+        # mp-hybrid (dps 30) until the exact next-order expansion
+        # of N = zeta*bigden*Q - bignum*P is derived (documented
+        # completion, NOTES 4.57).
+        z2 = _mp_z2(theta, phi, lam)
+    else:
+        z2 = np.sqrt((B11 ** 2 - z3sq * np.conj(B12) ** 2) / den2)
     Z1 = np.array([[1, 1], [z1, -z1]], dtype=complex)
     Z2 = np.array([[1, 1], [z2, -z2]], dtype=complex)
     Z3 = np.array([[1, z3], [1, -z3]], dtype=complex)
