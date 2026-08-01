@@ -1378,3 +1378,25 @@ corners, as mapped. Collar campaign price at this rate: a full
 slab (628 x 63 lines) ~ 20 CPU-hours; the 3-4 slab collar ~ 3-4
 CPU-days single-core, embarrassingly parallel — consistent with
 the 4.37 estimate.
+
+## 4.62 THE BULK COLLAPSES: signed tiles certify at every depth, 1.39 s/tile chained
+
+The v3 signed tile — invented for the collar — was never tried at
+bulk theta. Tried (2026-08-01 late morning):
+  ladder at (1.5349, 0.5516), slabs [th, th+0.01], hf 5e-3:
+    th = 0.05, 0.2, 0.5, 1.5: chi 2, 24-50 edges     CERTIFIED
+    th = 1.0 (56 roots):      chi 2, 74 edges        CERTIFIED
+  chain at th-slab [0.5, 0.6] (10x-THICK slab, adaptive), b3=2.0,
+    20 steps: 20/20, 0 fallbacks, 1.39 s/tile.
+No valley windows, no fold machinery, no Q-tubes — margins grow
+as 0.42 theta, so slab thickness and in-face widths scale with
+theta (span^2 and hf^2 curvature charges bound them at
+span ~ 0.1, hf ~ 0.14 theta). Estimated certificate-leg tile
+count over the fundamental domain (theta in [0.02, pi/2],
+adaptive widths): ~2-4e5 tiles ~ 4-8 CPU-days ~ $30-100 parallel
+— THREE ORDERS below the coarse-tile campaign estimate.
+CAVEAT (the honest leg): this certificate trusts enumeration at
+demo grade. The certified pass needs the coverage sweep
+(fat-sweep hulls -> blob-vs-root accounting) per tile; its
+per-tile cost at bulk-hf boxes is being measured — coverage is
+now THE cost driver of the whole theorem.
