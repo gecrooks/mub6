@@ -1271,3 +1271,27 @@ Certified-campaign consequence (bounded work, two options):
 Either way the failure mode is LOUD (denominator-touches-zero
 raise), never silent — consistent with the machine's design
 philosophy.
+
+## 4.57 Stable Karlsson kernel: exact factorization lands (~4300x at the corner)
+
+karlsson_stable.py implements the derivation:
+  num3 = (A11 - z1 A12) * P,  den3 = (cA12 - z1 cA11) * Q,
+  P/Q = 2 e^{i lam/2} [ sin(lam/2 - pi/6)
+                        - sqrt3 sin^2(theta/2) sin(lam/2)
+                        +- i (sqrt3/2) sin(theta) cos(lam/2+phi) ]
+— each bracket term individually small and cancellation-free, and
+the special loci fall out ALGEBRAICALLY: sin(lam/2 - pi/6) = 0 is
+the wall lam = pi/3; cos(lam/2 + phi) = 0 is the 2phi + lam = pi
+locus through the corner; sin^2(theta/2) is the even collapse.
+Verified vs 40-digit reference:
+  z3^2 kernel: relative error 8.9e-12 @ th=1e-4 (naive 1.5e-8),
+      8.9e-10 @ 1e-6 (naive 1.3e-4), 1.1e-8 @ 1e-8 (naive O(1));
+  full map at the corner: 1.2e-8 @ 1e-4 (naive 5.4e-5),
+      1.2e-6 @ 1e-5 (naive 1.4e-2) — ~4300x; residual eps/theta^2
+      comes from the z2 chain (its exact-delta form = documented
+      completion); off-corner unchanged (~1e-15).
+The same factorization applied inside ivkarlsson removes the
+interval blowup of 4.56 — bounded, mechanical.
+(Note for the record: a first "validation" showing uniform 5.9e-1
+errors was a forgotten /sqrt6 in the test harness's mp port, not
+a map bug — caught by entrywise diff.)
