@@ -1295,3 +1295,12 @@ interval blowup of 4.56 — bounded, mechanical.
 (Note for the record: a first "validation" showing uniform 5.9e-1
 errors was a forgotten /sqrt6 in the test harness's mp port, not
 a map bug — caught by entrywise diff.)
+
+Addendum 4.57 (certified half): ivstable.py ports the factored
+kernel to the interval substrate. Corner point-box enclosure
+widths: 4.6e-10 @ th=0.01 (naive map 7.0e-8), 4.6e-6 @ 1e-4
+(naive 6.8e-2), and NO RAISE down to 1e-6 (naive raises at 1e-5).
+~150x tighter at every depth; residual width is the 8-ulp pad on
+the pi/6 constant (house style), irrelevant at campaign box
+widths. Remaining to wire: use iv_stable_z3sq inside iv_karlsson
+(and the z2 chain via the same z3sq), mechanical.
