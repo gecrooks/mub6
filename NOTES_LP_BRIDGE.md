@@ -1197,3 +1197,35 @@ Consequences, in order of importance:
      quotients near (pi/3, pi/3); the slab-level racing laws
      (1/theta, 1/theta^2 at th >= 0.0025) are chart-real and
      their treatments stand.
+
+## 4.54 Item (1) RESOLVED: the corner anchor is a Fourier point with ordinary face structure
+
+Three converging measurements on clean arithmetic:
+  1. IDENTIFICATION: the true corner limit's FULL Haagerup
+     multiset matches the Fourier family F6(a,b) at 27
+     twelfth-root parameter points (e.g. (a,b) = (pi/6, 0),
+     (0, pi/6), (pi/6, pi/6), ...). Strong-evidence grade (the
+     Haagerup invariant is necessary, not sufficient; direct
+     permutation equivalence is a bounded follow-up). This also
+     explains the face's universal 8-basis structure: the theta=0
+     face IS the Fourier locus, and the corner is its
+     12th-root-parameter point.
+  2. STRUCTURE (safe map, th = 3e-3 and 5e-3, float error
+     ~2e-9): 48 vectors, EXACTLY 8 near-bases, max extra-MUB
+     clique 1, unbias-defect min 0.1007/0.1012, median exactly
+     1/6 — the corner anchor's margins are BETTER than the
+     F-point's 0.0917. Face-ordinary in every measured respect.
+  3. The earlier "0 bases / continua / empty pool" anchor
+     readings were the eps/theta^3 float-map noise (4.53).
+CONSEQUENCE: no special chart is needed at the corner anchor.
+The face walk covers (pi/3, pi/3) with the STANDARD pair-defect
+certificate at margin ~0.10 — only the evaluation route changes
+near the corner (proxy at th >= 3e-3 with the theta-tube
+covering [0, 3e-3], or ivkarlsson/mp evaluation; tube tax
+RATE_TH * 3e-3 = 0.003 against margin 0.10 — trivial headroom).
+With (1) resolved, the termination lemma (2) stands on: C1
+measured (mu_0 >= 0.32, 4.52), the cylinder's theta = 0 face
+covered by the face certificate (margin >= 0.10 at the corner
+point itself), and the finite-cover conclusion of SKELETON §6.
+Remaining for (2): certified-grade continuity of the rescaled
+family (s^2-chart / interval map — substrate work, not geometry).
