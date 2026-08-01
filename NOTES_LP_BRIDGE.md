@@ -1250,3 +1250,24 @@ no-4th-basis structure (4.54 item 2 — 8 near-bases, clique 1,
 margin 0.101, median exactly 1/6) is what the face certificate
 uses, and it is face-ordinary. The identification is a paper
 footnote, not a proof dependency.
+
+## 4.56 The interval map inherits eps/theta^3 at the corner — fix is bounded
+
+iv_karlsson point-box widths at the corner: 7.0e-8 @ th=0.01,
+7.1e-5 @ 1e-3, 6.8e-2 @ 1e-4, and a LOUD RuntimeError ("z2
+denominator interval touches 0") at 1e-5. Diagnostics show the
+z3 Moebius denominator margin collapsing ~ theta^4 (7.5e-9 ->
+7.5e-13 -> 7.5e-17): at the corner both numerator and denominator
+of the Moebius quotients vanish at the same order, so the naive
+quotient loses eps/theta^3 in ANY fixed-precision arithmetic —
+but the quotient itself is REGULAR there. Off-corner the interval
+map is fine (3.9e-10 generic, 4.8e-9 wall at th = 1e-4).
+Certified-campaign consequence (bounded work, two options):
+  (a) evaluate corner-basin tiles in mpmath.iv at elevated dps
+      (the substrate already uses mpmath.iv for transcendentals);
+  (b) algebraic factorization: cancel the common theta-degeneracy
+      from numerator and denominator once, exactly, and evaluate
+      the regular quotient — the clean permanent fix.
+Either way the failure mode is LOUD (denominator-touches-zero
+raise), never silent — consistent with the machine's design
+philosophy.
