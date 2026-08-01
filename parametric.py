@@ -62,13 +62,17 @@ def map_lipschitz(beta, delta=1e-6):
 
 
 def dg_dbeta(beta, th, delta=1e-6):
-    """5x3 matrix dg/dbeta at fixed theta (FD through the map). EMPIRICAL."""
+    """5x3 matrix dg/dbeta at fixed theta (CENTRAL FD through the
+    map). EMPIRICAL. Was one-sided until 2026-08-01: the O(delta *
+    d2g) truncation put a ~1e-4 systematic into every S consumer
+    (caught by test_smoke vs certified_S; NOTES 4.64 addendum)."""
     out = np.zeros((5, 3))
-    g0 = g_at(karlsson_map(*beta), th)
     for k in range(3):
-        b = list(beta)
-        b[k] += delta
-        out[:, k] = (g_at(karlsson_map(*b), th) - g0) / delta
+        bp, bm = list(beta), list(beta)
+        bp[k] += delta
+        bm[k] -= delta
+        out[:, k] = (g_at(karlsson_map(*bp), th)
+                     - g_at(karlsson_map(*bm), th)) / (2 * delta)
     return out
 
 
