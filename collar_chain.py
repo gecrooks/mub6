@@ -43,7 +43,7 @@ def _warm_pool(beta, ph_prev, topup=500, seed=11):
 
 
 def chain(theta_lo, theta_hi, b2_0, b3, hf, n_steps,
-          adjacency="signed", hf3=None):
+          adjacency="signed", hf3=None, curv=None):
     t00 = time.time()
     n_ok = n_fall = 0
     ph_prev = None
@@ -56,8 +56,10 @@ def chain(theta_lo, theta_hi, b2_0, b3, hf, n_steps,
         else:
             ph, _new, fell = _warm_pool((theta_lo, b2, b3), ph_prev)
         n_fall += fell
+        kw = {} if curv is None else {"curv": curv}
         ok = collar_tile(theta_lo, theta_hi, b2, b3, hf,
-                         adjacency=adjacency, hf3=hf3, pool=ph)
+                         adjacency=adjacency, hf3=hf3,
+                         pool=ph, **kw)
         n_ok += bool(ok)
         ph_prev = ph
     dt = time.time() - t00
