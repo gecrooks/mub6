@@ -62,7 +62,12 @@ def face_tile(b2, b3, hf, th_tube=0.0):
     theta_lo = th_tube and this certificate covers the rest.
     Returns (ok, n_bases, worst_margin)."""
     P = face_pool(b2, b3)
-    bases = find_bases(P, tol=1e-5)
+    # near-basis tolerance scales with the proxy: wall tiles use
+    # the safe proxy 3e-3 where orthogonality defects are
+    # ~0.4-0.9 * proxy (the walls' breaking-edge law), so exact
+    # bases only exist to that resolution
+    tol = 1e-5 if TH_PROXY < 1e-4 else 30.0 * TH_PROXY
+    bases = find_bases(P, tol=tol)
     if len(bases) != 8:
         return False, len(bases), np.nan   # unexpected stratum: split
     nb = len(bases)

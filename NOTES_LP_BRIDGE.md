@@ -1329,3 +1329,18 @@ N = zeta*bigden*Q - bignum*P. Full-map accuracy at the corner:
 0.031 ms generic (basin tiles only). The float-map story is
 closed; remaining: wire iv_stable_z3sq + an interval z2 treatment
 into iv_karlsson for the certified side.
+
+## 4.59 FULL FACE EXECUTED (pass 1): 3777/3969, min margin 0.0496
+
+facewalk_run.py + facewalk_resume.py (restart-safe via the JSONL
+ledger): all 3969 tiles of the (b2, b3) face executed at hf 0.05,
+theta-tube 0.005. PASS 1: 3777 certified (95.2%), min margin
+0.0496; the 192 failures are exactly the four b3-wall columns
+(k pi/3, k = 1, 2, 4, 5) plus shoulder tiles at the b2 = pi/3,
+5pi/3 crossings (the corner rows) — the histograms are clean
+delta functions on the known special set. Refine pass 1 (proxy
+3e-3 alone) fixed nothing — diagnosis: find_bases' 1e-5 tolerance
+can't see near-bases at a 3e-3 proxy where wall orthogonality
+defects are ~0.4-0.9 * proxy. face_tile now scales the tolerance
+with the proxy (30 * TH_PROXY), matching the measured wall/corner
+structure (8 near-bases, margins 0.10-0.17). Refine v2 in flight.
