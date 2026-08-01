@@ -1365,3 +1365,16 @@ Certified-pass upgrades needed per tile: dual-AD in-face rates
 (replace RATE_FACE 0.5 sample-pad), interval pair defects,
 enumeration coverage (fat-sweep hulls), and the stable kernel
 (4.57) at the corner rows.
+
+## 4.61 Full-circle collar chain: 628/628, 1.79 s/tile, zero fallbacks
+
+collar_circle.py: one complete beta2 circumnavigation of the torus
+at b3 = 2.0 (generic), slab [0.005, 0.01], hf 5e-3, signed tiles,
+warm pools: 628/628 CERTIFIED, 0 pool fallbacks, 1.79 s/tile
+amortized (1123 s wall on one core, running alongside a 7-worker
+face refine). Confirms at scale: no hidden special loci in the b2
+direction — the exceptional set is exactly the b3-walls and the
+corners, as mapped. Collar campaign price at this rate: a full
+slab (628 x 63 lines) ~ 20 CPU-hours; the 3-4 slab collar ~ 3-4
+CPU-days single-core, embarrassingly parallel — consistent with
+the 4.37 estimate.
