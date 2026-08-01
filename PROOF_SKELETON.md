@@ -249,9 +249,16 @@ theta^2-scaled tiles observed empirically. The recursion TERMINATES
 because it was never a recursion in K — walls, lines and crossings
 are fixed subsets of the compact cylinder, resolved once.
 
-**Status.** C1 is measured at demo grade along the hierarchy's
-generating directions; the cone-limit margin function's positivity
-on the full disk is tonight's measurement target. C2 requires the
-certified-grade tax continuity — the same certified-substrate work
-as the crossing caveat (NOTES 4.51 addendum). The theta = 0 face of
-K is the anchor analysis (continua) — section 7 when it exists.
+**Status (updated 2026-08-01 morning).** C1 MEASURED (NOTES 4.52):
+mu(s, t, theta) is theta-independent to 3 digits along every
+tested ray with uniform floor mu_0 >= 0.32. The theta = 0 face of
+K is RESOLVED (4.53-4.54): the apparent continua/pathology was
+float-map noise (error = eps/theta^3, corner-specific); on clean
+arithmetic the corner anchor is a Fourier-family point (Haagerup
+multiset matches F6(a,b) at 12th-root parameters) with ORDINARY
+face structure — 8 near-bases, max extra-MUB clique 1, pair-defect
+margin 0.10 (median exactly 1/6). The standard face certificate
+covers it; near-corner tiles must evaluate the map via ivkarlsson
+/ high precision (the float map loses eps/theta^3 there). C2
+remains the certified-grade continuity of the rescaled family —
+substrate work (s^2 chart + interval map), no open geometry.
