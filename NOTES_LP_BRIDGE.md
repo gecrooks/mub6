@@ -1400,3 +1400,11 @@ demo grade. The certified pass needs the coverage sweep
 (fat-sweep hulls -> blob-vs-root accounting) per tile; its
 per-tile cost at bulk-hf boxes is being measured — coverage is
 now THE cost driver of the whole theorem.
+
+Addendum 4.62: robustness + fat tiles. The signed bulk tile
+certifies at the TRUE census points (theta = 1.535 and 1.105 —
+the valley-heavy anchors of the old machinery; 48 and 56 roots,
+chi 2 both). Fat tiles: hf 0.02 certifies chi 2 at theta = 0.5
+and 1.0; hf 0.05 certifies chi 4 at theta = 1.0 and fails only at
+the theta = 1.5 equator edge (use 0.02 there). Certificate-leg
+count refines to ~1e5 tiles ~ 2 CPU-days ~ $20-50 parallel.
