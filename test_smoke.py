@@ -94,15 +94,29 @@ class TestTiles(unittest.TestCase):
 
 
 class TestCertifiedS(unittest.TestCase):
-    def test_certified_S_encloses_fd(self):
+    def test_certified_S_encloses_central_diff(self):
+        # reference = independent central differences of the
+        # polished root (root_data2's internal continuation
+        # carries an ~1e-4 systematic — measured 2026-08-01; the
+        # certified path matches central differences to ~1e-9)
         from certpair import certified_S
-        from collar_tile import _pool_phases
-        from parametric import root_data2
+        from collar_tile import _pool_phases, _polish
+        from karlsson import karlsson_map
         beta = (0.05, 1.0, 2.0)
         ph = _pool_phases(beta, n_starts=1500)
-        S0, err, c, r = certified_S(beta, ph[0])
-        Sf, _q, _d = root_data2(beta, ph[0], delta=1e-5)
-        self.assertLess(np.abs(S0 - Sf).max(), err + 1e-6)
+        th0 = ph[0]
+        S0, err, c, r = certified_S(beta, th0)
+        d = 1e-6
+        Sd = np.zeros((5, 3))
+        for l in range(3):
+            bp, bm = list(beta), list(beta)
+            bp[l] += d
+            bm[l] -= d
+            tp = _polish(karlsson_map(*bp), th0)
+            tm = _polish(karlsson_map(*bm), th0)
+            Sd[:, l] = ((tp - tm + np.pi) % (2 * np.pi)
+                        - np.pi) / (2 * d)
+        self.assertLess(np.abs(S0 - Sd).max(), err + 1e-6)
 
 
 if __name__ == "__main__":

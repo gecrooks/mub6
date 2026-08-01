@@ -1466,3 +1466,19 @@ A code review (2026-08-01) found five issues; disposition:
   theorem); test_smoke.py added (kernel bounds, interval
   containment, map-port agreement, fail-closed paths, one tile
   of each kind, certified-S vs FD enclosure).
+
+Addendum 4.64 (a bug the new tests caught, in the OTHER direction):
+the smoke test comparing certified_S against root_data2's FD S
+failed — and arbitration by independent central differences of
+the polished root showed the CERTIFIED path is right (agrees to
+~1e-9, 400x inside its 1.6e-5 err bar) while root_data2's
+continuation-based S carries an ~9e-5 delta-INDEPENDENT
+systematic (theta-column dominated) at the tested bulk point.
+Consequences: (a) certpair/4.40 enclosures stand, better than
+claimed; (b) the demo tiles' sampled signed rates inherit an
+~1e-4 absolute rate error — absorbed by PAD_CORR = 3x for the
+rate scales in play, but the certified pass should prefer
+certified_S (or central differences) over root_data2's S
+everywhere; (c) the test now uses central differences as the
+reference. Tracking down root_data2's systematic (its internal
+continuation step?) is a small open item.
