@@ -1433,3 +1433,36 @@ whole-theorem compute (bulk + collar + face + corner patches) now
 prices at ~$500-1500, i.e. the "$1M problem" of the survey has
 been argued down ~three orders of magnitude by measurements and
 design, not hardware.
+
+## 4.64 External review response (5 findings, all actioned)
+
+A code review (2026-08-01) found five issues; disposition:
+  1. Coverage sampled blobs, not boxes (HIGH): FIXED at demo
+     grade — _coverage_blobs and coarse_tile stage 4 now check
+     EVERY member box/hull cell geometrically (cell + r inside
+     ball(root, R_LOC), finer 0.025 hull cells), with the
+     whisker-tail refinement sweep as the only fallback and loud
+     failure otherwise. First box-wise run flushed out that the
+     0.1-grid hulls were too fat for any inclusion test — the
+     old cluster-sampling pass had been vacuously generous.
+     The certified-grade coverage verifier is owned by the
+     rigor/coverage-verifier branch (colleague).
+  2. Failed anchor did not halt the chain (HIGH): FIXED —
+     anchors return ok, chain_step raises on a failed state.
+  3. CURV = 5.0 unproved (HIGH): marked EXPERIMENTAL in code;
+     the cache shortcut is an amortization experiment until the
+     interval-Hessian re-verify exists.
+  4. Theta-tax dropped on a point derivative (HIGH): FIXED —
+     the drop now requires derivative PERSISTENCE across the
+     slab (dO_theta > curv0 * span), using the same sampled
+     curvature sups charged elsewhere. Re-validated: generic,
+     wall, exact corner, bulk thick-slab, census point all still
+     certify (chi 2-4).
+  5. Empty enumeration not fail-closed (MEDIUM): FIXED — empty
+     pools and empty root sets now fail loudly in collar_tile
+     and _pair_colors.
+  General: [SAMPLED] grade tags added to tile verdicts and the
+  README (a SAMPLED "CERTIFIED" is a validated experiment, not a
+  theorem); test_smoke.py added (kernel bounds, interval
+  containment, map-port agreement, fail-closed paths, one tile
+  of each kind, certified-S vs FD enclosure).
