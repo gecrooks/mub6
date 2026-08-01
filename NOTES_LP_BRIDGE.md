@@ -1408,3 +1408,28 @@ chi 2 both). Fat tiles: hf 0.02 certifies chi 2 at theta = 0.5
 and 1.0; hf 0.05 certifies chi 4 at theta = 1.0 and fails only at
 the theta = 1.5 equator edge (use 0.02 there). Certificate-leg
 count refines to ~1e5 tiles ~ 2 CPU-days ~ $20-50 parallel.
+
+## 4.63 Coverage-leg datum + composite bulk price: ~$100-500 all-in
+
+The naive measurement: fat_sweep_hulls over ONE bulk signed-tile
+box (hf 5e-3 at (0.5, 1.0, 2.0)) exceeded 25 CPU-minutes without
+terminating (killed) — fat beta-taxes leave too many survivors.
+So per-tile naive coverage is out; the viable coverage routes are
+the ones already measured elsewhere:
+  (a) chain-anchored coverage (coarse_chain's design: anchors at
+      wmin 0.025 + D1 exclusion cache, measured ~35-40 s
+      amortized per 3e-3 step -> ~60 s per 5e-3 signed tile);
+  (b) the 41x GPU sweep (gputile, box-exact validated) applied to
+      (a)'s anchor sweeps;
+  (c) slab-level starvation sweeps (4.5's fat-tile idea) —
+      unmeasured at bulk, possible further multiplier.
+COMPOSITE BULK PRICE with the signed-tile redesign:
+  certificate leg:  ~1e5 adaptive tiles x 1.4 s  ~ $20-50
+  coverage leg:     ~1e5 x 60 s CPU / 41x GPU    ~ $50-150
+  TOTAL:            ~$100-500 all-in
+— a 50-100x reduction from the $25-50k coarse-tile design,
+obtained by pointing the collar's signed tile at the bulk. The
+whole-theorem compute (bulk + collar + face + corner patches) now
+prices at ~$500-1500, i.e. the "$1M problem" of the survey has
+been argued down ~three orders of magnitude by measurements and
+design, not hardware.
