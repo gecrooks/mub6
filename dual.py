@@ -177,7 +177,18 @@ def dual_karlsson(theta_iv, phi_iv, lam_iv):
             raise RuntimeError("Moebius denominator touches 0")
         return num / den
 
-    z3sq = moebius(A11, A12)
+    # z3 via the FACTORED quotient (NOTES 4.57/4.72):
+    # algebraically identical to moebius(A11, A12) but the shared
+    # small factors are enclosed directly (interval widths are
+    # additive, not cancellation-amplified) — removes the corner
+    # blowup in the dual path. z4's factors are O(1) everywhere.
+    P_f = A11 + z1 * A12
+    Q_f = A12.conj() + z1 * A11.conj()
+    num3 = (A11 - z1 * A12) * P_f
+    den3 = (A12.conj() - z1 * A11.conj()) * Q_f
+    if den3.v.abs2().lo <= 0:
+        raise RuntimeError("Moebius denominator touches 0")
+    z3sq = num3 / den3
     z4sq = moebius(B11, B12)
     num2 = B11 * B11 - z3sq * (B12.conj() * B12.conj())
     den2 = B12 * B12 - z3sq * (B11.conj() * B11.conj())

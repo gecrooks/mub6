@@ -1680,3 +1680,17 @@ its three elementary trig partials) into dual.py, ride z2 on the
 tight z3sq, and branch-aware csqrt at the wall. rigor_tile now
 uses stable_karlsson for its float map (== naive generically,
 accurate at depth).
+
+Addendum 4.72 (the precise diagnosis): the factored z3 quotient
+in dual.py fixes nothing beyond generic because the remaining
+fatness is the INTERVAL DEPENDENCY PROBLEM in the quotient — num
+and den vary together through the shared small factors, but
+interval division adds their relative widths (measured ~8% where
+the true variation is ~0.1%). The repo's own founding cure
+applies: the MEAN-VALUE pattern (tight point values + derivative-
+bounded variation, as rates.py does downstream) must reach
+dual_karlsson's internal den/cut checks, which currently run on
+naively-propagated box values and so raise near the corner and
+wall. Scoped fix: split dual_karlsson into point-value + partial
+paths and make its internal checks mean-value aware. Bounded;
+next session.
