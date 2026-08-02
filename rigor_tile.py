@@ -125,7 +125,7 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
             False, deps, reason="empty enumeration (fail-closed)")
     H0 = karlsson_map(*beta0)
     from rates import certified_rates
-    cr = certified_rates(beta0, (h, h, h))
+    cr = certified_rates(beta0, (h, h, h), mv=True)
     RJx = cr["RJ_extra"]
     Htm = tm_karlsson(beta0, h)
     curves = []
@@ -133,8 +133,16 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     n_tube = n_fail = 0
     for th in ph0:
         try:
-            S, Q, defect = _pm.root_data2(beta0,
-                                          np.asarray(th, float))
+            S = Q = None
+            for _de in (2.5e-4, 1e-5, 2e-6, 5e-7):
+                try:
+                    S, Q, defect = _pm.root_data2(
+                        beta0, np.asarray(th, float), delta=_de)
+                    break
+                except RuntimeError:
+                    continue
+            if S is None:
+                raise RuntimeError("root_data2 ladder exhausted")
             Rcurve = certified_curve_residual(beta0, np.full(3, h),
                                               th, S, Q, Htm=Htm)
             rad_g = Rcurve + defect * np.sqrt(3.0) * h

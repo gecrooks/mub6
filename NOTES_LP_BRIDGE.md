@@ -1758,3 +1758,24 @@ family member).
                scoped piece is cascading the mean-value tighten
                to the stage2-computed den2 (point-pass through
                the divisions + box partials at that level).
+
+## 4.76 Cascaded mean-value dual: certified rates EXIST at walls and near-corner
+
+The stage-2 cascade (point pass through the divisions; num2/den2
+mean-value-tightened against their point twins) unlocks:
+  generic:       width 3.5e-4 (3x TIGHTER than before — the
+                 tightening helps globally)
+  wall:          width 0.17, NO RAISE
+  near-corner:   width 0.19, NO RAISE (was: raise)
+  nearer (2e-4): still raises — the standard adaptive rule
+                 applies (h must scale with surface distance);
+                 the surface itself is per-sheet territory.
+rates.certified_rates(mv=True) wired; rigor_tile uses it (plus
+the adaptive root_data2 delta ladder it was missing). Remaining
+blocker for theorem-grade TILES at the wall: RJ_extra = 4.8e-2
+there (the unslanted J-drift is genuinely 1/theta-fast) — static
+tube frames cannot contract against it; the fix is SLANT-RELATIVE
+J-drift (the J drift along the racing frame, which the measured
+overlap-rate cancellations say is tame) — precisely the
+frame-split continuation of assumption-ledger item 3. The onion:
+map (closed) -> dual rates (closed) -> tube frames (scoped).
