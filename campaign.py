@@ -36,6 +36,7 @@ import warnings
 import numpy as np
 
 from cache import anchored_tile, chain_step
+from certificate_result import CertificateGrade
 from karlsson import karlsson_map
 from mub import find_mu_vectors
 from parametric import _g_and_J, certify_tile, dg_dbeta, polish_root
@@ -45,6 +46,16 @@ warnings.filterwarnings("ignore")
 PI = np.pi
 DOMAIN = ((0.0, PI / 2), (0.0, PI / 2), (0.0, PI))
 FATTEN_LADDER = (3.0, 2.0, 1.5, 1.0)
+
+
+def grade_accepted(record, required=CertificateGrade.RIGOROUS):
+    """Legacy records have no theorem-grade claim and are experimental."""
+    grade_name = record.get("grade", CertificateGrade.EXPERIMENTAL.name)
+    try:
+        grade = CertificateGrade[grade_name]
+    except KeyError:
+        return False
+    return bool(record.get("ok")) and grade >= CertificateGrade(required)
 
 
 def coupling_profile(beta, sig_cut=0.06):
@@ -66,7 +77,8 @@ def coupling_profile(beta, sig_cut=0.06):
     return (prof if n_flag else None), n_flag
 
 
-def adaptive_tile(beta, h_base, ledger, verbose=True):
+def adaptive_tile(beta, h_base, ledger, verbose=True,
+                  required_grade=CertificateGrade.RIGOROUS):
     """Standalone certified tile with the fatten-weakest-axis ladder.
     Returns hv on success, None on failure (after the full ladder)."""
     prof, n_flag = coupling_profile(beta)
@@ -75,54 +87,49 @@ def adaptive_tile(beta, h_base, ledger, verbose=True):
         hv = np.full(3, h_base)
         hv[axis] = fac * h_base
         r = certify_tile(beta, hv, verbose=False, use_certified=True)
+        result = r.get("result")
+        grade = (CertificateGrade.EXPERIMENTAL if result is None
+                 else result.grade)
         rec = dict(mode="tile", beta=list(map(float, beta)),
                    hv=[float(x) for x in hv], ok=bool(r["ok"]),
+                   grade=grade.name,
                    seconds=float(r["seconds"]), n_flag=n_flag,
-                   reason=None if r["ok"] else str(r["reason"]))
+                   reason=(None if r["ok"] else
+                           str(r.get("reason", "certificate failed"))),
+                   evidence=(None if result is None else
+                             result.as_dict()["dependencies"]))
         ledger.write(json.dumps(rec) + "\n")
         ledger.flush()
-        if r["ok"]:
+        if grade_accepted(rec, required_grade):
             if verbose:
                 print(f"    tile th={beta[0]:.6f} hv=({hv[0]:g},{hv[1]:g},"
                       f"{hv[2]:g}) OK [{r['seconds']:.0f} s]", flush=True)
             return hv
-        if verbose:
+        if r["ok"] and verbose:
+            print(f"    tile th={beta[0]:.6f} rejected by grade policy: "
+                  f"{grade.name} < {CertificateGrade(required_grade).name}",
+                  flush=True)
+        elif verbose:
             print(f"    tile th={beta[0]:.6f} fac={fac:g} FAIL "
-                  f"({r['reason']})", flush=True)
+                  f"({r.get('reason', 'certificate failed')})", flush=True)
     return None
 
 
 def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
-             verbose=True):
+             verbose=True, required_grade=CertificateGrade.RIGOROUS):
     """Certify one theta-line. Returns (covered_to, n_tiles) — covered_to
     is the certified theta frontier (>= th_hi on full success)."""
     th = th_lo + h_base if start_at is None else start_at
     n_tiles = 0
     state = None
     while th - h_base < th_hi:
-        if state is None:
-            # try to open a chain at th; valley territory raises
-            try:
-                state = anchored_tile((th, phi, lam), h_base,
-                                      verbose=verbose, use_certified=True)
-                ledger.write(json.dumps(dict(
-                    mode="anchor", beta=[float(th), float(phi), float(lam)],
-                    hv=[h_base] * 3, ok=True,
-                    seconds=float(state["anchor_seconds"]))) + "\n")
-                ledger.flush()
-                n_tiles += 1
-                th += 1.6 * h_base
-                continue
-            except RuntimeError as e:
-                if verbose:
-                    print(f"    anchor th={th:.6f}: {e} -> adaptive",
-                          flush=True)
-        else:
+        if state is not None:
             res = chain_step(state, (th, phi, lam), verbose=verbose)
             if res.get("ok"):
                 ledger.write(json.dumps(dict(
                     mode="chain", beta=[float(th), float(phi), float(lam)],
                     hv=[h_base] * 3, ok=True,
+                    grade=CertificateGrade.EXPERIMENTAL.name,
                     seconds=float(res["seconds"]))) + "\n")
                 ledger.flush()
                 n_tiles += 1
@@ -132,8 +139,27 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
                 print(f"    chain broke at th={th:.6f} "
                       f"({res.get('reason')}) -> adaptive", flush=True)
             state = None
+        elif required_grade <= CertificateGrade.EXPERIMENTAL:
+            # try to open a chain at th; valley territory raises
+            try:
+                state = anchored_tile((th, phi, lam), h_base,
+                                      verbose=verbose, use_certified=True)
+                ledger.write(json.dumps(dict(
+                    mode="anchor", beta=[float(th), float(phi), float(lam)],
+                    hv=[h_base] * 3, ok=True,
+                    grade=CertificateGrade.EXPERIMENTAL.name,
+                    seconds=float(state["anchor_seconds"]))) + "\n")
+                ledger.flush()
+                n_tiles += 1
+                th += 1.6 * h_base
+                continue
+            except RuntimeError as e:
+                if verbose:
+                    print(f"    anchor th={th:.6f}: {e} -> adaptive",
+                          flush=True)
         # standalone adaptive tile across the stratum
-        hv = adaptive_tile((th, phi, lam), h_base, ledger, verbose=verbose)
+        hv = adaptive_tile((th, phi, lam), h_base, ledger, verbose=verbose,
+                           required_grade=required_grade)
         if hv is None:
             return th - h_base, n_tiles          # frontier stalled
         n_tiles += 1
@@ -141,7 +167,7 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
     return th_hi, n_tiles
 
 
-def load_frontiers(path):
+def load_frontiers(path, required_grade=CertificateGrade.RIGOROUS):
     """Resume support: per-(phi,lam) certified theta frontier from the
     ledger (max certified theta+hv_t of contiguously-OK records; the
     conservative re-check is one overlapping tile at resume)."""
@@ -151,7 +177,7 @@ def load_frontiers(path):
     with open(path) as f:
         for line in f:
             rec = json.loads(line)
-            if not rec.get("ok"):
+            if not grade_accepted(rec, required_grade):
                 continue
             b, hv = rec["beta"], rec["hv"]
             key = (round(b[1], 9), round(b[2], 9))
@@ -168,6 +194,9 @@ def main():
     ap.add_argument("--th-hi", type=float, default=None)
     ap.add_argument("--n-lines", type=int, default=1)
     ap.add_argument("--ledger", default="campaign_ledger.jsonl")
+    ap.add_argument("--required-grade",
+                    choices=[grade.name for grade in CertificateGrade],
+                    default=CertificateGrade.RIGOROUS.name)
     args = ap.parse_args()
 
     h = args.h
@@ -177,7 +206,8 @@ def main():
     th_lo = args.th_lo if args.th_lo is not None else DOMAIN[0][0]
     th_hi = args.th_hi if args.th_hi is not None else DOMAIN[0][1]
 
-    frontiers = load_frontiers(args.ledger)
+    required_grade = CertificateGrade[args.required_grade]
+    frontiers = load_frontiers(args.ledger, required_grade)
     t0 = time.time()
     total = 0
     with open(args.ledger, "a") as ledger:
@@ -194,7 +224,8 @@ def main():
                   + (f" resume at {start:.6f}" if start else ""),
                   flush=True)
             covered, n = run_line(phi, lam, th_lo, th_hi, h, ledger,
-                                  start_at=start)
+                                  start_at=start,
+                                  required_grade=required_grade)
             total += n
             status = "COMPLETE" if covered >= th_hi else \
                 f"STALLED at {covered:.6f}"

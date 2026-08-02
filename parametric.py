@@ -957,11 +957,37 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     else:
         ok, n_conf, _ = color_conflicts(lo)
     dt = time.time() - t0
+    from certificate_result import CertificateResult, Evidence
+    fold_rows_rigorous = all(
+        ("octants" in cert)
+        or (cert.get("cert") is not None
+            and cert["cert"].get("consistent"))
+        for cert in fold_certs.values()
+    )
+    pair_grade = (CertificateGrade.RIGOROUS
+                  if use_certified and fold_rows_rigorous
+                  else CertificateGrade.SAMPLED_BOUND)
+    result = CertificateResult.from_evidence(
+        ok,
+        [
+            coverage_witness.evidence(),
+            Evidence("pair-overlap-partition", pair_grade,
+                     "TM pair rows and certified fold rows" if
+                     pair_grade is CertificateGrade.RIGOROUS else
+                     "sampled overlap/fold fallback present"),
+            Evidence("coloring", CertificateGrade.RIGOROUS,
+                     f"proper coloring with {n_conf} conflict edges"),
+        ],
+        reason="" if ok else "coloring failed",
+        metadata={"n_roots": n, "n_folds": len(fold_certs),
+                  "n_conflicts": n_conf, "seconds": dt},
+    )
     if verbose:
-        print(f"  ==> {'TILE CERTIFIED (prototype)' if ok else 'FAILED at coloring'}"
-              f" at h={h:g}  [{dt:.0f} s]", flush=True)
+        print(f"  ==> {'TILE OK' if ok else 'FAILED at coloring'}"
+              f"[{result.grade.name}] at h={h:g}  [{dt:.0f} s]", flush=True)
     return dict(ok=ok, h=h, n_roots=n, n_folds=len(fold_certs),
                 n_conflicts=n_conf, seconds=dt,
+                result=result, grade=result.grade.name,
                 coverage_witness=coverage_witness,
                 coverage=coverage_witness.as_dict(),
                 coverage_grade=coverage_witness.evidence().grade.name)
