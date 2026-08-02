@@ -1836,3 +1836,10 @@ division of labor final. REVISED CERTIFIED-CAMPAIGN ESTIMATE
 / 3-4 chain amortization / ~2 caching): ~$3-10k, roughly 2-4
 weeks at the 10-GPU cap. Residual softness: certify_tile chain
 amortization unmeasured (coarse analog 4-5x), 5-point survey.
+
+Correction to the survey line: the 5th point (1.0, 5.5, 1.5)
+failed at ALL rungs down to 3e-4 — the July survey's hard-27%
+class persists (needs h < 3e-4; adaptive ladder handles it).
+Honest distribution: 4/5 at 7e-4-1e-3, 1/5 sub-3e-4. Estimate
+unchanged in range ($3-10k) with the hard class as the upper-end
+driver — exactly what the adaptive planner was built for.
