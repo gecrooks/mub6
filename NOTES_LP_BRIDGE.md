@@ -1645,3 +1645,16 @@ The interval z2 rides the tight z3sq through the plain quotient —
 usable to theta ~ 3e-7, far below any campaign tile. Between
 4.69 (float, 0.035 ms, <= 1.2e-8 any depth) and this, the corner
 map problem — float and certified — is CLOSED.
+
+## 4.71 Deep corner column re-measured on the stable map: regular all the way down
+
+With the corner map closed (4.69-4.70), the theta < 1e-3 column —
+invalidated as float noise in 4.53 — re-measures cleanly:
+  th = 1e-3, 3e-4, 1e-4, 3e-5 at (pi/3, pi/3):
+    48 roots, 8 near-bases, 0 exact bases at every depth,
+    min per-basis max-edge / theta = 0.379 EXACTLY CONSTANT.
+The cone-limit margin function's C1 measurement (SKELETON §6) now
+extends four more decades toward the apex with the same value the
+shallow ladder gave (0.379 at r=0 — cf. 4.52). No continua, no
+degeneracy, no surprises: the corner column is regular geometry
+under a numerically honest chart at every accessible depth.
