@@ -39,11 +39,18 @@ warnings.filterwarnings("ignore")
 SQ6 = np.sqrt(6.0)
 
 
-def certified_rates(beta, h, mv=False):
+MV_DEFAULT = False   # module switch: mean-value dual map for
+                     # ALL certified_rates calls (4.76)
+
+
+def certified_rates(beta, h, mv=None):
     """h: scalar or per-direction (3,) half-widths (anisotropic
     tiles). mv=True uses the mean-value dual map (4.76) — required
-    near the branch surfaces (walls/corner), tighter everywhere."""
+    near the branch surfaces (walls/corner), tighter everywhere.
+    mv=None defers to the module switch MV_DEFAULT."""
     hv = np.broadcast_to(np.asarray(h, float), (3,)).copy()
+    if mv is None:
+        mv = MV_DEFAULT
     if mv:
         from dual import dual_karlsson_mv
         Hd = dual_karlsson_mv(beta, hv)

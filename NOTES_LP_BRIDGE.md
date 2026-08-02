@@ -1799,3 +1799,28 @@ gaps. Remaining outside the ladder: the exact surfaces (per-sheet
 territory, measure-zero — walls/corner as tile boundaries with
 per-sheet limits) and the coverage leg. Assumption-ledger item
 3's frame-split is NO LONGER NEEDED for the tile path.
+
+## 4.78 certify_tile x mv-rates: h-ceiling DOUBLES; division of labor confirmed
+
+Item-1 measurements (the campaign cost-model sharpener):
+  BASELINE: the week's dual.py surgery is regression-clean
+      (README tile ok, 23 s).
+  h-LADDER at the README anchor, old vs mv rates:
+      old:  3e-4 ok (24s), 5e-4 ok (29s), 7e-4 FAIL (325s)
+      mv:   3e-4 ok, 5e-4 ok (fewer conflicts 56 vs 87),
+            7e-4 ok (29s!), 1e-3 ok (40s), 1.5e-3 FAIL
+      -> ceiling 5e-4 -> 1e-3 (2x linear, 8x volume) at
+         CONSTANT per-tile time. Mini-survey of the ceiling
+         distribution across territory in flight.
+  COLLAR (theta = 0.005): certify_tile FAILS at h = 3e-4 and at
+      anisotropic (1e-4, 1e-3, 1e-3) — its clique layer cannot
+      break the c*theta near-clique edges at any h (no
+      bottom-anchored/correlated deletion). The collar belongs to
+      the SIGNED tile design, as built. Division of labor is now
+      empirical: certify_tile owns theta >~ 0.02; signed tiles
+      own the collar and the special-locus ladders.
+  WALL-STRADDLING box: correct loud raise (branch surface inside;
+      per-sheet/boundary-seam territory).
+Campaign implication: if the survey confirms 7e-4-1e-3 typical,
+the certified bulk drops from $5-20k to ~$1-5k (~1-2 weeks at
+the 10-GPU cap).
