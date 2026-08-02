@@ -1843,3 +1843,30 @@ class persists (needs h < 3e-4; adaptive ladder handles it).
 Honest distribution: 4/5 at 7e-4-1e-3, 1/5 sub-3e-4. Estimate
 unchanged in range ($3-10k) with the hard class as the upper-end
 driver — exactly what the adaptive planner was built for.
+
+## 4.79 Matolcsi Conjecture 2 VERIFIED on our triples (independent methodology)
+
+Tested the conjectured Zauner-implying identity of Matolcsi-
+Matszangosz-Varga-Weiner (arXiv 2503.14752, J. Algebr. Comb.
+2026): for a d=6 MUB-triplet with transition matrices H_j
+(= sqrt6 X_i* X_k), G_{H_j}(pi(1,1,1,-1,-1,-1)) = 0 for all
+pi in S6 and j, and per j, min over {H_j, H_j*} of
+sup_pi G(pi(3,3,3,-3,-3,-3)) = 0, where G_H(gamma) =
+|sum_k prod_j H[j,k]^{gamma_j}|^2.
+Our triples come from a wholly independent pipeline (Karlsson-
+face root polishing, not their gradient-descent construction).
+Results (all 20 distinct permutations per gamma, all three
+transition matrices per triple):
+  generic face (1.0, 2.0), 3 bases:  G-values 1e-14 - 1e-17
+  F-point (2.0412, pi), 3 bases:     1e-16 - 1e-18
+  CORNER ANCHOR (pi/3, pi/3), 4 bases (via a self-consistent
+      mp-cast map, unitarity 4.9e-16; the mixed-precision
+      stable map's 1e-12 self-inconsistency blocks exact-root
+      enumeration — noted): 1e-16 - 1e-18
+IDENTITY VERIFIED at machine precision on every tested stratum,
+including the exotic corner anchor their 20,000-triplet search
+plausibly never sampled. No counterexample. Independent support
+for their Conjecture 2; natural citation link both ways (their
+Conjecture 1 + [JMMS] would give Zauner by a different route
+than ours; the two programs are complementary and now
+cross-validated on shared ground).
