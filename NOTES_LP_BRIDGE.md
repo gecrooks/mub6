@@ -1870,3 +1870,22 @@ for their Conjecture 2; natural citation link both ways (their
 Conjecture 1 + [JMMS] would give Zauner by a different route
 than ours; the two programs are complementary and now
 cross-validated on shared ground).
+
+## 4.80 Fat-tile coverage verdict (task 21, partial)
+
+The naive (guard-less) fat sweep at h = 0.01 exceeded 20+
+CPU-min without terminating (reaped) — matching the h = 5e-3
+attempt (4.63). Naive per-tile coverage gives the fat-tile route
+NO gain: ~30+ GPU-s/tile x ~1e6 tiles ~ 1e4 GPU-hr, the same
+order as the certify_tile baseline. The 1e2-1e3 GPU-hr target is
+therefore GATED on:
+  (a) guarded sweeps (zoned_sweep with R_LOC collection balls —
+      coarse_chain.anchor measured 134-160 s at h = 3e-3, i.e.
+      ~10x faster than the guard-less variant; h = 0.01 probe in
+      flight, detached);
+  (b) segment amortization across chains (the D1 cache: measured
+      4-17x) — the colleague's frontier accounting is the
+      load-bearing infrastructure here too;
+  (c) the 41x GPU port.
+Chained estimate if all three land at measured values: 300-1500
+GPU-hr. Baseline without them stands at ~3-12k GPU-hr (4.78).
