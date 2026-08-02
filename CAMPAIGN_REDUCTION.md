@@ -59,6 +59,13 @@ are identical. Parent creation grades and stores the coverage leg separately,
 so a valid global sweep remains reusable even if that parent's pair coloring
 failed.
 
+The first real paired measurement is recorded in
+`PARENT_REUSE_BENCHMARK.md`. It found that box restriction is sound but parent
+root coordinates alone do not initialize offset child tubes: three of three
+reused children failed all 48 tubes, while their independent counterparts
+certified. Reuse economics are therefore blocked on exporting certified root
+continuation data; no speedup projection from the failed path is accepted.
+
 ### 3. Use anisotropic boxes aligned with special strata
 
 The fine scale near an ordinary wall is normal to a codimension-one

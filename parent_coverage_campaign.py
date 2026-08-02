@@ -88,6 +88,11 @@ def certify_and_store_parent(beta, half_widths, store, *, certifier=None,
             "parent_result_ok": bool(run.get("ok", False))}
 
 
+def _outward_interval(center, half_width):
+    return (float(np.nextafter(center - half_width, -np.inf)),
+            float(np.nextafter(center + half_width, np.inf)))
+
+
 def _axis_children(center, parent_half_width, child_half_width):
     values = (center, parent_half_width, child_half_width)
     if not all(np.isfinite(value) for value in values):
@@ -101,7 +106,21 @@ def _axis_children(center, parent_half_width, child_half_width):
     count = int(np.ceil(parent_half_width / child_half_width))
     first = center - parent_half_width + child_half_width
     last = center + parent_half_width - child_half_width
-    return tuple(float(value) for value in np.linspace(first, last, count))
+    candidates = [float(value) for value in np.linspace(first, last, count)]
+    parent_lo, parent_hi = _outward_interval(center, parent_half_width)
+    adjusted = []
+    for candidate in candidates:
+        # Algebraically boundary-aligned centers can land one ulp outside
+        # after serialization/arithmetic. Move inward, never outward.
+        for _ in range(8):
+            lo, hi = _outward_interval(candidate, child_half_width)
+            if lo >= parent_lo and hi <= parent_hi:
+                break
+            candidate = float(np.nextafter(candidate, center))
+        else:
+            raise RuntimeError("cannot represent contained child interval")
+        adjusted.append(candidate)
+    return tuple(adjusted)
 
 
 def partition_children(artifact, child_half_widths):
@@ -124,9 +143,9 @@ def partition_children(artifact, child_half_widths):
     for axis, (centers, pc, ph, ch) in enumerate(zip(
             axes, parent.parameter_center, parent.parameter_half_widths,
             widths)):
-        intervals = sorted((center - ch, center + ch)
+        intervals = sorted(_outward_interval(center, ch)
                            for center in centers)
-        parent_lo, parent_hi = pc - ph, pc + ph
+        parent_lo, parent_hi = _outward_interval(pc, ph)
         if intervals[0][0] > parent_lo or intervals[-1][1] < parent_hi:
             raise RuntimeError(f"child partition misses axis {axis} boundary")
         if any(right[0] > left[1]

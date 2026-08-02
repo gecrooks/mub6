@@ -187,6 +187,14 @@ class CoverageContractTests(unittest.TestCase):
             artifact.restrict((1.26, 2.0), (0.25, 0.1)).complete
         )
 
+    def test_outward_endpoint_check_rejects_rounded_protrusion(self):
+        artifact = self._three_dimensional_artifact()
+        width = np.nextafter(0.5, np.inf)
+        self.assertFalse(
+            artifact.restrict((1.0, 2.0, 3.0),
+                              (width, 0.5, 0.5)).complete
+        )
+
     def test_parent_artifact_round_trip_detects_tampering(self):
         zone = RootCoverageZone(
             kind="tube", center=(0.0,), guard_radii=(0.2,),

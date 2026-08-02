@@ -240,9 +240,15 @@ def _closed_box_inside(child_center, child_half_widths,
         return False
     if (ch < 0).any() or (ph < 0).any():
         return False
-    # No tolerance: rounding may reject a boundary child, never admit one
-    # whose represented closed box protrudes beyond the parent.
-    return bool(np.all(np.abs(cc - pc) + ch <= ph))
+    # Compare outward-rounded endpoints.  This admits no numerical tolerance:
+    # both represented boxes are enlarged by one floating-point step before
+    # containment is tested.
+    child_lo = np.nextafter(cc - ch, -np.inf)
+    child_hi = np.nextafter(cc + ch, np.inf)
+    parent_lo = np.nextafter(pc - ph, -np.inf)
+    parent_hi = np.nextafter(pc + ph, np.inf)
+    return bool(np.all(child_lo >= parent_lo) and
+                np.all(child_hi <= parent_hi))
 
 
 @dataclass(frozen=True)
