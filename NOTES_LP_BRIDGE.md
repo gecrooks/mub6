@@ -1658,3 +1658,25 @@ extends four more decades toward the apex with the same value the
 shallow ladder gave (0.379 at r=0 — cf. 4.52). No continua, no
 degeneracy, no surprises: the corner column is regular geometry
 under a numerically honest chart at every accessible depth.
+
+## 4.72 Boundary of the theorem-grade tile: certified rates at the special loci
+
+Attempting rigor_tile at special-locus points (theta = 0.005):
+  wall (1.1, pi/3):            dual_karlsson raises "z3^2 touches
+                               branch cut" — z3^2 genuinely sits
+                               near the cut on the wall; the csqrt
+                               needs the branch-aware chart (track
+                               z3, not z3^2 — the s-chart pattern).
+  near-corner (pi/3+1e-3, ..): raises "z2 denominator touches 0"
+                               — dual.py's naive z2 quotient;
+                               needs the tight z3sq (4.70's fix,
+                               in dual arithmetic with partials).
+  (generic point untested past the first raise in the same run.)
+So the theorem-grade tile currently covers the GENERIC strata
+(validated 5/5 across theta, 4.66) and stops at the special loci
+where the certified-rates leg (dual.py) still runs the naive
+kernels. The fix list is known and bounded: port stable P/Q (with
+its three elementary trig partials) into dual.py, ride z2 on the
+tight z3sq, and branch-aware csqrt at the wall. rigor_tile now
+uses stable_karlsson for its float map (== naive generically,
+accurate at depth).

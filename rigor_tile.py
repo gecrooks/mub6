@@ -42,7 +42,7 @@ from certify import SLOP, L_H_G, L_H_J, _g_and_J, krawczyk_verify
 from collar_tile import _pool_phases
 from dual import dual_karlsson
 from interval import CIV, IV, iv_exp_i
-from karlsson import karlsson_map
+from karlsson_stable import stable_karlsson as karlsson_map
 
 HESS_ROW = 11.0 / 18.0
 
