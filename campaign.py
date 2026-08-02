@@ -36,6 +36,7 @@ import warnings
 import numpy as np
 
 from cache import anchored_tile, chain_step
+from campaign_coverage import analyze_ledger_records, grade_accepted
 from certificate_result import CertificateGrade
 from karlsson import karlsson_map
 from mub import find_mu_vectors
@@ -46,16 +47,6 @@ warnings.filterwarnings("ignore")
 PI = np.pi
 DOMAIN = ((0.0, PI / 2), (0.0, PI / 2), (0.0, PI))
 FATTEN_LADDER = (3.0, 2.0, 1.5, 1.0)
-
-
-def grade_accepted(record, required=CertificateGrade.RIGOROUS):
-    """Legacy records have no theorem-grade claim and are experimental."""
-    grade_name = record.get("grade", CertificateGrade.EXPERIMENTAL.name)
-    try:
-        grade = CertificateGrade[grade_name]
-    except KeyError:
-        return False
-    return bool(record.get("ok")) and grade >= CertificateGrade(required)
 
 
 def coupling_profile(beta, sig_cut=0.06):
@@ -167,22 +158,25 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
     return th_hi, n_tiles
 
 
-def load_frontiers(path, required_grade=CertificateGrade.RIGOROUS):
+def load_frontiers(path, required_grade=CertificateGrade.RIGOROUS,
+                   theta_lo=0.0, theta_hi=PI / 2):
     """Resume support: per-(phi,lam) certified theta frontier from the
     ledger (max certified theta+hv_t of contiguously-OK records; the
     conservative re-check is one overlapping tile at resume)."""
-    fr = {}
     if not os.path.exists(path):
-        return fr
+        return {}
+    records = []
     with open(path) as f:
         for line in f:
-            rec = json.loads(line)
-            if not grade_accepted(rec, required_grade):
-                continue
-            b, hv = rec["beta"], rec["hv"]
-            key = (round(b[1], 9), round(b[2], 9))
-            fr[key] = max(fr.get(key, 0.0), b[0] + hv[0])
-    return fr
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                records.append({"invalid_json": line.rstrip("\n")})
+    reports = analyze_ledger_records(
+        records, theta_lo, theta_hi, required_grade
+    )
+    return {key: report.frontier for key, report in reports.items()
+            if report.frontier > theta_lo}
 
 
 def main():
@@ -207,7 +201,7 @@ def main():
     th_hi = args.th_hi if args.th_hi is not None else DOMAIN[0][1]
 
     required_grade = CertificateGrade[args.required_grade]
-    frontiers = load_frontiers(args.ledger, required_grade)
+    frontiers = load_frontiers(args.ledger, required_grade, th_lo, th_hi)
     t0 = time.time()
     total = 0
     with open(args.ledger, "a") as ledger:
