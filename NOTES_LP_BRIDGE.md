@@ -1493,3 +1493,21 @@ with span, so the dyadic ladder absorbs the honesty cost locally.
 Collar remains 48/48 under review-hardened semantics with
 adaptive slabs; census tooling should try thinner slabs as a
 rung alongside thinner hf3.
+
+## 4.65 z2-delta second layer decoded: G- = sin(theta) * g1(phi, lam)
+
+The z2 stable form needs delta = zeta - z3sq via the numerator
+N' = (t1 + t2) * G- - i * t3 * G+, where G-+ = B12^2 * bigden -+
+cB11^2 * bignum. Probed at 40 digits: G- vanishes IDENTICALLY in
+(phi, lam) at theta = 0 (exactly 0.0 for all offsets) and is
+linear in theta with slope ~6 at the corner; G+ ~ 4.0 = O(1).
+Hence G- = sin(theta) * g1(phi, lam) + O(sin^2), with g1 a closed
+form obtained by differentiating at s = 0 (A11 = alpha + s mu,
+A12 = beta + s nu with alpha/beta theta-only and mu/nu phi-only —
+at s = 0 the phi-dependence drops, which is WHY the identity
+holds). With t1 ~ (lam - pi/3), t2 ~ theta^2, t3 ~ theta *
+cos(lam/2 + phi), and G- ~ theta, every product in N' carries an
+explicit small factor — the z2 quotient becomes cancellation-free
+one level down, same pattern as P/Q. Remaining: assemble g1
+symbolically and wire delta into karlsson_stable + ivstable
+(mechanical; removes the mp-hybrid and the interval z2 blowup).
