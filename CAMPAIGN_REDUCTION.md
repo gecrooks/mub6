@@ -51,6 +51,14 @@ none of those claims are inherited from the parent. Serialized artifacts are
 digest-checked on load, and an incomplete parent or protruding child fails
 closed.
 
+`parent_coverage_campaign.py` supplies the orchestration layer: an atomic
+content-addressed artifact store, a validated Cartesian closed-box partition,
+artifact-bound JSONL child records, and grade-aware resume. A record from a
+different parent digest cannot suppress work, even when its child coordinates
+are identical. Parent creation grades and stores the coverage leg separately,
+so a valid global sweep remains reusable even if that parent's pair coloring
+failed.
+
 ### 3. Use anisotropic boxes aligned with special strata
 
 The fine scale near an ordinary wall is normal to a codimension-one
