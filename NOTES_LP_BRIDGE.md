@@ -1482,3 +1482,14 @@ certified_S (or central differences) over root_data2's S
 everywhere; (c) the test now uses central differences as the
 reference. Tracking down root_data2's systematic (its internal
 continuation step?) is a small open item.
+
+Addendum 4.64 (persistence gate follow-through): the honest
+theta-tax (drop only when dO_theta > curv0 * span) fails 3 of the
+48 census cells at the base rung — their earlier certificates were
+leaning on the unsound point-derivative drop (the reviewer's
+exact concern). All three CERTIFY on 5x-thinner slabs
+([0.005, 0.006]: chi 2, 2, 4) — the persistence threshold scales
+with span, so the dyadic ladder absorbs the honesty cost locally.
+Collar remains 48/48 under review-hardened semantics with
+adaptive slabs; census tooling should try thinner slabs as a
+rung alongside thinner hf3.
