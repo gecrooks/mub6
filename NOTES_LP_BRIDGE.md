@@ -1585,3 +1585,20 @@ g2 (same differentiation, c = cos(theta) now contributing) and
 the symmetric treatment of num2 = cB12^2 (zeta' - z3sq) — both
 routine. Until wired, the mp-hybrid (0.25 ms) covers float grade
 and elevated-dps intervals cover certified corner tiles.
+
+## 4.68 Rigorous chains at 1.59 s/tile; honest campaign economics
+
+Warm-pool chains of the theorem-grade tile: 10/10 certified at
+1.59 s/tile (4x amortization — pool-dominated cost, same speed
+class as the sampled chains). HONEST ECONOMICS: at the
+tube-contraction h (2.5e-5 - 1e-4), flat-domain coverage is
+~1e11-1e13 tiles — the rigorous SIGNED tile is a demonstrated
+PRIMITIVE (pair layer with per-dependency grades, the
+CertificateResult pattern, 1.6 s chained), not a campaign
+vehicle. The rigorous campaign remains anchored to certify_tile
+(h = 3e-4, global sweep; $25-50k -> $5-15k post-multipliers), and
+the two now compose: certify_tile can adopt the signed tile's
+TM-pair layer and result-grading directly. The lever that would
+change the economics is the tube-contraction ceiling
+(|Y| * rad_g <~ 3.5e-3): frame-split preconditioning for
+large-|Y| roots — already assumption-ledger item 3's territory.
