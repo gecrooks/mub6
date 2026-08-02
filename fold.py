@@ -487,6 +487,7 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
                 # f_ok is diagnostic only: the floors are pure-phi
                 # ball floors, sound without the F-dichotomy
                 if not (cT["edge_ok"]
+                        and 1 <= len(cT["dips"]) <= 2
                         and all(a > 0 and b < len(tgrid) - 1
                                 for a, b in cT["dips"])):
                     if verbose:
@@ -534,6 +535,15 @@ def valley_certificate(beta, th0, h, far_tax, n_t=65, T_cap=1.6,
             merged[-1] = (merged[-1][0], max(merged[-1][1], b))
         else:
             merged.append((a, b))
+    if cert_rates is not None and cert_T is not None:
+        # In certified mode the PAD-inflated sampled envelope is advisory.
+        # Its beta-corner spread can exceed the entire edge profile and make
+        # ``env < floor`` touch both window edges even when the interval
+        # dichotomy has proved positive edge floors.  Use the certified dip
+        # cells as the enclosure partition; sampled Y values below are only
+        # representatives for prototype rows, while rigorous callers replace
+        # those rows with certified_dip_rows.
+        merged = list(cert_T["dips"])
     if not merged:
         raise RuntimeError("no phi-dip found (lost the root?)")
     if len(merged) > 2:

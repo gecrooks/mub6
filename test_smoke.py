@@ -107,6 +107,18 @@ class TestFailClosed(unittest.TestCase):
 
 
 class TestTiles(unittest.TestCase):
+    def test_certified_valley_uses_interval_dips_not_sampled_pad(self):
+        from certificate_result import CertificateGrade
+        from parametric import certify_tile
+        result = certify_tile(
+            (0.50025, 1.0, 2.0), 2.5e-4,
+            use_certified=True, verbose=False,
+        )
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["grade"], CertificateGrade.RIGOROUS.name)
+        self.assertEqual(result["coverage_grade"],
+                         CertificateGrade.RIGOROUS.name)
+
     def test_fully_rigorous_tile_with_global_coverage(self):
         from certificate_result import CertificateGrade
         from rigor_tile import fully_rigorous_signed_tile
