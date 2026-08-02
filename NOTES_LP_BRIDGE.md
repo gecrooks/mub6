@@ -1694,3 +1694,25 @@ naively-propagated box values and so raise near the corner and
 wall. Scoped fix: split dual_karlsson into point-value + partial
 paths and make its internal checks mean-value aware. Bounded;
 next session.
+
+## 4.73 Mean-value dual + THE IDENTIFICATION: special loci = branch surfaces of the z-quotients
+
+dual.py refactored: _dual_stage1 (divisions delayed) +
+_dual_stage2 (checks via callback) + dual_karlsson_mv (point-pass
+values, box-pass partials, mean-value-tightened intermediates).
+Result: generic tiles tighten; the special-locus raises PERSIST —
+and correctly so: at the corner box the factor t = t1 + t2
+genuinely crosses zero INSIDE any box containing lam = pi/3
+(t1 = sin(lam/2 - pi/6) changes sign), so den3 truly touches 0 —
+z3^2's BRANCH SURFACE passes through the box, and both +-z3
+sheets are genuine Hadamards there (the family is two-sheeted at
+the surface). The week's whole hierarchy now has one sentence:
+THE WALLS, LINES AND CORNER ARE THE BRANCH SURFACES OF THE
+z-QUOTIENTS, algebraically the zero sets of the t +- i t3
+factors (4.57). Fail-loudly is the right behavior for a
+single-sheet evaluator; the unlock is chart-level:
+  (a) rotated-cut csqrt for NEAR-cut boxes (the wall: z3^2 close
+      to but not crossing the cut) — small interval.py addition;
+  (b) per-sheet certification where the surface crosses the box
+      (corner): enumerate both sign sheets, certify each — the
+      branch-aware chart long budgeted for ~1-2% of tiles.
