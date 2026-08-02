@@ -83,6 +83,10 @@ class CertificateResult:
         """Whether this successful result meets a caller's evidence policy."""
         return self.ok and self.grade >= CertificateGrade(required)
 
+    def __bool__(self):
+        """Preserve fail-closed compatibility with legacy Boolean callers."""
+        return self.ok
+
     def as_dict(self):
         return {
             "ok": self.ok,

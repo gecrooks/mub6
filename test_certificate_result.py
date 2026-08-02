@@ -39,6 +39,7 @@ class CertificateResultTests(unittest.TestCase):
         )
 
         self.assertFalse(result.accepted_at(CertificateGrade.EXPERIMENTAL))
+        self.assertFalse(result)
 
     def test_combination_inherits_weakest_stage_and_failure(self):
         rigorous = CertificateResult.from_evidence(
@@ -77,6 +78,7 @@ class CertificateResultTests(unittest.TestCase):
         restored = json.loads(json.dumps(result.as_dict()))
         self.assertEqual(restored["grade"], "RIGOROUS")
         self.assertEqual(restored["metadata"], {"boxes": 12})
+        self.assertTrue(result)
 
     def test_empty_evidence_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "declare its evidence"):

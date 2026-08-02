@@ -18,7 +18,9 @@ import warnings
 
 import numpy as np
 
+from certificate_result import CertificateGrade, CertificateResult, Evidence
 from certify import SLOP, cluster_suspects
+from coverage_contract import close_survivor_boxes
 from karlsson import karlsson_map
 from mub import find_mu_vectors
 from parametric import polish_root, root_data2, _g_and_J
@@ -26,6 +28,30 @@ from fold import valley_certificate
 from rates import certified_rates
 
 warnings.filterwarnings("ignore")
+
+
+def _coarse_result(n_roots, bound, coverage_complete, uncovered):
+    """Build the graded verdict, including the empty-enumeration gate."""
+    ok = n_roots > 0 and bound <= 5 and coverage_complete
+    failures = []
+    if n_roots == 0:
+        failures.append("empty enumeration")
+    if bound > 5:
+        failures.append(f"colors={bound}")
+    if not coverage_complete:
+        failures.append(f"unresolved={uncovered}")
+    return CertificateResult.from_evidence(
+        ok,
+        [
+            Evidence("coarse coloring", CertificateGrade.SAMPLED_BOUND,
+                     "wild localization and window composition"),
+            Evidence("survivor coverage", CertificateGrade.SAMPLED_BOUND,
+                     "box-wise check with provisional 0.05 zones"),
+        ],
+        reason=", ".join(failures),
+        metadata={"roots": n_roots, "colors": bound,
+                  "unresolved": uncovered},
+    )
 
 
 def _window_ok(beta, th, h):
@@ -130,48 +156,50 @@ def coarse_certify_tile(beta, h=3e-3):
     # (cell +- r inside ball(root, R_LOC)); cells that don't go to
     # the whisker-tail refinement sweep, and only cells failing
     # BOTH count uncovered. Vectorized; no cluster sampling.
-    uncovered = 0
-    R = np.array(roots)
+    R = np.asarray(roots, dtype=float).reshape(-1, 5)
     C_h = np.atleast_2d(cen_h)
     r_h = np.atleast_2d(rad_h)
-    if len(R) == 0 and len(C_h):
-        uncovered = len(C_h)
-    elif len(C_h):
-        d = np.abs((C_h[:, None, :] - R[None, :, :] + np.pi)
-                   % (2 * np.pi) - np.pi).max(axis=2)
-        inside = (d.min(axis=1) + r_h.max(axis=1)) <= 0.05
-        bad = ~inside
-        if bad.any():
-            from coarse_chain import _refine_out
-            from rates import certified_rates as _crates
-            cr4 = _crates(beta, (h, h, h))
-            C_bad = C_h[bad]
-            W_bad = np.repeat(r_h[bad].max(axis=1)[:, None], 5,
-                              axis=1)
-            # chunked mini-sweeps: bounded memory per call; a
-            # chunk that fails to exclude marks all its cells
-            # uncovered (loud, conservative)
-            CH = 50
-            for k0 in range(0, len(C_bad), CH):
-                try:
-                    ok_ref = _refine_out(beta, h,
-                                         C_bad[k0:k0 + CH],
-                                         W_bad[k0:k0 + CH], cr4)
-                except RuntimeError:
-                    ok_ref = False       # budget blown = loud fail
-                if not ok_ref:
-                    uncovered += len(C_bad[k0:k0 + CH])
+    widths = np.repeat(r_h.max(axis=1)[:, None], 5, axis=1)
+    initial = close_survivor_boxes(
+        C_h, widths, R, np.full_like(R, 0.05)
+    )
+    excluded = np.zeros(len(C_h), dtype=bool)
+    bad_indices = np.asarray(initial.unresolved_indices, dtype=int)
+    if len(bad_indices):
+        from coarse_chain import _refine_out
+        from rates import certified_rates as _crates
+        cr4 = _crates(beta, (h, h, h))
+        C_bad = C_h[bad_indices]
+        W_bad = widths[bad_indices]
+        # chunked mini-sweeps: bounded memory per call; a
+        # chunk that fails to exclude marks all its cells
+        # uncovered (loud, conservative)
+        CH = 50
+        for k0 in range(0, len(C_bad), CH):
+            try:
+                ok_ref = _refine_out(beta, h,
+                                     C_bad[k0:k0 + CH],
+                                     W_bad[k0:k0 + CH], cr4)
+            except RuntimeError:
+                ok_ref = False       # budget blown = loud fail
+            if ok_ref:
+                excluded[bad_indices[k0:k0 + CH]] = True
+    coverage = close_survivor_boxes(
+        C_h, widths, R, np.full_like(R, 0.05), excluded=excluded
+    )
+    uncovered = len(coverage.unresolved_indices)
     t_swp = time.time() - t0s
     bound = cols                 # wilds are IN the coloring now
-    ok = bound <= 5 and uncovered == 0
+    result = _coarse_result(len(roots), bound, coverage.complete, uncovered)
     print(f"COARSE_TILE ({beta[0]:.3f},{beta[1]:.3f},{beta[2]:.3f}) "
-          f"h={h}: {'CERTIFIED' if ok else 'FAILED'} — roots "
+          f"h={h}: {'OK' if result else 'FAILED'}[{result.grade.name}] "
+          f"— roots "
           f"{len(roots)}, slow {slow}, recursed {rec}, wild "
           f"{len(wild)}, colors {cols}, bound {bound}, uncovered-blobs "
           f"{uncovered} | enum {t_enum:.0f}s win {t_win:.0f}s pair "
           f"{t_pair:.1f}s sweep {t_swp:.0f}s total "
           f"{time.time()-t0:.0f}s", flush=True)
-    return ok
+    return result
 
 
 if __name__ == "__main__":

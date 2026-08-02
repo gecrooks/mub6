@@ -61,6 +61,24 @@ class TestKernels(unittest.TestCase):
 
 
 class TestFailClosed(unittest.TestCase):
+    def test_coarse_empty_enumeration_fails_even_without_survivors(self):
+        from coarse_tile import _coarse_result
+        result = _coarse_result(
+            n_roots=0, bound=0, coverage_complete=True, uncovered=0,
+        )
+        self.assertFalse(result)
+        self.assertIn("empty enumeration", result.reason)
+
+    def test_coarse_result_grade_cannot_claim_rigorous(self):
+        from certificate_result import (
+            CertificateGrade, CertificateResult, Evidence,
+        )
+        result = CertificateResult.from_evidence(
+            True,
+            [Evidence("chain cache", CertificateGrade.EXPERIMENTAL)],
+        )
+        self.assertFalse(result.accepted_at(CertificateGrade.RIGOROUS))
+
     def test_collar_tile_empty_pool_fails(self):
         from collar_tile import collar_tile
         ok = collar_tile(0.005, 0.01, 1.0, 2.0, hf=5e-3,

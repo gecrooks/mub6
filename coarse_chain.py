@@ -18,7 +18,9 @@ import warnings
 import numpy as np
 
 import parametric
+from certificate_result import CertificateGrade, CertificateResult, Evidence
 from certify import cluster_suspects
+from coverage_contract import close_survivor_boxes
 from karlsson import karlsson_map
 from mub import find_mu_vectors
 from parametric import polish_root, root_data2, zoned_sweep, SLOP
@@ -127,11 +129,24 @@ def anchor(beta, h):
     # coverage at anchor (blobs persist along the chain)
     blobs = _blobs(stuck)
     unc = _coverage_blobs(H0, roots, blobs, beta=beta, h=h, cr=cr)
-    ok = cols <= 5 and unc == 0
-    print(f"  ANCHOR ({beta[0]:.3f},..): {'OK' if ok else 'FAIL'} "
+    result = CertificateResult.from_evidence(
+        cols <= 5 and unc == 0,
+        [
+            Evidence("coarse coloring", CertificateGrade.SAMPLED_BOUND,
+                     "wild localization and window composition"),
+            Evidence("survivor coverage", CertificateGrade.SAMPLED_BOUND,
+                     "box-wise check with provisional 0.05 zones"),
+        ],
+        reason="" if cols <= 5 and unc == 0 else
+               f"colors={cols}, uncovered={unc}",
+        metadata={"roots": n, "colors": cols, "uncovered": unc},
+    )
+    print(f"  ANCHOR ({beta[0]:.3f},..): "
+          f"{'OK' if result else 'FAIL'}[{result.grade.name}] "
           f"roots {n} colors {cols} stuck {st} cached {len(C)} "
           f"[{time.time()-t0:.0f}s]", flush=True)
-    return dict(beta=np.array(beta), h=h, roots=roots, ok=ok,
+    return dict(beta=np.array(beta), h=h, roots=roots, ok=result.ok,
+                result=result, grade=result.grade.name,
                 classes=classes, locs=locs, C=C, W=W, E=E, R=R,
                 D1=D1, blobs=blobs, t_anchor=time.time() - t0)
 
@@ -175,23 +190,30 @@ def _coverage_blobs(H0, roots, blobs, beta=None, h=None, cr=None):
     +- W) must fit inside the localization radius. A blob with
     even one unexplained box goes to the refinement fallback, and
     failing that counts uncovered (loud)."""
-    R = np.array(roots)
+    R = np.asarray(roots, dtype=float).reshape(-1, 5)
     R_LOC = 0.05
     unc = 0
     for cc_, picks, bC, bW in blobs:
         boxes = np.atleast_2d(np.asarray(bC))
         wids = np.atleast_2d(np.asarray(bW))
-        covered = True
+        candidate_roots = []
         for c, w in zip(boxes, wids):
+            if len(R) == 0:
+                candidate_roots.append(-1)
+                continue
             th = polish_root(H0, np.asarray(c))
             d = np.abs((th - R + np.pi) % (2 * np.pi)
                        - np.pi).max(axis=1)
-            dc = np.abs((np.asarray(c) - R + np.pi) % (2 * np.pi)
-                        - np.pi).max(axis=1)
-            if not (d.min() <= 1e-4
-                    and dc.min() + float(np.max(w)) <= R_LOC):
-                covered = False
-                break
+            root_i = int(np.argmin(d))
+            candidate_roots.append(root_i if d[root_i] <= 1e-4 else -1)
+        report = close_survivor_boxes(
+            boxes,
+            wids,
+            R,
+            np.full_like(R, R_LOC),
+            candidate_roots=candidate_roots,
+        )
+        covered = report.complete
         if not covered and cr is not None:
             covered = _refine_out(beta, h, bC, bW, cr)
         if not covered:
@@ -288,12 +310,26 @@ def chain_step(state, beta_new):
     if stuck:
         unc += _coverage_blobs(H1, roots1, _blobs(stuck),
                                beta=beta_new, h=h, cr=cr)
-    ok = cols <= 5 and unc == 0
+    result = CertificateResult.from_evidence(
+        cols <= 5 and unc == 0,
+        [
+            Evidence("coarse coloring", CertificateGrade.SAMPLED_BOUND),
+            Evidence("survivor coverage", CertificateGrade.SAMPLED_BOUND,
+                     "box-wise check with provisional 0.05 zones"),
+            Evidence("chain cache", CertificateGrade.EXPERIMENTAL,
+                     "unproved curvature remainder"),
+        ],
+        reason="" if cols <= 5 and unc == 0 else
+               f"colors={cols}, uncovered={unc}",
+        metadata={"colors": cols, "uncovered": unc,
+                  "cache_failures": n_fail},
+    )
     dt = time.time() - t0
-    print(f"  STEP -> ({beta_new[0]:.4f},..): {'OK' if ok else 'FAIL'} "
+    print(f"  STEP -> ({beta_new[0]:.4f},..): "
+          f"{'OK' if result else 'FAIL'}[{result.grade.name}] "
           f"colors {cols} cachefail {n_fail} resweep {nb} stuck {st} "
           f"unc {unc} [{dt:.0f}s]", flush=True)
-    return ok, dt
+    return result, dt
 
 
 if __name__ == "__main__":
