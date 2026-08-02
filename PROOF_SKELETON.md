@@ -295,3 +295,32 @@ Pricing: certificate leg ~1e5 adaptive tiles ~ $20-50; coverage
 via chain-anchored sweeps / 41x GPU ~ $50-150 (NOTES 4.63).
 The §5 coarse-tile machinery remains valid and is retained as the
 reference implementation of the coverage sweep.
+
+## 8. The ball-vertex lemma and coverage-only fat tiles (2026-08-02)
+
+**Lemma (ball-vertex).** Let u, v be unit vectors of the form
+(1, e^{i theta_1..5})/sqrt6 with |theta_k(u) - theta_k(v)| <= 2r
+for all k (both phase points in an l-inf ball of radius r). Then
+  Re <u, v> >= (1 + 5 cos 2r)/6 > 0  whenever  r < 0.886.
+Proof: <u,v> = (1 + sum_k e^{i delta_k})/6 with |delta_k| <= 2r;
+each term has real part >= cos 2r. QED.
+Consequence: any set of mutually orthogonal MU vectors contains AT
+MOST ONE member per ball of radius r <= 0.88 — each ball is a
+single clique vertex, with no per-ball certificate needed.
+
+**Coverage-only fat tile.** With the lemma, a tile certificate at
+box half-width h needs only:
+  (a) COVERAGE: every MU vector of every beta in the box lies in
+      one of the listed balls (radius R_LOC around enumerated
+      roots) — the coarse sweep, the sole compute cost;
+  (b) PAIRS: inter-ball overlap lower bounds via exact interval
+      phasor sums with per-coordinate width 2 R_LOC + certified
+      blanket drift BU * h (mean-value rates);
+  (c) chi <= 5 coloring of the ball graph.
+Budget: pair slop ~ 5(2 R_LOC + BU h)/6 must sit under the local
+orthogonality margins (measured O(0.15) in the deep bulk), giving
+R_LOC ~ 0.05-0.08 and h ~ 5e-3-0.02 by root drift class — a
+100-8000x volume gain over the fine tile where margins allow,
+with the sweep (GPU, chain-amortized) as the only real cost.
+Grade: RIGOROUS given (a) at certified grade — the coverage leg
+(rigor/coverage-verifier) is the gating dependency, as everywhere.
