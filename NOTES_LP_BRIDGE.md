@@ -1741,3 +1741,20 @@ Consequences:
 (The boundary-aligned half-tiles' chi 6 failures are now a
 performance puzzle, not a soundness one — unresolved, low
 priority.)
+
+## 4.75 Rotated-cut branch lands: the wall opens to the certified path
+
+interval.civ_csqrt_rot(z, alpha): sqrt with the cut rotated away
+from the rectangle (verified r^2 contains z on the wall's
+im-straddling z3^2 box). dual's sqrt_branch auto-rotates when the
+principal cut is touched — sound per 4.74 (H is continuous
+through the chart cut; any consistent branch yields a valid
+family member).
+  generic:     unchanged (1.2e-3)
+  WALL:        NO RAISE — width 0.32 (fat from the fast near-cut
+               turn; tightens with h < t3-scale boxes — but the
+               certified-rates door at the wall is now OPEN)
+  near-corner: still blocked at the den2 check — the remaining
+               scoped piece is cascading the mean-value tighten
+               to the stage2-computed den2 (point-pass through
+               the divisions + box partials at that level).

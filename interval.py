@@ -238,6 +238,24 @@ class CIV:
         return CIV(r * iv_cos(half), r * iv_sin(half))
 
 
+def civ_csqrt_rot(z, alpha):
+    """Square root of CIV z with the branch cut rotated to angle
+    alpha + pi (i.e. the cut points AWAY from direction alpha):
+    w = z e^{-i alpha}; requires w clear of the standard cut;
+    returns e^{i alpha/2} sqrt(w). For a rectangle hugging the
+    negative real axis (the wall's z3^2), alpha = pi picks the
+    branch continuous there. The caller owns sheet consistency."""
+    ca, sa = np.cos(alpha), np.sin(alpha)
+    rot = CIV(IV.pad(ca, 4), IV.pad(-sa, 4))
+    w = z * rot
+    if not w.cut_clear():
+        raise ValueError("rotated rectangle still touches the cut")
+    s = w.csqrt()
+    ch, sh = np.cos(alpha / 2), np.sin(alpha / 2)
+    back = CIV(IV.pad(ch, 4), IV.pad(sh, 4))
+    return s * back
+
+
 def civ_matmul(A, B):
     """(list-of-lists) complex-interval matrix product."""
     n, k, m = len(A), len(B), len(B[0])
