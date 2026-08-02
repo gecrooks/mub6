@@ -324,3 +324,30 @@ R_LOC ~ 0.05-0.08 and h ~ 5e-3-0.02 by root drift class — a
 with the sweep (GPU, chain-amortized) as the only real cost.
 Grade: RIGOROUS given (a) at certified grade — the coverage leg
 (rigor/coverage-verifier) is the gating dependency, as everywhere.
+
+## 9. The certificate format and the independent re-checker
+
+The campaign's output is a LEDGER of per-tile certificates, each a
+compact finite witness (~10-50 KB):
+  (1) tile identity: beta0 (exact floats), hv, grade, stratum;
+  (2) root list + definitional frames: theta_i, S_i, Q_i, rho_i —
+      floats pick the frame; every theorem-bearing statement is a
+      containment the re-checker re-verifies;
+  (3) zone declarations (tubes / R_LOC balls);
+  (4) clique-layer witness: conflict-graph edges + an exhibited
+      proper <= 5-coloring (checkable in O(E); non-edges re-verified
+      by one TM/interval inner-product bound each);
+  (5) the claimed certified constants, re-derived by the checker
+      from (beta0, hv) with INDEPENDENT interval arithmetic (Arb).
+The coverage sweep's tree is NOT stored: it is a deterministic
+function of the interval tests and split rule, replayed by an
+independently-written ~200-line kernel (certified trig, tax
+comparison, split-or-collect). Two implementations already
+cross-execute box-exactly (CPU/GPU, Result 28); the audit protocol
+is random public samples + one full replay. A final global check
+verifies the closed tiles cover the fundamental domain (interval
+geometry over the ledger, independent of all tile internals).
+This is the artifact that moves the proof from "trust our stack"
+to "audit this data" — the Hales/Tucker standard, with a clean
+path to later formalization (the lemma skeleton is elementary;
+only the certificate format needs encoding).
