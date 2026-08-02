@@ -1,4 +1,5 @@
 import unittest
+import json
 
 import numpy as np
 
@@ -118,6 +119,12 @@ class CoverageContractTests(unittest.TestCase):
         self.assertEqual(
             witness.as_dict()["zones"][0]["enclosure_radii"], [0.01, 0.02]
         )
+        restored = SweepCoverageWitness.from_dict(
+            json.loads(json.dumps(witness.as_dict()))
+        )
+        self.assertEqual(restored, witness)
+        self.assertTrue(restored.matches((1.0,), (0.05,), [[0.0, 0.0]]))
+        self.assertFalse(restored.matches((1.1,), (0.05,), [[0.0, 0.0]]))
 
     def test_open_handoff_keeps_sweep_witness_incomplete(self):
         zone = RootCoverageZone(

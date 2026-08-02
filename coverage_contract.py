@@ -109,6 +109,21 @@ class RootCoverageZone:
             "grade": self.grade.name,
         }
 
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            kind=value["kind"],
+            center=tuple(value["center"]),
+            guard_radii=tuple(value["guard_radii"]),
+            collected_reach=tuple(value["collected_reach"]),
+            enclosure_radii=(
+                None if value["enclosure_radii"] is None
+                else tuple(value["enclosure_radii"])
+            ),
+            handoff_complete=bool(value["handoff_complete"]),
+            grade=CertificateGrade[value["grade"]],
+        )
+
 
 @dataclass(frozen=True)
 class SweepCoverageWitness:
@@ -153,6 +168,31 @@ class SweepCoverageWitness:
         )
         return Evidence("enumeration-coverage", grade, detail)
 
+    def matches(self, parameter_center, parameter_half_widths, roots,
+                *, atol=1e-12):
+        """Check that this witness covers the requested box and root pool."""
+        center = np.asarray(parameter_center, dtype=float)
+        half_widths = np.asarray(parameter_half_widths, dtype=float)
+        witness_center = np.asarray(self.parameter_center, dtype=float)
+        witness_widths = np.asarray(self.parameter_half_widths, dtype=float)
+        if center.shape != witness_center.shape \
+                or half_widths.shape != witness_widths.shape:
+            return False
+        if not np.allclose(center, witness_center, rtol=0.0, atol=atol):
+            return False
+        if not np.all(witness_widths + atol >= half_widths):
+            return False
+        roots = np.asarray(roots, dtype=float)
+        witness_roots = np.asarray([zone.center for zone in self.zones],
+                                   dtype=float)
+        if roots.shape != witness_roots.shape:
+            return False
+        if roots.size == 0:
+            return True
+        delta = np.abs((witness_roots - roots + np.pi)
+                       % (2.0 * np.pi) - np.pi)
+        return bool(np.max(delta) <= atol)
+
     def as_dict(self):
         return {
             "complete": self.complete,
@@ -165,6 +205,19 @@ class SweepCoverageWitness:
             "parameter_half_widths": list(self.parameter_half_widths),
             "zones": [zone.as_dict() for zone in self.zones],
         }
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            zones=tuple(RootCoverageZone.from_dict(zone)
+                        for zone in value["zones"]),
+            global_sweep_complete=bool(value["global_sweep_complete"]),
+            arithmetic_grade=CertificateGrade[value["arithmetic_grade"]],
+            boxes_processed=int(value["boxes_processed"]),
+            phantom_count=int(value.get("phantom_count", 0)),
+            parameter_center=tuple(value["parameter_center"]),
+            parameter_half_widths=tuple(value["parameter_half_widths"]),
+        )
 
 
 def _box_array(value, name, dimension=None):

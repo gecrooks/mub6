@@ -108,19 +108,8 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
             "enumeration-coverage", CertificateGrade.SAMPLED_BOUND,
             "multistart pool; no global sweep witness supplied"))
     else:
-        cb = np.asarray(coverage_witness.parameter_center, dtype=float)
-        ch = np.asarray(coverage_witness.parameter_half_widths, dtype=float)
-        same_box = (cb.shape == beta0.shape and ch.shape == hv.shape
-                    and np.allclose(cb, beta0, rtol=0.0, atol=1e-14)
-                    and np.all(ch + 1e-15 >= hv))
-        witness_roots = np.asarray(
-            [zone.center for zone in coverage_witness.zones], dtype=float)
-        same_roots = witness_roots.shape == ph0.shape
-        if same_roots and len(ph0):
-            delta = np.abs((witness_roots - ph0 + np.pi)
-                           % (2 * np.pi) - np.pi)
-            same_roots = bool(np.max(delta) <= 1e-12)
-        coverage_ok = (coverage_witness.complete and same_box and same_roots)
+        coverage_ok = (coverage_witness.complete
+                       and coverage_witness.matches(beta0, hv, ph0))
         coverage_ev = coverage_witness.evidence()
         deps.append(Evidence(
             coverage_ev.name,
