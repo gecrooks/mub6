@@ -92,6 +92,24 @@ class TestFailClosed(unittest.TestCase):
 
 
 class TestTiles(unittest.TestCase):
+    def test_fully_rigorous_tile_with_global_coverage(self):
+        from certificate_result import CertificateGrade
+        from rigor_tile import fully_rigorous_signed_tile
+        b0 = (5.978503016422594, 4.007534549834652,
+              1.6327649325136653)
+        h = 3e-4
+        result = fully_rigorous_signed_tile(
+            b0[0] - h, b0[0] + h, b0[1], b0[2],
+            hf=h, hf3=h, verbose=False,
+        )
+        self.assertTrue(result)
+        self.assertEqual(result.grade, CertificateGrade.RIGOROUS)
+        coverage = next(
+            item for item in result.dependencies
+            if item.name == "enumeration-coverage"
+        )
+        self.assertIn("global sweep closed", coverage.detail)
+
     def test_signed_collar_tile_generic(self):
         from collar_tile import collar_tile
         ok = collar_tile(0.005, 0.01, 2.041236, float(np.pi),

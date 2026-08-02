@@ -2,7 +2,13 @@ import unittest
 
 import numpy as np
 
-from coverage_contract import BoxDisposition, close_survivor_boxes
+from certificate_result import CertificateGrade
+from coverage_contract import (
+    BoxDisposition,
+    RootCoverageZone,
+    SweepCoverageWitness,
+    close_survivor_boxes,
+)
 
 
 class CoverageContractTests(unittest.TestCase):
@@ -87,6 +93,64 @@ class CoverageContractTests(unittest.TestCase):
         )
 
         self.assertTrue(report.complete)
+
+    def test_sweep_witness_exports_guard_handoff_and_tube(self):
+        zone = RootCoverageZone(
+            kind="tube",
+            center=(0.0, 0.0),
+            guard_radii=(0.2, 0.3),
+            collected_reach=(0.1, 0.25),
+            enclosure_radii=(0.01, 0.02),
+            handoff_complete=True,
+            grade=CertificateGrade.RIGOROUS,
+        )
+        witness = SweepCoverageWitness(
+            zones=(zone,),
+            global_sweep_complete=True,
+            arithmetic_grade=CertificateGrade.RIGOROUS,
+            boxes_processed=123,
+            parameter_center=(1.0,),
+            parameter_half_widths=(0.1,),
+        )
+
+        self.assertTrue(witness.complete)
+        self.assertEqual(witness.evidence().grade, CertificateGrade.RIGOROUS)
+        self.assertEqual(
+            witness.as_dict()["zones"][0]["enclosure_radii"], [0.01, 0.02]
+        )
+
+    def test_open_handoff_keeps_sweep_witness_incomplete(self):
+        zone = RootCoverageZone(
+            kind="fold",
+            center=(0.0,),
+            guard_radii=(0.2,),
+            collected_reach=(0.1,),
+            enclosure_radii=None,
+            handoff_complete=False,
+            grade=CertificateGrade.SAMPLED_BOUND,
+        )
+        witness = SweepCoverageWitness(
+            zones=(zone,),
+            global_sweep_complete=True,
+            arithmetic_grade=CertificateGrade.SAMPLED_BOUND,
+            boxes_processed=5,
+            parameter_center=(1.0,),
+            parameter_half_widths=(0.1,),
+        )
+
+        self.assertFalse(witness.complete)
+
+    def test_tube_zone_requires_final_enclosure(self):
+        with self.assertRaisesRegex(ValueError, "require final enclosure"):
+            RootCoverageZone(
+                kind="tube",
+                center=(0.0,),
+                guard_radii=(0.2,),
+                collected_reach=(0.1,),
+                enclosure_radii=None,
+                handoff_complete=True,
+                grade=CertificateGrade.RIGOROUS,
+            )
 
 
 if __name__ == "__main__":

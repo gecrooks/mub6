@@ -1,5 +1,10 @@
-"""Theorem-grade signed tile: every ingredient except enumeration
-coverage at RIGOROUS grade (PROOF_SKELETON §7 upgrade path).
+"""Theorem-grade signed tile and its global-coverage composition.
+
+``rigorous_signed_tile`` proves the pair layer at RIGOROUS grade and remains
+SAMPLED_BOUND when called with only a multistart pool.  Supplying a matching
+``SweepCoverageWitness`` upgrades enumeration coverage.  The convenience
+wrapper ``fully_rigorous_signed_tile`` constructs that witness through the
+global certified sweep and composes both legs fail-closed.
 
 The chain, per pair of roots over the beta-box B = beta0 +- hv:
   1. hslop: certified sup entry-drift of H over B from the box
@@ -71,7 +76,7 @@ def _hslop(Hd, hv):
 
 
 def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
-                         pool=None, n_starts=6000):
+                         pool=None, n_starts=6000, coverage_witness=None):
     """Theorem-grade signed tile: pair layer on the CERT-blessed
     L4/L5 path — Q-curves with TM-certified residuals
     (tmres.certified_curve_residual), slanted-tube containment
@@ -97,15 +102,38 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     deps = [Evidence("map+rates+TM-residuals",
                      CertificateGrade.RIGOROUS,
                      "tm_karlsson TMs; certified_curve_residual "
-                     "(no sampling, no PAD)"),
-            Evidence("enumeration-coverage",
-                     CertificateGrade.SAMPLED_BOUND,
-                     "multistart pool; sound coverage owned by "
-                     "rigor/coverage-verifier")]
+                     "(no sampling, no PAD)")]
+    if coverage_witness is None:
+        deps.append(Evidence(
+            "enumeration-coverage", CertificateGrade.SAMPLED_BOUND,
+            "multistart pool; no global sweep witness supplied"))
+    else:
+        cb = np.asarray(coverage_witness.parameter_center, dtype=float)
+        ch = np.asarray(coverage_witness.parameter_half_widths, dtype=float)
+        same_box = (cb.shape == beta0.shape and ch.shape == hv.shape
+                    and np.allclose(cb, beta0, rtol=0.0, atol=1e-14)
+                    and np.all(ch + 1e-15 >= hv))
+        witness_roots = np.asarray(
+            [zone.center for zone in coverage_witness.zones], dtype=float)
+        same_roots = witness_roots.shape == ph0.shape
+        if same_roots and len(ph0):
+            delta = np.abs((witness_roots - ph0 + np.pi)
+                           % (2 * np.pi) - np.pi)
+            same_roots = bool(np.max(delta) <= 1e-12)
+        coverage_ok = (coverage_witness.complete and same_box and same_roots)
+        coverage_ev = coverage_witness.evidence()
+        deps.append(Evidence(
+            coverage_ev.name,
+            coverage_ev.grade if coverage_ok else CertificateGrade.EXPERIMENTAL,
+            coverage_ev.detail if coverage_ok else
+            "coverage witness does not match this parameter box/root pool",
+        ))
+        if not coverage_ok:
+            return CertificateResult.from_evidence(
+                False, deps, reason="coverage witness mismatch")
     if n == 0:
-        return CertificateResult(
-            False, CertificateGrade.SAMPLED_BOUND, tuple(deps),
-            reason="empty enumeration (fail-closed)")
+        return CertificateResult.from_evidence(
+            False, deps, reason="empty enumeration (fail-closed)")
     H0 = karlsson_map(*beta0)
     from rates import certified_rates
     cr = certified_rates(beta0, (h, h, h))
@@ -171,8 +199,8 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     deps.append(Evidence("coloring", CertificateGrade.RIGOROUS,
                          f"proper {best}-coloring exhibited"))
     ok = best <= 5
-    res = CertificateResult(
-        ok, CertificateGrade.SAMPLED_BOUND, tuple(deps),
+    res = CertificateResult.from_evidence(
+        ok, tuple(deps),
         reason=f"chi<={best} over {n} enumerated roots",
         metadata=dict(n_roots=n, chi=best, n_rig_deleted=n_rig,
                       n_tube=n_tube, n_tube_fail=n_fail,
@@ -183,6 +211,34 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
           f"{n_tube}, tube-fails {n_fail}, rig-deletions {n_rig} "
           f"[{time.time()-t0:.0f}s]", flush=True)
     return res
+
+
+def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
+                               n_starts=6000, verbose=False):
+    """Compose global cover-completeness with the rigorous pair layer."""
+    from parametric import certify_tile
+
+    hf3 = hf if hf3 is None else hf3
+    span = theta_hi - theta_lo
+    h = float(max(0.5 * span, hf, hf3))
+    beta0 = np.array([0.5 * (theta_lo + theta_hi), b2, b3])
+    coverage_run = certify_tile(
+        beta0, np.full(3, h), verbose=verbose, use_certified=True
+    )
+    witness = coverage_run.get("coverage_witness")
+    if witness is None or not witness.complete:
+        reason = coverage_run.get("reason", "coverage witness unavailable")
+        return CertificateResult.from_evidence(
+            False,
+            [Evidence("enumeration-coverage", CertificateGrade.RIGOROUS,
+                      reason)],
+            reason=reason,
+        )
+    pool = np.asarray([zone.center for zone in witness.zones], dtype=float)
+    return rigorous_signed_tile(
+        theta_lo, theta_hi, b2, b3, hf, hf3=hf3,
+        pool=pool, n_starts=n_starts, coverage_witness=witness,
+    )
 
 
 if __name__ == "__main__":

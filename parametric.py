@@ -790,6 +790,7 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
               flush=True)
 
     rho_arr = np.zeros((n, 5))
+    tube_handoff = np.zeros(n, dtype=bool)
     n_tubes = 0
     for i, th0 in enumerate(roots):
         if i in fold_certs:
@@ -805,10 +806,56 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
             return dict(ok=False, h=h, seconds=time.time() - t0,
                         reason=f"tube {i}: {info}")
         rho_arr[i] = rho
+        tube_handoff[i] = True
         n_tubes += 1
     if verbose:
         print(f"    {n_tubes} tubes + {len(fold_certs)} fold windows "
               f"certified", flush=True)
+
+    # Export the actual coverage proof chain.  The global sweep's guard is
+    # not itself called a root enclosure: regular guards are connected to
+    # their final Krawczyk tubes by certify_root_tube's near-zone sweep;
+    # folds are collected only through their certified oracle membership.
+    from certificate_result import CertificateGrade
+    from coverage_contract import RootCoverageZone, SweepCoverageWitness
+    coverage_zones = []
+    for i, th0 in enumerate(roots):
+        if i in fold_certs:
+            kind = "fold-split" if "octants" in fold_certs[i] else "fold"
+            enclosure = None
+            handoff = True  # zoned_sweep collected through the oracle itself
+            if kind == "fold-split":
+                zone_grade = CertificateGrade.RIGOROUS
+            else:
+                cc = fold_certs[i].get("cert")
+                zone_grade = (CertificateGrade.RIGOROUS
+                              if cc is not None and cc.get("consistent")
+                              else CertificateGrade.SAMPLED_BOUND)
+        else:
+            kind = "tube"
+            enclosure = tuple(float(x) for x in rho_arr[i])
+            handoff = bool(tube_handoff[i])
+            zone_grade = (CertificateGrade.RIGOROUS if use_certified
+                          else CertificateGrade.SAMPLED_BOUND)
+        coverage_zones.append(RootCoverageZone(
+            kind=kind,
+            center=tuple(float(x) for x in th0),
+            guard_radii=tuple(float(x) for x in guards[i]),
+            collected_reach=tuple(float(x) for x in D0[i]),
+            enclosure_radii=enclosure,
+            handoff_complete=handoff,
+            grade=zone_grade,
+        ))
+    coverage_witness = SweepCoverageWitness(
+        zones=tuple(coverage_zones),
+        global_sweep_complete=True,
+        arithmetic_grade=(CertificateGrade.RIGOROUS if use_certified
+                          else CertificateGrade.SAMPLED_BOUND),
+        boxes_processed=int(nboxes),
+        phantom_count=len(phantoms),
+        parameter_center=tuple(float(x) for x in beta),
+        parameter_half_widths=tuple(float(x) for x in hv),
+    )
 
     # partition certificate: Q-tube rows analytic, fold rows span-sampled
     lo = np.empty((n, n))
@@ -914,7 +961,10 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
         print(f"  ==> {'TILE CERTIFIED (prototype)' if ok else 'FAILED at coloring'}"
               f" at h={h:g}  [{dt:.0f} s]", flush=True)
     return dict(ok=ok, h=h, n_roots=n, n_folds=len(fold_certs),
-                n_conflicts=n_conf, seconds=dt)
+                n_conflicts=n_conf, seconds=dt,
+                coverage_witness=coverage_witness,
+                coverage=coverage_witness.as_dict(),
+                coverage_grade=coverage_witness.evidence().grade.name)
 
 
 def main():
