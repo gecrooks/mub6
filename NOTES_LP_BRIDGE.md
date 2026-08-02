@@ -1511,3 +1511,17 @@ explicit small factor — the z2 quotient becomes cancellation-free
 one level down, same pattern as P/Q. Remaining: assemble g1
 symbolically and wire delta into karlsson_stable + ivstable
 (mechanical; removes the mp-hybrid and the interval z2 blowup).
+
+Addendum 4.64 (coverage-cost verdict): the box-wise coarse-tile
+validation ran 134 CPU-minutes without completing and was stopped.
+Anatomy: the 0.025-grid hull-cell census produces O(1e4-1e5)
+cells needing refinement at this census tile, and per-chunk
+mini-sweeps (50 cells x ~45 s) put per-tile coverage at HOURS —
+correct and fail-closed, but impractical as a per-tile leg.
+Verdict recorded honestly: the old cluster-sampled 6/6 census
+coverage claims are DOWNGRADED to sampled-grade pending sound
+coverage; the box-wise semantics stand as the specification; the
+practical implementation (batched streaming refinement, segment
+amortization, GPU sweeps) is exactly the coverage-verifier
+work (colleague's branch). The demo-tier certificate/margin
+results are unaffected — coverage was always their listed gap.
