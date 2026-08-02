@@ -43,18 +43,22 @@ def run_point(beta, half_widths):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--point", action="append", type=parse_point)
-    parser.add_argument("--h", type=float, default=2.5e-4)
+    parser.add_argument("--h", type=float, action="append",
+                        help="half-width rung; repeat to survey a ladder")
     parser.add_argument("--ledger", default="rigorous_census.jsonl")
     args = parser.parse_args()
     points = tuple(args.point) if args.point else DEFAULT_POINTS
+    half_widths = tuple(args.h) if args.h else (2.5e-4,)
     with open(args.ledger, "a") as ledger:
-        for point in points:
-            record = run_point(point, (args.h, args.h, args.h))
-            ledger.write(json.dumps(record) + "\n")
-            ledger.flush()
-            print(f"{tuple(round(x, 6) for x in point)}: "
-                  f"{'OK' if record['ok'] else 'FAIL'}[{record['grade']}] "
-                  f"{record['seconds']:.1f}s", flush=True)
+        for h in half_widths:
+            for point in points:
+                record = run_point(point, (h, h, h))
+                ledger.write(json.dumps(record) + "\n")
+                ledger.flush()
+                print(f"{tuple(round(x, 6) for x in point)} h={h:g}: "
+                      f"{'OK' if record['ok'] else 'FAIL'}"
+                      f"[{record['grade']}] {record['seconds']:.1f}s",
+                      flush=True)
 
 
 if __name__ == "__main__":
