@@ -1625,3 +1625,23 @@ Full-map accuracy at the corner: 1.2e-12 @ 1e-2, 1.2e-8 @ 1e-4,
 hybrid, 0.031 generic). Task (3)'s map thread is COMPLETE; the
 interval twin (ivstable z2 via the same factored form) is the
 one remaining wiring item.
+
+## 4.70 Certified corner map COMPLETE: depth-independent enclosures, truth contained
+
+The interval kernel's remaining 1/theta^2 width was the
+eps-in-argument of the two near-zero trig smalls (t1's width was
+4.4e-16 from the float-pi/6 representation offset). Fix: for
+point-float lam/phi the arguments are summed EXACTLY at prec 100
+(_mp_sin_iv/_mp_cos_iv — floats promote exactly), and the
+constants are enclosed from the prec-100 substrate with
+nextafter outward rounding.
+  z3sq enclosure: width 4.2e-14, DEPTH-INDEPENDENT, 40-digit
+      truth centered (margin = half-width) at theta = 1e-2
+      through 1e-8.
+  Full interval map at the corner: widths 4.4e-12 (1e-2) to
+      4.3e-8 (1e-6), NO RAISE at any depth (was: raise at 1e-5),
+      36/36 entries contain the 40-digit truth at 1e-4 and 1e-6.
+The interval z2 rides the tight z3sq through the plain quotient —
+usable to theta ~ 3e-7, far below any campaign tile. Between
+4.69 (float, 0.035 ms, <= 1.2e-8 any depth) and this, the corner
+map problem — float and certified — is CLOSED.
