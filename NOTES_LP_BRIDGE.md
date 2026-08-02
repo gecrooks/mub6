@@ -1433,3 +1433,95 @@ whole-theorem compute (bulk + collar + face + corner patches) now
 prices at ~$500-1500, i.e. the "$1M problem" of the survey has
 been argued down ~three orders of magnitude by measurements and
 design, not hardware.
+
+## 4.64 External review response (5 findings, all actioned)
+
+A code review (2026-08-01) found five issues; disposition:
+  1. Coverage sampled blobs, not boxes (HIGH): FIXED at demo
+     grade — _coverage_blobs and coarse_tile stage 4 now check
+     EVERY member box/hull cell geometrically (cell + r inside
+     ball(root, R_LOC), finer 0.025 hull cells), with the
+     whisker-tail refinement sweep as the only fallback and loud
+     failure otherwise. First box-wise run flushed out that the
+     0.1-grid hulls were too fat for any inclusion test — the
+     old cluster-sampling pass had been vacuously generous.
+     The certified-grade coverage verifier is owned by the
+     rigor/coverage-verifier branch (colleague).
+  2. Failed anchor did not halt the chain (HIGH): FIXED —
+     anchors return ok, chain_step raises on a failed state.
+  3. CURV = 5.0 unproved (HIGH): marked EXPERIMENTAL in code;
+     the cache shortcut is an amortization experiment until the
+     interval-Hessian re-verify exists.
+  4. Theta-tax dropped on a point derivative (HIGH): FIXED —
+     the drop now requires derivative PERSISTENCE across the
+     slab (dO_theta > curv0 * span), using the same sampled
+     curvature sups charged elsewhere. Re-validated: generic,
+     wall, exact corner, bulk thick-slab, census point all still
+     certify (chi 2-4).
+  5. Empty enumeration not fail-closed (MEDIUM): FIXED — empty
+     pools and empty root sets now fail loudly in collar_tile
+     and _pair_colors.
+  General: [SAMPLED] grade tags added to tile verdicts and the
+  README (a SAMPLED "CERTIFIED" is a validated experiment, not a
+  theorem); test_smoke.py added (kernel bounds, interval
+  containment, map-port agreement, fail-closed paths, one tile
+  of each kind, certified-S vs FD enclosure).
+
+Addendum 4.64 (a bug the new tests caught, in the OTHER direction):
+the smoke test comparing certified_S against root_data2's FD S
+failed — and arbitration by independent central differences of
+the polished root showed the CERTIFIED path is right (agrees to
+~1e-9, 400x inside its 1.6e-5 err bar) while root_data2's
+continuation-based S carries an ~9e-5 delta-INDEPENDENT
+systematic (theta-column dominated) at the tested bulk point.
+Consequences: (a) certpair/4.40 enclosures stand, better than
+claimed; (b) the demo tiles' sampled signed rates inherit an
+~1e-4 absolute rate error — absorbed by PAD_CORR = 3x for the
+rate scales in play, but the certified pass should prefer
+certified_S (or central differences) over root_data2's S
+everywhere; (c) the test now uses central differences as the
+reference. Tracking down root_data2's systematic (its internal
+continuation step?) is a small open item.
+
+Addendum 4.64 (persistence gate follow-through): the honest
+theta-tax (drop only when dO_theta > curv0 * span) fails 3 of the
+48 census cells at the base rung — their earlier certificates were
+leaning on the unsound point-derivative drop (the reviewer's
+exact concern). All three CERTIFY on 5x-thinner slabs
+([0.005, 0.006]: chi 2, 2, 4) — the persistence threshold scales
+with span, so the dyadic ladder absorbs the honesty cost locally.
+Collar remains 48/48 under review-hardened semantics with
+adaptive slabs; census tooling should try thinner slabs as a
+rung alongside thinner hf3.
+
+## 4.65 z2-delta second layer decoded: G- = sin(theta) * g1(phi, lam)
+
+The z2 stable form needs delta = zeta - z3sq via the numerator
+N' = (t1 + t2) * G- - i * t3 * G+, where G-+ = B12^2 * bigden -+
+cB11^2 * bignum. Probed at 40 digits: G- vanishes IDENTICALLY in
+(phi, lam) at theta = 0 (exactly 0.0 for all offsets) and is
+linear in theta with slope ~6 at the corner; G+ ~ 4.0 = O(1).
+Hence G- = sin(theta) * g1(phi, lam) + O(sin^2), with g1 a closed
+form obtained by differentiating at s = 0 (A11 = alpha + s mu,
+A12 = beta + s nu with alpha/beta theta-only and mu/nu phi-only —
+at s = 0 the phi-dependence drops, which is WHY the identity
+holds). With t1 ~ (lam - pi/3), t2 ~ theta^2, t3 ~ theta *
+cos(lam/2 + phi), and G- ~ theta, every product in N' carries an
+explicit small factor — the z2 quotient becomes cancellation-free
+one level down, same pattern as P/Q. Remaining: assemble g1
+symbolically and wire delta into karlsson_stable + ivstable
+(mechanical; removes the mp-hybrid and the interval z2 blowup).
+
+Addendum 4.64 (coverage-cost verdict): the box-wise coarse-tile
+validation ran 134 CPU-minutes without completing and was stopped.
+Anatomy: the 0.025-grid hull-cell census produces O(1e4-1e5)
+cells needing refinement at this census tile, and per-chunk
+mini-sweeps (50 cells x ~45 s) put per-tile coverage at HOURS —
+correct and fail-closed, but impractical as a per-tile leg.
+Verdict recorded honestly: the old cluster-sampled 6/6 census
+coverage claims are DOWNGRADED to sampled-grade pending sound
+coverage; the box-wise semantics stand as the specification; the
+practical implementation (batched streaming refinement, segment
+amortization, GPU sweeps) is exactly the coverage-verifier
+work (colleague's branch). The demo-tier certificate/margin
+results are unaffected — coverage was always their listed gap.

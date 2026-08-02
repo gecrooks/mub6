@@ -60,7 +60,13 @@ def iv_karlsson(theta, phi, lam):
             raise RuntimeError("Moebius denominator interval touches 0")
         return num / den, dmag.lo
 
-    z3sq, d3 = moebius(A11, A12)
+    # z3 via the FACTORED kernel (NOTES 4.57): algebraically
+    # identical to the Moebius quotient but cancellation-free —
+    # removes the eps/theta^3 interval blowup at the (pi/3, pi/3)
+    # corner. z4's factors are O(1) there; it keeps the plain
+    # quotient.
+    from ivstable import iv_stable_z3sq
+    z3sq, d3 = iv_stable_z3sq(theta, phi, lam)
     z4sq, d4 = moebius(B11, B12)
     num2 = B11 * B11 - z3sq * (B12.conj() * B12.conj())
     den2 = B12 * B12 - z3sq * (B11.conj() * B11.conj())

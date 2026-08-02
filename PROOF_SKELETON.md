@@ -262,3 +262,35 @@ covers it; near-corner tiles must evaluate the map via ivkarlsson
 / high precision (the float map loses eps/theta^3 there). C2
 remains the certified-grade continuity of the rescaled family —
 substrate work (s^2 chart + interval map), no open geometry.
+
+## 7. The signed-tile bulk (2026-08-01 redesign)
+
+The two-regime bulk of §5 (coarse tiles with valley windows) is
+superseded: the collar's signed tile (NOTES 4.34, review-hardened
+4.64) certifies the no-triple claim AT EVERY BULK DEPTH — theta
+0.05 to 1.5, including the valley-heavy census anchors — with no
+valley windows, no Q-tubes, no fold machinery (4.62). Margins grow
+as 0.42 theta, so slab thickness and in-face widths scale with
+theta under the span^2 / hf^2 curvature charges. Chains run at
+1.39 s/tile on 10x-thick slabs.
+
+Certificate anatomy per signed bulk tile:
+  (a) pool + per-root S (central-difference grade after the
+      2026-08-01 dg_dbeta fix; certified_S enclosures where
+      continuation dies, verified against independent central
+      differences to 1e-9);
+  (b) signed pair-rate taxes with persistence-gated theta drop
+      (dO_theta > curv0 * span) and per-stratum second-order
+      charges;
+  (c) chromatic bound chi <= 5 (greedy + DSATUR + randomized
+      restarts — any proper coloring is a valid upper bound);
+  (d) COVERAGE (the load-bearing leg, grade-critical): box-wise
+      hull-cell inclusion in root neighborhoods + chunked
+      whisker-refinement (this branch), with the certified
+      verifier owned by rigor/coverage-verifier.
+Grades: (a)-(c) are [SAMPLED] pending the certified-S sweep and
+interval second-order remainders; (d) is the main open rigor item.
+Pricing: certificate leg ~1e5 adaptive tiles ~ $20-50; coverage
+via chain-anchored sweeps / 41x GPU ~ $50-150 (NOTES 4.63).
+The §5 coarse-tile machinery remains valid and is retained as the
+reference implementation of the coverage sweep.

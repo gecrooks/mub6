@@ -24,7 +24,20 @@ main finding was that the naive full campaign is a ~$10⁶ object.
 | Same for the Diţă arc and the full two-parameter Szöllősi region | **Certified, gap-free** (same grade) |
 | Pointwise anchors: S₆, Björck's C, K₃ points, F₆ quadruple wall at exactly 1/6 | **Certified** |
 | Tile certificates (3-param Karlsson boxes): machinery | **Assumption-free**: no PAD, no sampled constants, no libm, no enumeration trust (`PROOF_SKELETON.md` §4) |
-| The target theorem over the full fundamental domain | **NOT proven** — three-piece program, all pieces measured (PROOF_SKELETON.md §5): **bulk** re-designed on the signed tile (§4.62–4.63): certifies at every depth incl. census points, 1.39 s/tile chained on adaptive slabs — ~$100–500 all-in with chain-anchored GPU coverage (was $25–50k); **collar** = θ-scaled tiles under the measured law defect = c(β)·θ — demonstrated 48/48 on the face census incl. the β₃=±π/3 branch walls (signed analytic pair rates, ~6 s/tile, negligible cost); **face** = 2-param walk with pair-level obstruction, margin 0.09–0.17 — **fully executed: 3969/3969 tiles certified** (demo grade, JSONL ledgers in repo). Structural unknowns: nearly closed — the corner core decoded to three lines that all certify pointwise (NOTES §4.48–4.49); open residue is paper-shaped only: the θ=0 corner anchor (MU continua) and a termination lemma for the corner recursion — the line-crossings certify via the certified-S fallback (§4.50–4.51). Remaining: that residue, the certified-grade pass, and the bulk campaign run |
+| The target theorem over the full fundamental domain | **NOT proven** — three-piece program, all pieces measured (PROOF_SKELETON.md §5): **bulk** re-designed on the signed tile (§4.62–4.63): certifies at every depth at [SAMPLED] grade incl. census points, 1.39 s/tile chained on adaptive slabs — ~$100–500 all-in with chain-anchored GPU coverage (was $25–50k); **collar** = θ-scaled tiles under the measured law defect = c(β)·θ — demonstrated 48/48 on the face census incl. the β₃=±π/3 branch walls (signed analytic pair rates, ~6 s/tile, negligible cost); **face** = 2-param walk with pair-level obstruction, margin 0.09–0.17 — **fully executed: 3969/3969 tiles certified** (demo grade, JSONL ledgers in repo). Structural unknowns: nearly closed — the corner core decoded to three lines that all certify pointwise (NOTES §4.48–4.49); open residue is paper-shaped only: the θ=0 corner anchor (MU continua) and a termination lemma for the corner recursion — the line-crossings certify via the certified-S fallback (§4.50–4.51). Remaining: that residue, the certified-grade pass, and the bulk campaign run |
+
+## Result grades
+
+Every runtime verdict now carries a grade tag. **[SAMPLED]** =
+margins real but rates/constants are measured-and-padded, and
+enumeration is trusted (the demo tier: collar/face/bulk signed
+tiles, censuses, walks). **RIGOROUS** = interval/dual-AD
+enclosures with no sampled constants (the fine-tile chain of
+PROOF_SKELETON §4, the certified kernels). A [SAMPLED]
+"CERTIFIED" is a validated experiment, not a theorem; the
+certified-grade pass upgrades tiles by replacing each sampled
+link (coverage, S-enclosures, second-order remainders) with its
+rigorous counterpart.
 
 ## Read first
 

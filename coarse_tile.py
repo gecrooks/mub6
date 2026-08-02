@@ -123,15 +123,44 @@ def coarse_certify_tile(beta, h=3e-3):
     # stage 4: coverage — coarse sweep stuck blobs must polish into roots
     t0s = time.time()
     from starve import fat_sweep_hulls
-    cen_h, rad_h, cnt_h, swept = fat_sweep_hulls(beta, h, wmin=0.025)
-    cl = cluster_suspects(cen_h, rad_h, link=0.15)
+    cen_h, rad_h, cnt_h, swept = fat_sweep_hulls(beta, h, wmin=0.025,
+                                                 cell=0.025)
+    # BOX-WISE coverage (review finding 1): every hull cell must
+    # geometrically fit inside a known root's collection radius
+    # (cell +- r inside ball(root, R_LOC)); cells that don't go to
+    # the whisker-tail refinement sweep, and only cells failing
+    # BOTH count uncovered. Vectorized; no cluster sampling.
     uncovered = 0
     R = np.array(roots)
-    for cc_, rr_, _ in cl:
-        th = polish_root(H0, np.asarray(cc_))
-        d = np.abs((th - R + np.pi) % (2 * np.pi) - np.pi).max(axis=1)
-        if d.min() > 0.05:
-            uncovered += 1
+    C_h = np.atleast_2d(cen_h)
+    r_h = np.atleast_2d(rad_h)
+    if len(R) == 0 and len(C_h):
+        uncovered = len(C_h)
+    elif len(C_h):
+        d = np.abs((C_h[:, None, :] - R[None, :, :] + np.pi)
+                   % (2 * np.pi) - np.pi).max(axis=2)
+        inside = (d.min(axis=1) + r_h.max(axis=1)) <= 0.05
+        bad = ~inside
+        if bad.any():
+            from coarse_chain import _refine_out
+            from rates import certified_rates as _crates
+            cr4 = _crates(beta, (h, h, h))
+            C_bad = C_h[bad]
+            W_bad = np.repeat(r_h[bad].max(axis=1)[:, None], 5,
+                              axis=1)
+            # chunked mini-sweeps: bounded memory per call; a
+            # chunk that fails to exclude marks all its cells
+            # uncovered (loud, conservative)
+            CH = 50
+            for k0 in range(0, len(C_bad), CH):
+                try:
+                    ok_ref = _refine_out(beta, h,
+                                         C_bad[k0:k0 + CH],
+                                         W_bad[k0:k0 + CH], cr4)
+                except RuntimeError:
+                    ok_ref = False       # budget blown = loud fail
+                if not ok_ref:
+                    uncovered += len(C_bad[k0:k0 + CH])
     t_swp = time.time() - t0s
     bound = cols                 # wilds are IN the coloring now
     ok = bound <= 5 and uncovered == 0

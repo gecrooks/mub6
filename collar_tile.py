@@ -88,6 +88,13 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
     ph0 = _pool_phases(b_lo) if pool is None else np.asarray(pool)
+    if len(ph0) == 0:
+        # fail-closed (review finding 5): an empty enumeration is
+        # never a certificate
+        print(f"COLLAR_TILE [{theta_lo:g},{theta_hi:g}] "
+              f"({b2:.4f},{b3:.4f}): FAILED[SAMPLED] — empty pool",
+              flush=True)
+        return False
     n = len(ph0)
     U0 = _uvecs(ph0)
     O0 = np.abs(U0.conj() @ U0.T)
@@ -195,7 +202,13 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 dO = np.real(np.conj(ip) * dip) / max(abs(ip), 1e-12)
                 # theta: bottom-anchored — certified growth means
                 # the slab minimum sits at theta_lo, no theta tax
-                t_th = 0.0 if dO[0] > 1e-6 else abs(dO[0]) * span
+                # theta-tax drops only if the derivative PERSISTS
+                # positive across the slab: dO(theta) >= dO(lo) -
+                # curv0 * span > 0 (review finding 4; curv0 is the
+                # sampled sup of the second derivative — the
+                # certified pass replaces it with an enclosure)
+                t_th = 0.0 if dO[0] > curv[0] * span + 1e-9 \
+                    else abs(dO[0]) * span
                 if diag_box:
                     # rotated in-face box: hf along (1,-1)/sqrt2
                     # (the diagonal line), hf3 transverse (1,1)/
@@ -282,7 +295,7 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
     ok = c_after <= 5
     print(f"COLLAR_TILE [{theta_lo:g},{theta_hi:g}] "
           f"({b2:.4f},{b3:.4f}) hf={hf:g}: "
-          f"{'CERTIFIED' if ok else 'FAILED'} — roots {n}, edges "
+          f"{'CERTIFIED' if ok else 'FAILED'}[SAMPLED] — roots {n}, edges "
           f"{n_edges}, deleted {n_del}, chi {c_before} -> {c_after} "
           f"[{time.time()-t0:.0f}s]", flush=True)
     return ok
