@@ -1779,3 +1779,23 @@ J-drift (the J drift along the racing frame, which the measured
 overlap-rate cancellations say is tame) — precisely the
 frame-split continuation of assumption-ledger item 3. The onion:
 map (closed) -> dual rates (closed) -> tube frames (scoped).
+
+## 4.77 Special-locus theorem-grade tiles: SOLVED by depth, not frames
+
+The slant-relative frame hypothesis was TESTED AND REFUTED: the
+J-drift along the racing frame equals the static drift (349 vs
+267 per unit at the wall — the slant preserves g = 0, not J; J
+genuinely rotates through the fast turn; no hidden cancellation).
+But the refutation dissolves the requirement: with the mv rates
+(4.76) + rotated-cut branch (4.75) + the delta ladder, the tube
+contraction |Y| * dJ * h < 1 is satisfied by DEPTH alone:
+  wall (1.1, pi/3):          h = 1e-6:  48/48 tubes, chi 2,
+                                        1081 rigorous deletions
+  near-corner (+1e-3 both):  h = 1e-6:  48/48, chi 2, 1094
+  nearer (+2e-4 both):       h = 5e-7:  48/48, chi 2, 1074
+~6 s/tile throughout. The rigorous-h ladder by stratum: generic
+2.5e-5, walls 1e-6, near-corner 5e-7 — depth costs, not theory
+gaps. Remaining outside the ladder: the exact surfaces (per-sheet
+territory, measure-zero — walls/corner as tile boundaries with
+per-sheet limits) and the coverage leg. Assumption-ledger item
+3's frame-split is NO LONGER NEEDED for the tile path.
