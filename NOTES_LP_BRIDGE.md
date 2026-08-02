@@ -1716,3 +1716,28 @@ single-sheet evaluator; the unlock is chart-level:
   (b) per-sheet certification where the surface crosses the box
       (corner): enumerate both sign sheets, certify each — the
       branch-aware chart long budgeted for ~1-2% of tiles.
+
+## 4.74 The wall is CHART-singular, MAP-continuous — soundness question dissolves
+
+Decisive continuity test at the wall (lam = pi/3 +- 1e-6,
+b2 = 1.1, theta = 0.005):
+  |H(+eps) - H(-eps)|_max = 1.8e-3  — derivative-sized (rate
+      ~900, the measured wall racing), NOT a jump;
+  48/48 roots match across at 5.8e-3 = |S| * 2 eps exactly.
+The z-intermediates' principal-sqrt discontinuity CANCELS in the
+block assembly: H is continuous (fast-turning) through the wall.
+Consequences:
+  1. The demo-grade straddling wall tiles were SOUND — their
+     empirical drift bounds measured the true (finite) rates of a
+     continuous family. The sheet-jump concern raised by the
+     dual-path analysis applies only to the CHART, not the map.
+  2. Boundary-aligned tiling (walls as tile edges) is an
+     OPTIMIZATION for the certified path (whose z-intermediates
+     do see the chart singularity), not a soundness requirement.
+  3. The certified path's unlock remains as scoped in 4.73:
+     branch-managed intermediates (rotated-cut csqrt / per-sheet
+     with cancellation in assembly) OR chart-free evaluation of H
+     enclosures near the walls.
+(The boundary-aligned half-tiles' chi 6 failures are now a
+performance puzzle, not a soundness one — unresolved, low
+priority.)

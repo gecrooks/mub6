@@ -83,7 +83,7 @@ def _repolish_pool(beta, ph0):
 
 def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
                 hf3=None, pool=None, curv=CURV_GENERIC,
-                diag_box=False, slop=1e-3):
+                diag_box=False, slop=1e-3, wall_side=None):
     hf3 = hf if hf3 is None else hf3
     t0 = time.time()
     b_lo = (theta_lo, b2, b3)
@@ -102,8 +102,16 @@ def collar_tile(theta_lo, theta_hi, b2, b3, hf, adjacency="blanket",
     # per-root localization for the adjacency
     h_dir = np.array([theta_hi - theta_lo, hf, hf])
     probes, spreads = [], np.zeros(n)
-    probe_betas = [(theta_lo, b2 + s * hf, b3) for s in (1, -1)] + \
-                  [(theta_lo, b2, b3 + s * hf) for s in (1, -1)]
+    # boundary-aligned tiles (4.73/4.74): b3-probes must not
+    # cross the branch surface — inward one-sided stencil
+    if wall_side == "+":
+        b3_probes = [(theta_lo, b2, b3 + s * hf3) for s in (1, 2)]
+    elif wall_side == "-":
+        b3_probes = [(theta_lo, b2, b3 - s * hf3) for s in (1, 2)]
+    else:
+        b3_probes = [(theta_lo, b2, b3 + s * hf3) for s in (1, -1)]
+    probe_betas = [(theta_lo, b2 + s * hf, b3)
+                   for s in (1, -1)] + b3_probes
     for bp in probe_betas:
         php = _repolish_pool(bp, ph0)
         d = np.abs(np.exp(1j * php) - np.exp(1j * ph0)).max(axis=1)
