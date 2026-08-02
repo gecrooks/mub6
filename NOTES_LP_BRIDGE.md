@@ -1824,3 +1824,15 @@ Item-1 measurements (the campaign cost-model sharpener):
 Campaign implication: if the survey confirms 7e-4-1e-3 typical,
 the certified bulk drops from $5-20k to ~$1-5k (~1-2 weeks at
 the 10-GPU cap).
+
+Addendum 4.78 (survey + collar close): mv h-ceiling across 5
+spread bulk points: 7e-4, 1e-3, 7e-4, 1e-3 (+1 pending) at
+30-45 s/tile — the old "3e-4 typical / 5e-4 best" becomes
+"7e-4-1e-3 typical", i.e. the Result-34 h-push lever is REALIZED
+by the mean-value rates: 12.7-37x volume vs old-typical. Collar
+anisotropic configs (1e-4, 5e-4-1e-3 in-face) also fail —
+division of labor final. REVISED CERTIFIED-CAMPAIGN ESTIMATE
+(GPU-anchored bottom-up: $1M survey baseline / 12.7-37 h-volume
+/ 3-4 chain amortization / ~2 caching): ~$3-10k, roughly 2-4
+weeks at the 10-GPU cap. Residual softness: certify_tile chain
+amortization unmeasured (coarse analog 4-5x), 5-point survey.
