@@ -46,6 +46,20 @@ by about `625x` relative to `1e-6` cubes. Use two fine directions only near
 codimension-two intersections. Treat exact surfaces with lower-dimensional
 or per-sheet certificates.
 
+`campaign_geometry.py` makes this arithmetic explicit. For a representative
+`pi/2 x pi x 2.5e-5` wall band, symmetry factor 32, and 6 seconds/tile:
+
+- `(1e-6,1e-6,1e-6)` cubes: about 501 billion tiles;
+- tangential `2.5e-5`: about 802 million tiles (`625x` reduction, still far
+  too large);
+- tangential `3e-4`: about 5.57 million tiles and 9,281 A100-hours.
+
+Thus anisotropy at the old pair width is insufficient. The tangential axes
+must remain near the coarse coverage width, and the normal band should use a
+dyadic onion whose width scales with distance from the wall. This calculation
+also explains the present 8,000–15,000-hour estimate and identifies batching
+the per-tile pair work as the next multiplier after geometry.
+
 ### 4. Subdivide only graph-critical children and directions
 
 Attempt the largest pair box first. If coloring fails, identify the roots
