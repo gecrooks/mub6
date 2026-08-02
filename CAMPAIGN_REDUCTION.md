@@ -59,6 +59,14 @@ are identical. Parent creation grades and stores the coverage leg separately,
 so a valid global sweep remains reusable even if that parent's pair coloring
 failed.
 
+While the coverage-only implementation is developed, the independent v2
+serialization contract lives in `continuation_artifact.py`. It validates one
+typed continuation payload per coverage zone: regular `S`/`Q`, residual,
+Jacobian-remainder and tube bounds, or complete fold/fold-split oracle frames.
+Restricted regular payloads produce only `proposed_seed` values explicitly
+marked `requires_krawczyk`; serialization cannot promote them to certified
+child roots.
+
 The first real paired measurement is recorded in
 `PARENT_REUSE_BENCHMARK.md`. It found that box restriction is sound but parent
 root coordinates alone do not initialize offset child tubes: three of three
