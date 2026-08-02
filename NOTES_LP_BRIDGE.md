@@ -1525,3 +1525,36 @@ practical implementation (batched streaming refinement, segment
 amortization, GPU sweeps) is exactly the coverage-verifier
 work (colleague's branch). The demo-tier certificate/margin
 results are unaffected — coverage was always their listed gap.
+
+## 4.66 FIRST THEOREM-GRADE SIGNED TILE (task 2 complete)
+
+rigor_tile.py: the signed tile with every pair bound RIGOROUS —
+Q-curves + TM-certified curve residuals (tmres, no sampling/PAD)
++ certified tile-local RJ_extra (rates.py) + slanted-tube
+containment (tube_krawczyk with quadratic offset) + TM
+inner-product overlap lower bounds (certified_overlap_lo) +
+exhibited proper coloring. Result objects are
+certificate_result.CertificateResult with per-dependency
+Evidence; the weakest-dependency rule correctly grades the tile
+SAMPLED_BOUND while the pair layer itself is RIGOROUS —
+enumeration coverage (rigor/coverage-verifier) is the one
+non-rigorous dependency, by design.
+
+Measured at (0.5, 1.0, 2.0), the h-ladder (the tube-contraction
+wall is |Y|-limited: Krawczyk fixpoint needs |Y| * rad_g <~
+3.5e-3 with rad_g ~ h^2-scaled):
+  h = 2.5e-4: tubes  0/52 (global-Lipschitz RJ was 20x fat; fixed
+              to certified RJ_extra; still |Y| ~ 23 blocks)
+  h = 1e-4:   tubes 41/52, 787 rigorous deletions, chi 13
+  h = 5e-5:   tubes 45/52, 961, chi 9
+  h = 2.5e-5: tubes 49/52, 1151, chi 5  -> CERTIFIED, ~6 s/tile
+The 3 remaining tube-less roots are valley-class (large |Y|);
+fail-closed as full-edge vertices they still fit chi <= 5. The
+composition with valley windows (certify_tile's L4) is the
+completion for larger h; the working law: rigorous-pair h ~
+2.5e-5-1e-4 at bulk conditioning vs 5e-3 sampled — the rigorous
+campaign economics run through chains/adaptivity exactly as the
+fine-tile design always said. En route fixed: the global L_H_J
+RJ bound was 20x fatter than rates.py's certified RJ_extra — the
+debug trail that found it is the night's second dependency-blowup
+lesson (after 4.57's).
