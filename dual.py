@@ -188,9 +188,26 @@ def _dual_stage2(p, checker):
     den2 = B12 * B12 - z3sq * (B11.conj() * B11.conj())
     checker("den2", den2)
     z2sq = num2 / den2
-    for name, zsq in (("z3", z3sq), ("z4", z4sq), ("z2", z2sq)):
-        checker("cut:" + name, zsq)
-    z3, z4, z2 = z3sq.csqrt(), z4sq.csqrt(), z2sq.csqrt()
+    def sqrt_branch(name, zsq):
+        # principal branch when the cut is clear; else the
+        # rotated-cut branch continuous on the rectangle (4.74:
+        # any consistent branch yields a valid family member —
+        # H is continuous through the chart's cut)
+        if zsq.v.cut_clear():
+            checker("cut:" + name, zsq)
+            return zsq.csqrt()
+        from interval import civ_csqrt_rot
+        alpha = float(np.arctan2(zsq.v.im.mid, zsq.v.re.mid))
+        w = civ_csqrt_rot(zsq.v, alpha)
+        # derivative of sqrt: d / (2 sqrt)
+        two = CDual(CIV(2.0))
+        out = CDual(w, list(zsq.d))
+        denom = two * CDual(w)
+        return CDual(w, [(CDual(zsq.d[l]) / denom).v
+                         for l in range(3)])
+    z3 = sqrt_branch("z3", z3sq)
+    z4 = sqrt_branch("z4", z4sq)
+    z2 = sqrt_branch("z2", z2sq)
     A11, A12 = p["A11"], p["A12"]
     one = CDual(CIV(1.0))
     F2 = [[one, one], [one, -one]]
