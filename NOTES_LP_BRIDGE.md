@@ -1558,3 +1558,14 @@ fine-tile design always said. En route fixed: the global L_H_J
 RJ bound was 20x fatter than rates.py's certified RJ_extra — the
 debug trail that found it is the night's second dependency-blowup
 lesson (after 4.57's).
+
+Addendum 4.66 (validation ladder): the theorem-grade tile
+certifies at 5/5 test points with adaptive h:
+  theta=0.05  h=1e-5:   48/48 tubes, chi 2 (h=2.5e-5 gave chi 8)
+  theta=0.2   h=2.5e-5: 48/48 tubes, chi 2
+  theta=0.5   h=2.5e-5: 49/52 tubes, chi 5
+  theta=1.0   h=2.5e-5: 53/56 tubes, chi 5
+  census pt   h=2.5e-5: 48/48 tubes, chi 2
+~6 s/tile throughout (pool-dominated). Required h tightens toward
+the collar (conditioning grows as theta drops) — the adaptive-h
+rung ladder is the campaign shape, as everywhere else.
