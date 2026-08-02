@@ -102,12 +102,14 @@ def stable_karlsson(theta, phi, lam):
     z3, z4 = np.sqrt(z3sq), np.sqrt(z4sq)
     den2 = B12 ** 2 - z3sq * np.conj(B11) ** 2
     if abs(den2) < 1e-3:
-        # corner basin: den2 ~ theta^2 and the subtraction z2sq =
-        # num2/den2 loses eps/theta^2 even with stable z3sq.
-        # mp-hybrid (dps 30) until the exact next-order expansion
-        # of N = zeta*bigden*Q - bignum*P is derived (documented
-        # completion, NOTES 4.57).
-        z2 = _mp_z2(theta, phi, lam)
+        # corner basin: the fully factored stable_z2sq (4.65/4.67,
+        # exact odd-series small factors). Residual float floor:
+        # eps in the near-zero trig ARGUMENTS amplified by 1/s^2 —
+        # keep the mp path only in the deepest sliver.
+        if abs(np.sin(theta)) < 3e-5:
+            z2 = _mp_z2(theta, phi, lam)
+        else:
+            z2 = np.sqrt(stable_z2sq(theta, phi, lam))
     else:
         z2 = np.sqrt((B11 ** 2 - z3sq * np.conj(B12) ** 2) / den2)
     Z1 = np.array([[1, 1], [z1, -z1]], dtype=complex)
@@ -125,3 +127,73 @@ def stable_karlsson(theta, phi, lam):
     H[4:6, 2:4] = 0.5 * Z4 @ B @ Z1
     H[4:6, 4:6] = 0.5 * Z4 @ A @ Z2
     return H / np.sqrt(6)
+
+W3 = np.exp(2j * np.pi / 3)
+
+
+def _g1(phi, lam):
+    z1 = np.exp(1j * lam)
+    return 1j * (SQRT3 / 2) * (
+        -4 * W3 * np.exp(1j * phi) * (W3 - z1 * np.conj(W3))
+        - 2 * W3 ** 2 * (np.exp(-1j * phi) - z1 * np.exp(1j * phi)))
+
+
+def _g21(phi, lam):
+    z1 = np.exp(1j * lam)
+    mu = 1j * (SQRT3 / 2) * np.exp(-1j * phi)
+    nu = 1j * (SQRT3 / 2) * np.exp(1j * phi)
+    n0 = W3 - z1 * np.conj(W3)
+    n1 = mu - z1 * nu
+    return -4 * np.conj(W3) * mu * n0 - 2 * np.conj(W3) ** 2 * n1
+
+
+def _G_pair(s, phi, lam):
+    """(G-, G+, G2-, G2+) at sin(theta) = s, naive evaluation
+    (used at the safe extraction point s0 and for the O(1)
+    plus-combinations)."""
+    c = np.sqrt(max(1.0 - s * s, 0.0))
+    A11 = -0.5 + 1j * (SQRT3 / 2) * (c + np.exp(-1j * phi) * s)
+    A12 = -0.5 + 1j * (SQRT3 / 2) * (np.exp(1j * phi) * s - c)
+    B11, B12 = -1 - A11, -1 - A12
+    z1 = np.exp(1j * lam)
+    bignum = A11 - z1 * A12
+    bigden = np.conj(A12) - z1 * np.conj(A11)
+    Gm = B12 ** 2 * bigden - np.conj(B11) ** 2 * bignum
+    Gp = B12 ** 2 * bigden + np.conj(B11) ** 2 * bignum
+    G2m = B11 ** 2 * bigden - np.conj(B12) ** 2 * bignum
+    G2p = B11 ** 2 * bigden + np.conj(B12) ** 2 * bignum
+    return Gm, Gp, G2m, G2p
+
+
+def stable_z2sq(theta, phi, lam):
+    """Fully factored z2^2 (NOTES 4.65/4.67). The common bigden*Q
+    cancels, and the shared small factor s = sin(theta) is
+    cancelled ANALYTICALLY (tau3 = t3/s is exact trig):
+      z2^2 = (t ghat2 - i tau3 G2+) / (t ghat - i tau3 G+),
+    ghat = g1 + s^2 g3 (G- exactly odd, g3 extracted at s0 = 0.02,
+    exact to O(s^4) relative), t = t1 + t2. For s > 0.05 the naive
+    quotient is well-conditioned and used directly."""
+    s = np.sin(theta)
+    if abs(s) > 0.05:
+        Gm, Gp, G2m, G2p = _G_pair(s, phi, lam)
+        hl = lam / 2
+        t = np.sin(hl - np.pi / 6) \
+            - SQRT3 * np.sin(theta / 2) ** 2 * np.sin(hl)
+        t3 = (SQRT3 / 2) * s * np.cos(hl + phi)
+        return (t * G2m - 1j * t3 * G2p) / (t * Gm - 1j * t3 * Gp)
+    hl = lam / 2
+    t = np.sin(hl - np.pi / 6) \
+        - SQRT3 * np.sin(theta / 2) ** 2 * np.sin(hl)
+    tau3 = (SQRT3 / 2) * np.cos(hl + phi)
+    s0 = 0.02
+    Gm0, _, G2m0, _ = _G_pair(s0, phi, lam)
+    g1 = _g1(phi, lam)
+    g21 = _g21(phi, lam)
+    g3 = (Gm0 - s0 * g1) / s0 ** 3
+    g23 = (G2m0 - s0 * g21) / s0 ** 3
+    ghat = g1 + s * s * g3
+    ghat2 = g21 + s * s * g23
+    _, Gp, _, G2p = _G_pair(s, phi, lam)
+    num = t * ghat2 - 1j * tau3 * G2p
+    den = t * ghat - 1j * tau3 * Gp
+    return num / den

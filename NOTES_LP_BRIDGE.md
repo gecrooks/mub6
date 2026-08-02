@@ -1602,3 +1602,26 @@ TM-pair layer and result-grading directly. The lever that would
 change the economics is the tube-contraction ceiling
 (|Y| * rad_g <~ 3.5e-3): frame-split preconditioning for
 large-|Y| roots — already assumption-ledger item 3's territory.
+
+## 4.69 Stable z2^2 complete: exact odd-series small factors, 0.035 ms
+
+The z2 chain is closed in closed form. Verified identities: G-
+and G2- are EXACTLY ODD in s = sin(theta) (even parts identically
+0.0 at 40 digits; the g2 = 0 cancellation goes through
+conj(mu) = -nu term by term), with first-order coefficients
+  g1  = i(sqrt3/2)[-4 w e^{i phi}(w - z1 conj w)
+                   - 2 w^2 (e^{-i phi} - z1 e^{i phi})]
+  g21 = -4 conj(w) mu n0 - 2 conj(w)^2 n1
+(both verified to 1e-24). In the ratio the common bigden*Q AND
+the shared factor s cancel analytically:
+  z2^2 = (t ghat2 - i tau3 G2+) / (t ghat - i tau3 G+),
+  ghat = g1 + s^2 g3 (g3 extracted at s0 = 0.02, exact to O(s^4)
+  by oddness), tau3 = (sqrt3/2) cos(lam/2 + phi) exact.
+stable_karlsson now runs pure float everywhere except the
+theta < 3e-5 corner sliver (irreducible eps-in-argument floor of
+the two near-zero trig sums; mp there gives 1.8e-11).
+Full-map accuracy at the corner: 1.2e-12 @ 1e-2, 1.2e-8 @ 1e-4,
+1.8e-11 @ 1e-5, 1.8e-10 @ 1e-6; 0.035 ms/call (was 0.25 ms
+hybrid, 0.031 generic). Task (3)'s map thread is COMPLETE; the
+interval twin (ivstable z2 via the same factored form) is the
+one remaining wiring item.
