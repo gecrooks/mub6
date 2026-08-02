@@ -144,51 +144,54 @@ def matmulD(A, B):
     return out
 
 
-def dual_karlsson(theta_iv, phi_iv, lam_iv):
-    """Karlsson map with certified values AND first partials over the
-    parameter box. Returns 6x6 CDual matrix (entries include 1/sqrt6)."""
+def _dual_stage1(theta_iv, phi_iv, lam_iv):
+    """Everything up to the z^2 quantities, with DIVISIONS DELAYED
+    (numerators/denominators returned separately so callers can
+    mean-value-tighten near-zero denominators before dividing)."""
     th = RDual.var(theta_iv, 0)
     ph = RDual.var(phi_iv, 1)
     la = RDual.var(lam_iv, 2)
-
     ct, st = cosD(th), sinD(th)
     eip = expiD(ph)
     L11 = CDual.from_r(ct)
     L12 = eip * CDual.from_r(st)
-    L21 = eip.conj() * CDual.from_r(st)
-
     i_s3 = CDual(CIV(IV(0.0), SQRT3_HALF))
     M11 = CDual(CIV(IV(-0.5))) + i_s3 * L11
     M12 = i_s3 * L12
-    M21 = i_s3 * L21
+    M21 = i_s3 * (eip.conj() * CDual.from_r(st))
     M22 = CDual(CIV(IV(-0.5))) - i_s3 * L11
     A11 = M11 + M21
     A12 = M12 + M22
     B11 = -CDual(CIV(1.0)) - A11
     B12 = -CDual(CIV(1.0)) - A12
-
     z1 = expiD(la)
     w = z1 * z1
+    # factored z3 (4.57/4.72); plain moebius parts for z4
+    num3 = (A11 - z1 * A12) * (A11 + z1 * A12)
+    den3 = ((A12.conj() - z1 * A11.conj())
+            * (A12.conj() + z1 * A11.conj()))
+    num4 = B11 * B11 - w * (B12 * B12)
+    den4 = (B12.conj() * B12.conj()) - w * (B11.conj() * B11.conj())
+    return dict(A11=A11, A12=A12, B11=B11, B12=B12, z1=z1,
+                num3=num3, den3=den3, num4=num4, den4=den4)
 
-    def moebius(P11, P12):
-        num = P11 * P11 - w * (P12 * P12)
-        den = (P12.conj() * P12.conj()) - w * (P11.conj() * P11.conj())
-        if den.v.abs2().lo <= 0:
-            raise RuntimeError("Moebius denominator touches 0")
-        return num / den
 
-    z3sq = moebius(A11, A12)
-    z4sq = moebius(B11, B12)
+def _dual_stage2(p, checker):
+    """Divisions, cut checks (via `checker(name, q)` which either
+    raises or certifies clearance), csqrt, and block assembly."""
+    checker("den3", p["den3"])
+    z3sq = p["num3"] / p["den3"]
+    checker("den4", p["den4"])
+    z4sq = p["num4"] / p["den4"]
+    B11, B12, z1 = p["B11"], p["B12"], p["z1"]
     num2 = B11 * B11 - z3sq * (B12.conj() * B12.conj())
     den2 = B12 * B12 - z3sq * (B11.conj() * B11.conj())
-    if den2.v.abs2().lo <= 0:
-        raise RuntimeError("z2 denominator touches 0")
+    checker("den2", den2)
     z2sq = num2 / den2
     for name, zsq in (("z3", z3sq), ("z4", z4sq), ("z2", z2sq)):
-        if not zsq.v.cut_clear():
-            raise RuntimeError(f"{name}^2 touches branch cut")
+        checker("cut:" + name, zsq)
     z3, z4, z2 = z3sq.csqrt(), z4sq.csqrt(), z2sq.csqrt()
-
+    A11, A12 = p["A11"], p["A12"]
     one = CDual(CIV(1.0))
     F2 = [[one, one], [one, -one]]
     Z1 = [[one, one], [z1, -z1]]
@@ -197,9 +200,9 @@ def dual_karlsson(theta_iv, phi_iv, lam_iv):
     Z4 = [[one, z4], [one, -z4]]
     A = [[A11, A12], [A12.conj(), -A11.conj()]]
     B = [[B11, B12], [B12.conj(), -B11.conj()]]
-
     half = IV(0.5)
-    blocks = {(0, 0): F2, (0, 1): Z1, (0, 2): Z2, (1, 0): Z3, (2, 0): Z4}
+    blocks = {(0, 0): F2, (0, 1): Z1, (0, 2): Z2, (1, 0): Z3,
+              (2, 0): Z4}
     blocks[(1, 1)] = [[e.scale_iv(half) for e in row]
                       for row in matmulD(matmulD(Z3, A), Z1)]
     blocks[(1, 2)] = [[e.scale_iv(half) for e in row]
@@ -208,13 +211,58 @@ def dual_karlsson(theta_iv, phi_iv, lam_iv):
                       for row in matmulD(matmulD(Z4, B), Z1)]
     blocks[(2, 2)] = [[e.scale_iv(half) for e in row]
                       for row in matmulD(matmulD(Z4, A), Z2)]
-
     H = [[None] * 6 for _ in range(6)]
     for (bi, bj), blk in blocks.items():
         for a in range(2):
             for b in range(2):
-                H[2 * bi + a][2 * bj + b] = blk[a][b].scale_iv(INV_SQRT6)
+                H[2 * bi + a][2 * bj + b] = \
+                    blk[a][b].scale_iv(INV_SQRT6)
     return H
+
+
+def _box_checker(name, q):
+    if name.startswith("cut:"):
+        if not q.v.cut_clear():
+            raise RuntimeError(f"{name[4:]}^2 touches branch cut")
+    elif q.v.abs2().lo <= 0:
+        raise RuntimeError(
+            "Moebius denominator touches 0" if name != "den2"
+            else "z2 denominator touches 0")
+
+
+def dual_karlsson(theta_iv, phi_iv, lam_iv):
+    """Karlsson map with certified values AND first partials over
+    the parameter box (box-propagated checks — original
+    behavior)."""
+    p = _dual_stage1(theta_iv, phi_iv, lam_iv)
+    return _dual_stage2(p, _box_checker)
+
+
+def _mv_tight(q_pt, q_box, hv):
+    """Mean-value-tightened CDual: point value +- sum |d|_box h,
+    box partials. Sound: for beta in the box, q(beta) = q(center)
+    + integral of dq along the path, |dq_l| <= box-sup mags."""
+    pad = sum(cdual_mag(q_box.d[l]) * float(hv[l])
+              for l in range(3)) * (1.0 + 1e-12) + 1e-300
+    v = CIV(IV(q_pt.v.re.lo - pad, q_pt.v.re.hi + pad),
+            IV(q_pt.v.im.lo - pad, q_pt.v.im.hi + pad))
+    return CDual(v, list(q_box.d))
+
+
+def dual_karlsson_mv(beta, hv):
+    """Mean-value dual map over the box beta +- hv: point-pass
+    values, box-pass partials, mean-value-tightened intermediates
+    so the den/cut checks and csqrt see tight rectangles. Unlocks
+    the near-corner/wall tiles where box-propagated checks raise
+    (NOTES 4.72)."""
+    beta = [float(b) for b in beta]
+    hv = [float(h) for h in hv]
+    p_pt = _dual_stage1(IV(beta[0]), IV(beta[1]), IV(beta[2]))
+    p_bx = _dual_stage1(IV(beta[0] - hv[0], beta[0] + hv[0]),
+                        IV(beta[1] - hv[1], beta[1] + hv[1]),
+                        IV(beta[2] - hv[2], beta[2] + hv[2]))
+    p_mv = {k: _mv_tight(p_pt[k], p_bx[k], hv) for k in p_pt}
+    return _dual_stage2(p_mv, _box_checker)
 
 
 def cdual_mag(c):

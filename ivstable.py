@@ -16,9 +16,22 @@ import numpy as np
 
 from interval import CIV, IV, iv_cos, iv_exp_i, iv_sin
 
-SQRT3_HALF = IV.pad(np.sqrt(3.0) / 2.0, 8)
-SQRT3 = IV.pad(np.sqrt(3.0), 8)
-PI_6 = IV.pad(np.pi / 6.0, 8)
+import mpmath as _mpm
+_MPIV = _mpm.iv
+_MPIV.prec = 100
+
+
+def _iv_const(x_mp):
+    lo = float(_mpm.mpf(x_mp.a) if hasattr(x_mp, 'a') else x_mp)
+    hi = float(_mpm.mpf(x_mp.b) if hasattr(x_mp, 'b') else x_mp)
+    if lo > hi:
+        lo, hi = hi, lo
+    return IV(np.nextafter(lo, -np.inf), np.nextafter(hi, np.inf))
+
+
+SQRT3_HALF = _iv_const(_MPIV.sqrt(_MPIV.mpf(3)) / 2)
+SQRT3 = _iv_const(_MPIV.sqrt(_MPIV.mpf(3)))
+PI_6 = _iv_const(_MPIV.pi / 6)
 HALF = IV(0.5)
 
 
@@ -36,19 +49,48 @@ def _A_civ(theta, phi):
     return M11 + M21, M12 + M22          # A11, A12
 
 
+def _mp_sin_iv(*terms):
+    """sin(sum of terms) with the SUM taken exactly at prec 100
+    (floats promote exactly; PI_6-style constants passed as mp
+    quantities). Collapses the eps-in-argument width of near-zero
+    smalls (t1, t3) from ~4e-16 to ~1e-30."""
+    acc = _MPIV.mpf(0)
+    for t in terms:
+        acc = acc + (t if not isinstance(t, float) else
+                     _MPIV.mpf(t))
+    return _iv_const(_MPIV.sin(acc))
+
+
+def _mp_cos_iv(*terms):
+    acc = _MPIV.mpf(0)
+    for t in terms:
+        acc = acc + (t if not isinstance(t, float) else
+                     _MPIV.mpf(t))
+    return _iv_const(_MPIV.cos(acc))
+
+
 def iv_stable_z3sq(theta, phi, lam):
     """Certified enclosure of z3^2 via the factored kernel.
-    Returns (z3sq_CIV, den_margin)."""
+    Returns (z3sq_CIV, den_margin). Point-float lam/phi arguments
+    get exact-argument mp evaluation for the two near-zero smalls;
+    interval arguments fall back to plain interval trig."""
     A11, A12 = _A_civ(theta, phi)
     z1 = iv_exp_i(lam)
     hl = lam * IV(0.5) if hasattr(lam, "lo") else IV(lam * 0.5)
     e_hl = iv_exp_i(hl)
-    t1 = iv_sin(hl - PI_6)
+    lam_pt = getattr(lam, "width", 1.0) == 0.0
+    phi_pt = getattr(phi, "width", 1.0) == 0.0
+    if lam_pt and phi_pt:
+        t1 = _mp_sin_iv(_MPIV.mpf(lam.lo) / 2, -_MPIV.pi / 6)
+        t3c = _mp_cos_iv(_MPIV.mpf(lam.lo) / 2, phi.lo)
+    else:
+        t1 = iv_sin(hl - PI_6)
+        t3c = iv_cos(hl + phi)
     sh = iv_sin(hl)
     s2t = iv_sin(theta * IV(0.5) if hasattr(theta, "lo")
                  else IV(theta * 0.5))
     t2 = -(SQRT3 * (s2t * s2t) * sh)
-    t3 = SQRT3_HALF * iv_sin(theta) * iv_cos(hl + phi)
+    t3 = SQRT3_HALF * iv_sin(theta) * t3c
     brP = CIV(t1 + t2, t3)
     brQ = CIV(t1 + t2, -t3)
     two = CIV(IV(2.0))

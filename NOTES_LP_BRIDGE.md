@@ -1625,3 +1625,119 @@ Full-map accuracy at the corner: 1.2e-12 @ 1e-2, 1.2e-8 @ 1e-4,
 hybrid, 0.031 generic). Task (3)'s map thread is COMPLETE; the
 interval twin (ivstable z2 via the same factored form) is the
 one remaining wiring item.
+
+## 4.70 Certified corner map COMPLETE: depth-independent enclosures, truth contained
+
+The interval kernel's remaining 1/theta^2 width was the
+eps-in-argument of the two near-zero trig smalls (t1's width was
+4.4e-16 from the float-pi/6 representation offset). Fix: for
+point-float lam/phi the arguments are summed EXACTLY at prec 100
+(_mp_sin_iv/_mp_cos_iv — floats promote exactly), and the
+constants are enclosed from the prec-100 substrate with
+nextafter outward rounding.
+  z3sq enclosure: width 4.2e-14, DEPTH-INDEPENDENT, 40-digit
+      truth centered (margin = half-width) at theta = 1e-2
+      through 1e-8.
+  Full interval map at the corner: widths 4.4e-12 (1e-2) to
+      4.3e-8 (1e-6), NO RAISE at any depth (was: raise at 1e-5),
+      36/36 entries contain the 40-digit truth at 1e-4 and 1e-6.
+The interval z2 rides the tight z3sq through the plain quotient —
+usable to theta ~ 3e-7, far below any campaign tile. Between
+4.69 (float, 0.035 ms, <= 1.2e-8 any depth) and this, the corner
+map problem — float and certified — is CLOSED.
+
+## 4.71 Deep corner column re-measured on the stable map: regular all the way down
+
+With the corner map closed (4.69-4.70), the theta < 1e-3 column —
+invalidated as float noise in 4.53 — re-measures cleanly:
+  th = 1e-3, 3e-4, 1e-4, 3e-5 at (pi/3, pi/3):
+    48 roots, 8 near-bases, 0 exact bases at every depth,
+    min per-basis max-edge / theta = 0.379 EXACTLY CONSTANT.
+The cone-limit margin function's C1 measurement (SKELETON §6) now
+extends four more decades toward the apex with the same value the
+shallow ladder gave (0.379 at r=0 — cf. 4.52). No continua, no
+degeneracy, no surprises: the corner column is regular geometry
+under a numerically honest chart at every accessible depth.
+
+## 4.72 Boundary of the theorem-grade tile: certified rates at the special loci
+
+Attempting rigor_tile at special-locus points (theta = 0.005):
+  wall (1.1, pi/3):            dual_karlsson raises "z3^2 touches
+                               branch cut" — z3^2 genuinely sits
+                               near the cut on the wall; the csqrt
+                               needs the branch-aware chart (track
+                               z3, not z3^2 — the s-chart pattern).
+  near-corner (pi/3+1e-3, ..): raises "z2 denominator touches 0"
+                               — dual.py's naive z2 quotient;
+                               needs the tight z3sq (4.70's fix,
+                               in dual arithmetic with partials).
+  (generic point untested past the first raise in the same run.)
+So the theorem-grade tile currently covers the GENERIC strata
+(validated 5/5 across theta, 4.66) and stops at the special loci
+where the certified-rates leg (dual.py) still runs the naive
+kernels. The fix list is known and bounded: port stable P/Q (with
+its three elementary trig partials) into dual.py, ride z2 on the
+tight z3sq, and branch-aware csqrt at the wall. rigor_tile now
+uses stable_karlsson for its float map (== naive generically,
+accurate at depth).
+
+Addendum 4.72 (the precise diagnosis): the factored z3 quotient
+in dual.py fixes nothing beyond generic because the remaining
+fatness is the INTERVAL DEPENDENCY PROBLEM in the quotient — num
+and den vary together through the shared small factors, but
+interval division adds their relative widths (measured ~8% where
+the true variation is ~0.1%). The repo's own founding cure
+applies: the MEAN-VALUE pattern (tight point values + derivative-
+bounded variation, as rates.py does downstream) must reach
+dual_karlsson's internal den/cut checks, which currently run on
+naively-propagated box values and so raise near the corner and
+wall. Scoped fix: split dual_karlsson into point-value + partial
+paths and make its internal checks mean-value aware. Bounded;
+next session.
+
+## 4.73 Mean-value dual + THE IDENTIFICATION: special loci = branch surfaces of the z-quotients
+
+dual.py refactored: _dual_stage1 (divisions delayed) +
+_dual_stage2 (checks via callback) + dual_karlsson_mv (point-pass
+values, box-pass partials, mean-value-tightened intermediates).
+Result: generic tiles tighten; the special-locus raises PERSIST —
+and correctly so: at the corner box the factor t = t1 + t2
+genuinely crosses zero INSIDE any box containing lam = pi/3
+(t1 = sin(lam/2 - pi/6) changes sign), so den3 truly touches 0 —
+z3^2's BRANCH SURFACE passes through the box, and both +-z3
+sheets are genuine Hadamards there (the family is two-sheeted at
+the surface). The week's whole hierarchy now has one sentence:
+THE WALLS, LINES AND CORNER ARE THE BRANCH SURFACES OF THE
+z-QUOTIENTS, algebraically the zero sets of the t +- i t3
+factors (4.57). Fail-loudly is the right behavior for a
+single-sheet evaluator; the unlock is chart-level:
+  (a) rotated-cut csqrt for NEAR-cut boxes (the wall: z3^2 close
+      to but not crossing the cut) — small interval.py addition;
+  (b) per-sheet certification where the surface crosses the box
+      (corner): enumerate both sign sheets, certify each — the
+      branch-aware chart long budgeted for ~1-2% of tiles.
+
+## 4.74 The wall is CHART-singular, MAP-continuous — soundness question dissolves
+
+Decisive continuity test at the wall (lam = pi/3 +- 1e-6,
+b2 = 1.1, theta = 0.005):
+  |H(+eps) - H(-eps)|_max = 1.8e-3  — derivative-sized (rate
+      ~900, the measured wall racing), NOT a jump;
+  48/48 roots match across at 5.8e-3 = |S| * 2 eps exactly.
+The z-intermediates' principal-sqrt discontinuity CANCELS in the
+block assembly: H is continuous (fast-turning) through the wall.
+Consequences:
+  1. The demo-grade straddling wall tiles were SOUND — their
+     empirical drift bounds measured the true (finite) rates of a
+     continuous family. The sheet-jump concern raised by the
+     dual-path analysis applies only to the CHART, not the map.
+  2. Boundary-aligned tiling (walls as tile edges) is an
+     OPTIMIZATION for the certified path (whose z-intermediates
+     do see the chart singularity), not a soundness requirement.
+  3. The certified path's unlock remains as scoped in 4.73:
+     branch-managed intermediates (rotated-cut csqrt / per-sheet
+     with cancellation in assembly) OR chart-free evaluation of H
+     enclosures near the walls.
+(The boundary-aligned half-tiles' chi 6 failures are now a
+performance puzzle, not a soundness one — unresolved, low
+priority.)

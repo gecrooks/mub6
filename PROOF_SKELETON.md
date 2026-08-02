@@ -249,7 +249,8 @@ theta^2-scaled tiles observed empirically. The recursion TERMINATES
 because it was never a recursion in K — walls, lines and crossings
 are fixed subsets of the compact cylinder, resolved once.
 
-**Status (updated 2026-08-01 morning).** C1 MEASURED (NOTES 4.52):
+**Status (updated 2026-08-01 morning).** C1 MEASURED (NOTES 4.52, deep-column extension 4.71 on the
+stable map — 0.379 constant to theta = 3e-5 at the apex):
 mu(s, t, theta) is theta-independent to 3 digits along every
 tested ray with uniform floor mu_0 >= 0.32. The theta = 0 face of
 K is RESOLVED (4.53-4.54): the apparent continua/pathology was
