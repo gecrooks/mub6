@@ -1525,3 +1525,103 @@ practical implementation (batched streaming refinement, segment
 amortization, GPU sweeps) is exactly the coverage-verifier
 work (colleague's branch). The demo-tier certificate/margin
 results are unaffected — coverage was always their listed gap.
+
+## 4.66 FIRST THEOREM-GRADE SIGNED TILE (task 2 complete)
+
+rigor_tile.py: the signed tile with every pair bound RIGOROUS —
+Q-curves + TM-certified curve residuals (tmres, no sampling/PAD)
++ certified tile-local RJ_extra (rates.py) + slanted-tube
+containment (tube_krawczyk with quadratic offset) + TM
+inner-product overlap lower bounds (certified_overlap_lo) +
+exhibited proper coloring. Result objects are
+certificate_result.CertificateResult with per-dependency
+Evidence; the weakest-dependency rule correctly grades the tile
+SAMPLED_BOUND while the pair layer itself is RIGOROUS —
+enumeration coverage (rigor/coverage-verifier) is the one
+non-rigorous dependency, by design.
+
+Measured at (0.5, 1.0, 2.0), the h-ladder (the tube-contraction
+wall is |Y|-limited: Krawczyk fixpoint needs |Y| * rad_g <~
+3.5e-3 with rad_g ~ h^2-scaled):
+  h = 2.5e-4: tubes  0/52 (global-Lipschitz RJ was 20x fat; fixed
+              to certified RJ_extra; still |Y| ~ 23 blocks)
+  h = 1e-4:   tubes 41/52, 787 rigorous deletions, chi 13
+  h = 5e-5:   tubes 45/52, 961, chi 9
+  h = 2.5e-5: tubes 49/52, 1151, chi 5  -> CERTIFIED, ~6 s/tile
+The 3 remaining tube-less roots are valley-class (large |Y|);
+fail-closed as full-edge vertices they still fit chi <= 5. The
+composition with valley windows (certify_tile's L4) is the
+completion for larger h; the working law: rigorous-pair h ~
+2.5e-5-1e-4 at bulk conditioning vs 5e-3 sampled — the rigorous
+campaign economics run through chains/adaptivity exactly as the
+fine-tile design always said. En route fixed: the global L_H_J
+RJ bound was 20x fatter than rates.py's certified RJ_extra — the
+debug trail that found it is the night's second dependency-blowup
+lesson (after 4.57's).
+
+Addendum 4.66 (validation ladder): the theorem-grade tile
+certifies at 5/5 test points with adaptive h:
+  theta=0.05  h=1e-5:   48/48 tubes, chi 2 (h=2.5e-5 gave chi 8)
+  theta=0.2   h=2.5e-5: 48/48 tubes, chi 2
+  theta=0.5   h=2.5e-5: 49/52 tubes, chi 5
+  theta=1.0   h=2.5e-5: 53/56 tubes, chi 5
+  census pt   h=2.5e-5: 48/48 tubes, chi 2
+~6 s/tile throughout (pool-dominated). Required h tightens toward
+the collar (conditioning grows as theta drops) — the adaptive-h
+rung ladder is the campaign shape, as everywhere else.
+
+## 4.67 g1 closed form VERIFIED (z2-delta layer-2 identity)
+
+Hand-derived and verified to 1e-24 at 40 digits at arbitrary
+(phi, lam):
+  g1(phi, lam) = dG-/ds at s=0
+    = i (sqrt3/2) [ -4 w e^{i phi} (w - z1 conj(w))
+                    - 2 w^2 (e^{-i phi} - z1 e^{i phi}) ],
+  w = e^{2 pi i/3}, z1 = e^{i lam}.
+(Derivation collapses via conj(mu) = -nu at s = 0.) With 4.65's
+structure this fully specifies the stable z2 numerator through
+first order; the remaining mechanical piece is the s^2 remainder
+g2 (same differentiation, c = cos(theta) now contributing) and
+the symmetric treatment of num2 = cB12^2 (zeta' - z3sq) — both
+routine. Until wired, the mp-hybrid (0.25 ms) covers float grade
+and elevated-dps intervals cover certified corner tiles.
+
+## 4.68 Rigorous chains at 1.59 s/tile; honest campaign economics
+
+Warm-pool chains of the theorem-grade tile: 10/10 certified at
+1.59 s/tile (4x amortization — pool-dominated cost, same speed
+class as the sampled chains). HONEST ECONOMICS: at the
+tube-contraction h (2.5e-5 - 1e-4), flat-domain coverage is
+~1e11-1e13 tiles — the rigorous SIGNED tile is a demonstrated
+PRIMITIVE (pair layer with per-dependency grades, the
+CertificateResult pattern, 1.6 s chained), not a campaign
+vehicle. The rigorous campaign remains anchored to certify_tile
+(h = 3e-4, global sweep; $25-50k -> $5-15k post-multipliers), and
+the two now compose: certify_tile can adopt the signed tile's
+TM-pair layer and result-grading directly. The lever that would
+change the economics is the tube-contraction ceiling
+(|Y| * rad_g <~ 3.5e-3): frame-split preconditioning for
+large-|Y| roots — already assumption-ledger item 3's territory.
+
+## 4.69 Stable z2^2 complete: exact odd-series small factors, 0.035 ms
+
+The z2 chain is closed in closed form. Verified identities: G-
+and G2- are EXACTLY ODD in s = sin(theta) (even parts identically
+0.0 at 40 digits; the g2 = 0 cancellation goes through
+conj(mu) = -nu term by term), with first-order coefficients
+  g1  = i(sqrt3/2)[-4 w e^{i phi}(w - z1 conj w)
+                   - 2 w^2 (e^{-i phi} - z1 e^{i phi})]
+  g21 = -4 conj(w) mu n0 - 2 conj(w)^2 n1
+(both verified to 1e-24). In the ratio the common bigden*Q AND
+the shared factor s cancel analytically:
+  z2^2 = (t ghat2 - i tau3 G2+) / (t ghat - i tau3 G+),
+  ghat = g1 + s^2 g3 (g3 extracted at s0 = 0.02, exact to O(s^4)
+  by oddness), tau3 = (sqrt3/2) cos(lam/2 + phi) exact.
+stable_karlsson now runs pure float everywhere except the
+theta < 3e-5 corner sliver (irreducible eps-in-argument floor of
+the two near-zero trig sums; mp there gives 1.8e-11).
+Full-map accuracy at the corner: 1.2e-12 @ 1e-2, 1.2e-8 @ 1e-4,
+1.8e-11 @ 1e-5, 1.8e-10 @ 1e-6; 0.035 ms/call (was 0.25 ms
+hybrid, 0.031 generic). Task (3)'s map thread is COMPLETE; the
+interval twin (ivstable z2 via the same factored form) is the
+one remaining wiring item.
