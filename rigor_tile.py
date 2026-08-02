@@ -215,6 +215,7 @@ def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     """Compose global cover-completeness with the rigorous pair layer."""
     from parametric import certify_tile
 
+    started = time.time()
     hf3 = hf if hf3 is None else hf3
     span = theta_hi - theta_lo
     h = float(max(0.5 * span, hf, hf3))
@@ -222,6 +223,7 @@ def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     coverage_run = certify_tile(
         beta0, np.full(3, h), verbose=verbose, use_certified=True
     )
+    coverage_seconds = time.time() - started
     witness = coverage_run.get("coverage_witness")
     if witness is None or not witness.complete:
         reason = coverage_run.get("reason", "coverage witness unavailable")
@@ -232,9 +234,28 @@ def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
             reason=reason,
         )
     pool = np.asarray([zone.center for zone in witness.zones], dtype=float)
-    return rigorous_signed_tile(
+    pair_result = rigorous_signed_tile(
         theta_lo, theta_hi, b2, b3, hf, hf3=hf3,
         pool=pool, n_starts=n_starts, coverage_witness=witness,
+    )
+    metadata = dict(pair_result.metadata)
+    kind_counts = {}
+    for zone in witness.zones:
+        kind_counts[zone.kind] = kind_counts.get(zone.kind, 0) + 1
+    metadata.update(
+        coverage_boxes=witness.boxes_processed,
+        coverage_phantoms=witness.phantom_count,
+        coverage_zones=len(witness.zones),
+        coverage_kind_counts=kind_counts,
+        coverage_seconds=coverage_seconds,
+        total_seconds=time.time() - started,
+    )
+    return CertificateResult(
+        pair_result.ok,
+        pair_result.grade,
+        pair_result.dependencies,
+        reason=pair_result.reason,
+        metadata=metadata,
     )
 
 

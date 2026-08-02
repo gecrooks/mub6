@@ -136,6 +136,9 @@ class TestTiles(unittest.TestCase):
             if item.name == "enumeration-coverage"
         )
         self.assertIn("global sweep closed", coverage.detail)
+        self.assertGreater(result.metadata["coverage_boxes"], 0)
+        self.assertEqual(result.metadata["coverage_zones"], 48)
+        self.assertEqual(result.metadata["coverage_phantoms"], 0)
 
     def test_signed_collar_tile_generic(self):
         from collar_tile import collar_tile
