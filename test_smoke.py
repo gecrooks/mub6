@@ -48,15 +48,30 @@ class TestKernels(unittest.TestCase):
                 self.assertTrue(civ.im.contains(Hf[a, b].imag))
 
     def test_iv_stable_z3sq_tight_and_contains(self):
+        # reference = 40-digit truth (the enclosure is now TIGHTER
+        # than the float kernel's own error, so float values fall
+        # outside it — correctly)
         from interval import IV
         from ivstable import iv_stable_z3sq
-        from karlsson_stable import stable_z3sq
+        from mpmath import mp, mpc, sqrt, exp, cos, sin
         z, dm = iv_stable_z3sq(IV(1e-4), IV(np.pi / 3),
                                IV(np.pi / 3))
-        zf = stable_z3sq(1e-4, np.pi / 3, np.pi / 3)
-        self.assertTrue(z.re.contains(zf.real))
-        self.assertTrue(z.im.contains(zf.imag))
-        self.assertLess(max(z.re.width, z.im.width), 1e-4)
+        with mp.workdps(40):
+            I = mpc(0, 1)
+            th, ph, la = (mp.mpf(1e-4), mp.mpf(np.pi / 3),
+                          mp.mpf(np.pi / 3))
+            c, s = cos(th), sin(th)
+            A11 = mp.mpf(-1) / 2 + I * (sqrt(3) / 2) * (
+                c + exp(-I * ph) * s)
+            A12 = mp.mpf(-1) / 2 + I * (sqrt(3) / 2) * (
+                exp(I * ph) * s - c)
+            w = exp(2 * I * la)
+            cj = lambda x: x.conjugate()
+            ref = ((A11 ** 2 - w * A12 ** 2)
+                   / (cj(A12) ** 2 - w * cj(A11) ** 2))
+        self.assertTrue(z.re.contains(float(ref.real)))
+        self.assertTrue(z.im.contains(float(ref.imag)))
+        self.assertLess(max(z.re.width, z.im.width), 1e-12)
         self.assertGreater(dm, 0)
 
 
