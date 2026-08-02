@@ -176,9 +176,12 @@ def _dual_stage1(theta_iv, phi_iv, lam_iv):
                 num3=num3, den3=den3, num4=num4, den4=den4)
 
 
-def _dual_stage2(p, checker):
+def _dual_stage2(p, checker, pt2=None, hv=None):
     """Divisions, cut checks (via `checker(name, q)` which either
-    raises or certifies clearance), csqrt, and block assembly."""
+    raises or certifies clearance), csqrt, and block assembly.
+    With pt2/hv (the mv cascade), stage-2 quantities are
+    mean-value-tightened against their point twins before their
+    checks."""
     checker("den3", p["den3"])
     z3sq = p["num3"] / p["den3"]
     checker("den4", p["den4"])
@@ -186,6 +189,9 @@ def _dual_stage2(p, checker):
     B11, B12, z1 = p["B11"], p["B12"], p["z1"]
     num2 = B11 * B11 - z3sq * (B12.conj() * B12.conj())
     den2 = B12 * B12 - z3sq * (B11.conj() * B11.conj())
+    if pt2 is not None:
+        num2 = _mv_tight(pt2["num2"], num2, hv)
+        den2 = _mv_tight(pt2["den2"], den2, hv)
     checker("den2", den2)
     z2sq = num2 / den2
     def sqrt_branch(name, zsq):
@@ -268,10 +274,10 @@ def _mv_tight(q_pt, q_box, hv):
 
 def dual_karlsson_mv(beta, hv):
     """Mean-value dual map over the box beta +- hv: point-pass
-    values, box-pass partials, mean-value-tightened intermediates
-    so the den/cut checks and csqrt see tight rectangles. Unlocks
-    the near-corner/wall tiles where box-propagated checks raise
-    (NOTES 4.72)."""
+    values, box-pass partials, mean-value tightening CASCADED
+    through the stage-2 divisions (each near-zero quantity is
+    tightened against its point twin before its check). Unlocks
+    the near-corner and wall tiles (NOTES 4.72/4.75/4.76)."""
     beta = [float(b) for b in beta]
     hv = [float(h) for h in hv]
     p_pt = _dual_stage1(IV(beta[0]), IV(beta[1]), IV(beta[2]))
@@ -279,7 +285,16 @@ def dual_karlsson_mv(beta, hv):
                         IV(beta[1] - hv[1], beta[1] + hv[1]),
                         IV(beta[2] - hv[2], beta[2] + hv[2]))
     p_mv = {k: _mv_tight(p_pt[k], p_bx[k], hv) for k in p_pt}
-    return _dual_stage2(p_mv, _box_checker)
+    # point pass THROUGH the divisions (safe at a point off the
+    # exact surface; a genuinely on-surface point still raises,
+    # correctly — the family is two-sheeted there)
+    _box_checker("den3", p_pt["den3"])
+    z3sq_pt = p_pt["num3"] / p_pt["den3"]
+    B11p, B12p = p_pt["B11"], p_pt["B12"]
+    num2_pt = B11p * B11p - z3sq_pt * (B12p.conj() * B12p.conj())
+    den2_pt = B12p * B12p - z3sq_pt * (B11p.conj() * B11p.conj())
+    pt2 = dict(num2=num2_pt, den2=den2_pt)
+    return _dual_stage2(p_mv, _box_checker, pt2=pt2, hv=hv)
 
 
 def cdual_mag(c):

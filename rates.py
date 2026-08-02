@@ -39,12 +39,18 @@ warnings.filterwarnings("ignore")
 SQ6 = np.sqrt(6.0)
 
 
-def certified_rates(beta, h):
-    """h: scalar or per-direction (3,) half-widths (anisotropic tiles)."""
+def certified_rates(beta, h, mv=False):
+    """h: scalar or per-direction (3,) half-widths (anisotropic
+    tiles). mv=True uses the mean-value dual map (4.76) — required
+    near the branch surfaces (walls/corner), tighter everywhere."""
     hv = np.broadcast_to(np.asarray(h, float), (3,)).copy()
-    Hd = dual_karlsson(IV(beta[0] - hv[0], beta[0] + hv[0]),
-                       IV(beta[1] - hv[1], beta[1] + hv[1]),
-                       IV(beta[2] - hv[2], beta[2] + hv[2]))
+    if mv:
+        from dual import dual_karlsson_mv
+        Hd = dual_karlsson_mv(beta, hv)
+    else:
+        Hd = dual_karlsson(IV(beta[0] - hv[0], beta[0] + hv[0]),
+                           IV(beta[1] - hv[1], beta[1] + hv[1]),
+                           IV(beta[2] - hv[2], beta[2] + hv[2]))
     e1 = np.zeros((3, 6, 6))
     hmag = 0.0
     for i in range(6):
