@@ -1,0 +1,101 @@
+# Reducing the rigorous campaign cost
+
+Current external estimate (2026-08-02): **8,000–15,000 A100-hours**.
+Treat this as a provisional upper estimate, not a settled campaign price.
+Recent composed certificates already pass at `h=2.5e-4` at both the generic
+reference and the former valley failure, while older pricing notes use
+smaller pair-layer ceilings in some of the same territory.
+
+The governing rule is that an optimization may reduce theorem cost only if
+its saved work remains covered by explicit `RIGOROUS` evidence. Search,
+scheduling, and prioritization may be heuristic; ledger acceptance may not.
+
+## Ranked reduction program
+
+### 1. Re-measure the rigorous half-width distribution
+
+Run a stratified dyadic census over generic bulk, valleys, ordinary walls,
+wall intersections, and near-corner shells. Record the largest rigorous
+half-width, coverage boxes, root-structure mix, chromatic bound, and time.
+Integrate the resulting local density instead of pricing the full domain at
+the worst observed depth.
+
+Tools: `rigorous_census.py`, `rigorous_census_report.py`.
+
+### 2. Reuse a coarse coverage witness across pair subtiles
+
+The 3–5 million-box torus sweep is the demonstrated cost center. A parent
+coverage witness at roughly `h=3e-4` proves that every root over the parent
+box belongs to one of its certified tubes/fold structures. Fine signed-pair
+children should inherit those indexed structures and recompute only their
+pair bounds and coloring.
+
+At a generic pair width of `2.5e-5`, one parent contains about `12^3 = 1728`
+isotropic children. Repeating global enumeration coverage in each child
+throws away that factor. Required implementation: export each regular
+zone's certified Q-curve and enclosure, and export a child-restriction map
+for fold oracles. Child association must be proved from the parent
+structure, not inferred by nearest-root polishing.
+
+### 3. Use anisotropic boxes aligned with special strata
+
+The fine scale near an ordinary wall is normal to a codimension-one
+surface. Do not charge that scale in both tangential directions. A normal
+width of `1e-6` and tangential widths of `2.5e-5` already reduce wall count
+by about `625x` relative to `1e-6` cubes. Use two fine directions only near
+codimension-two intersections. Treat exact surfaces with lower-dimensional
+or per-sheet certificates.
+
+### 4. Subdivide only graph-critical children and directions
+
+Attempt the largest pair box first. If coloring fails, identify the roots
+and pair rows responsible for the sixth color. Subdivide only directions
+that materially change those rows, while inheriting already-certified pair
+bounds. Most measured graphs have chromatic bound 2, so uniform refinement
+discards large margins.
+
+Tooling: `coloring_witness.py` provides deterministic DSATUR witnesses,
+fail-closed search budgets, critical vertices, and conflict-edge directional
+uncertainty scores. It is intentionally not wired into `certify_tile` while
+the mean-value-rate validation is in progress.
+
+### 5. Stop contracting roots that are irrelevant to a 5-color witness
+
+The proof needs an exhibited proper coloring, not the tightest possible
+tube for every root. Tube-less roots can remain conservative full-edge
+vertices. Prioritize structures and pair rows on the coloring obstruction
+and stop once a rigorous 5-coloring is available.
+
+### 6. Batch and warm-track non-sweep work
+
+Reuse parent enumerations, warm-track root centers, and batch Newton solves,
+Jacobians, Taylor models, and pair bounds across children. Submit many
+children per GPU launch. Measure GPU utilization: enumeration and Python
+launch overhead should not consume billed A100 time.
+
+### 7. Time-box a structural replacement for the pair campaign
+
+Repeated chromatic bound 2 suggests a persistent bipartition or a small
+family of analytic overlap inequalities. Spend one or two focused days
+searching for a stratum-wise root labeling and symbolic pair lower bounds.
+The upside is elimination of most pair tiles; the numerical campaign stays
+as the fallback.
+
+## Immediate measurement plan
+
+1. Run 20–50 stratified points on a repeated dyadic `--h` ladder.
+2. Compute the local tile-density integral, not a worst-case flat count.
+3. Measure how many pair children fit in each successful coverage parent.
+4. Survey anisotropic normal/tangential ladders on wall and intersection
+   points.
+5. Report A100-hours separately for global coverage, root continuation,
+   pair bounds, and orchestration overhead.
+
+## Acceptance and assembly safeguards
+
+- Campaign resume uses only the grade-filtered interval component connected
+  to the domain start (`campaign_coverage.py`).
+- Disconnected successful islands cannot advance the frontier.
+- Parent-witness reuse must bind the parameter box and root structures;
+  polishing may suggest associations but may not certify them.
+- Every cost survey must retain failed and downgraded records.
