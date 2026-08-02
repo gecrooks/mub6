@@ -1569,3 +1569,19 @@ certifies at 5/5 test points with adaptive h:
 ~6 s/tile throughout (pool-dominated). Required h tightens toward
 the collar (conditioning grows as theta drops) — the adaptive-h
 rung ladder is the campaign shape, as everywhere else.
+
+## 4.67 g1 closed form VERIFIED (z2-delta layer-2 identity)
+
+Hand-derived and verified to 1e-24 at 40 digits at arbitrary
+(phi, lam):
+  g1(phi, lam) = dG-/ds at s=0
+    = i (sqrt3/2) [ -4 w e^{i phi} (w - z1 conj(w))
+                    - 2 w^2 (e^{-i phi} - z1 e^{i phi}) ],
+  w = e^{2 pi i/3}, z1 = e^{i lam}.
+(Derivation collapses via conj(mu) = -nu at s = 0.) With 4.65's
+structure this fully specifies the stable z2 numerator through
+first order; the remaining mechanical piece is the s^2 remainder
+g2 (same differentiation, c = cos(theta) now contributing) and
+the symmetric treatment of num2 = cB12^2 (zeta' - z3sq) — both
+routine. Until wired, the mp-hybrid (0.25 ms) covers float grade
+and elevated-dps intervals cover certified corner tiles.
