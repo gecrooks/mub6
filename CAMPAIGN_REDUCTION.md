@@ -37,6 +37,10 @@ zone's certified Q-curve and enclosure, and export a child-restriction map
 for fold oracles. Child association must be proved from the parent
 structure, not inferred by nearest-root polishing.
 
+`campaign_geometry.parent_reuse_comparison` separates the coverage and pair
+legs. The saving approaches the number of children per parent only when
+coverage dominates; pair work remains and must be chained/batched separately.
+
 ### 3. Use anisotropic boxes aligned with special strata
 
 The fine scale near an ordinary wall is normal to a codimension-one
@@ -59,6 +63,11 @@ must remain near the coarse coverage width, and the normal band should use a
 dyadic onion whose width scales with distance from the wall. This calculation
 also explains the present 8,000–15,000-hour estimate and identifies batching
 the per-tile pair work as the next multiplier after geometry.
+
+Using the measured wall-band count above, changing only the per-child pair
+time from 6 seconds to the demonstrated warm-chain 1.59 seconds gives about
+2,460 A100-hours. A batched 0.5-second pair leg gives about 773 hours. These
+are targets to measure, not certificate claims.
 
 ### 4. Subdivide only graph-critical children and directions
 

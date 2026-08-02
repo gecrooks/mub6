@@ -51,6 +51,27 @@ def wall_band_comparison(tangent_lengths, band_width, normal_half_width,
     }
 
 
+def parent_reuse_comparison(parent_tiles, children_per_parent,
+                            coverage_seconds, pair_seconds):
+    """Cost of repeating versus inheriting one coverage proof per parent."""
+    values = (parent_tiles, children_per_parent, coverage_seconds, pair_seconds)
+    if any(float(value) < 0 for value in values) or children_per_parent < 1:
+        raise ValueError("reuse inputs must be nonnegative with children >= 1")
+    total_children = int(parent_tiles) * int(children_per_parent)
+    repeated_seconds = total_children * (coverage_seconds + pair_seconds)
+    inherited_seconds = (int(parent_tiles) * coverage_seconds
+                         + total_children * pair_seconds)
+    return {
+        "parent_tiles": int(parent_tiles),
+        "children_per_parent": int(children_per_parent),
+        "total_children": total_children,
+        "repeated_a100_hours": repeated_seconds / 3600.0,
+        "inherited_a100_hours": inherited_seconds / 3600.0,
+        "hour_reduction": repeated_seconds / inherited_seconds
+        if inherited_seconds else 1.0,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--tangent-lengths", default="1.5707963268,3.1415926536")
