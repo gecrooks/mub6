@@ -211,8 +211,14 @@ def rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
 
 
 def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
-                               n_starts=6000, verbose=False):
-    """Compose global cover-completeness with the rigorous pair layer."""
+                               n_starts=6000, verbose=False,
+                               coverage_artifact=None):
+    """Compose cover-completeness with the rigorous pair layer.
+
+    When ``coverage_artifact`` is supplied, its parent sweep is reused only
+    after an exact closed-box containment check.  Pair tubes, overlap rows,
+    and coloring are still recomputed for this child.
+    """
     from parametric import certify_tile
 
     started = time.time()
@@ -220,19 +226,30 @@ def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
     span = theta_hi - theta_lo
     h = float(max(0.5 * span, hf, hf3))
     beta0 = np.array([0.5 * (theta_lo + theta_hi), b2, b3])
-    coverage_run = certify_tile(
-        beta0, np.full(3, h), verbose=verbose, use_certified=True
-    )
-    coverage_seconds = time.time() - started
-    witness = coverage_run.get("coverage_witness")
-    if witness is None or not witness.complete:
-        reason = coverage_run.get("reason", "coverage witness unavailable")
-        return CertificateResult.from_evidence(
-            False,
-            [Evidence("enumeration-coverage", CertificateGrade.RIGOROUS,
-                      reason)],
-            reason=reason,
+    if coverage_artifact is None:
+        coverage_run = certify_tile(
+            beta0, np.full(3, h), verbose=verbose, use_certified=True
         )
+        coverage_seconds = time.time() - started
+        witness = coverage_run.get("coverage_witness")
+        if witness is None or not witness.complete:
+            reason = coverage_run.get("reason",
+                                      "coverage witness unavailable")
+            return CertificateResult.from_evidence(
+                False,
+                [Evidence("enumeration-coverage", CertificateGrade.RIGOROUS,
+                          reason)],
+                reason=reason,
+            )
+    else:
+        coverage_seconds = 0.0
+        witness = coverage_artifact.restrict(beta0, np.full(3, h))
+        if not witness.complete:
+            return CertificateResult.from_evidence(
+                False,
+                [witness.evidence()],
+                reason="child box is not contained in parent coverage artifact",
+            )
     pool = np.asarray([zone.center for zone in witness.zones], dtype=float)
     pair_result = rigorous_signed_tile(
         theta_lo, theta_hi, b2, b3, hf, hf3=hf3,
@@ -248,6 +265,9 @@ def fully_rigorous_signed_tile(theta_lo, theta_hi, b2, b3, hf, hf3=None,
         coverage_zones=len(witness.zones),
         coverage_kind_counts=kind_counts,
         coverage_seconds=coverage_seconds,
+        coverage_reused=coverage_artifact is not None,
+        coverage_artifact_id=(None if coverage_artifact is None else
+                              coverage_artifact.artifact_id),
         total_seconds=time.time() - started,
     )
     return CertificateResult(

@@ -1,18 +1,35 @@
 import unittest
 import json
+from unittest.mock import patch
 
 import numpy as np
 
-from certificate_result import CertificateGrade
+from certificate_result import (CertificateGrade, CertificateResult,
+                                Evidence)
 from coverage_contract import (
     BoxDisposition,
     RootCoverageZone,
+    ParentCoverageArtifact,
     SweepCoverageWitness,
     close_survivor_boxes,
 )
 
 
 class CoverageContractTests(unittest.TestCase):
+    def _three_dimensional_artifact(self):
+        zone = RootCoverageZone(
+            kind="tube", center=(0.0, 0.0, 0.0, 0.0, 0.0),
+            guard_radii=(0.2,) * 5, collected_reach=(0.1,) * 5,
+            enclosure_radii=(0.01,) * 5, handoff_complete=True,
+            grade=CertificateGrade.RIGOROUS,
+        )
+        return SweepCoverageWitness(
+            zones=(zone,), global_sweep_complete=True,
+            arithmetic_grade=CertificateGrade.RIGOROUS,
+            boxes_processed=10, parameter_center=(1.0, 2.0, 3.0),
+            parameter_half_widths=(0.5, 0.5, 0.5),
+        ).artifact()
+
     def test_mixed_blob_fails_if_one_member_is_unresolved(self):
         report = close_survivor_boxes(
             centers=[[0.01, 0.01], [0.30, 0.30]],
@@ -146,6 +163,82 @@ class CoverageContractTests(unittest.TestCase):
         )
 
         self.assertFalse(witness.complete)
+
+    def test_parent_artifact_restricts_only_contained_closed_children(self):
+        witness = SweepCoverageWitness(
+            zones=(RootCoverageZone(
+                kind="tube", center=(0.0,), guard_radii=(0.2,),
+                collected_reach=(0.1,), enclosure_radii=(0.01,),
+                handoff_complete=True, grade=CertificateGrade.RIGOROUS,
+            ),),
+            global_sweep_complete=True,
+            arithmetic_grade=CertificateGrade.RIGOROUS,
+            boxes_processed=10,
+            parameter_center=(1.0, 2.0),
+            parameter_half_widths=(0.5, 0.25),
+        )
+        artifact = witness.artifact()
+
+        child = artifact.restrict((1.25, 2.0), (0.25, 0.1))
+        self.assertTrue(child.complete)
+        self.assertTrue(child.matches((1.25, 2.0), (0.25, 0.1), [[0.0]]))
+        self.assertFalse(child.matches((1.25, 2.0), (0.2, 0.1), [[0.0]]))
+        self.assertFalse(
+            artifact.restrict((1.26, 2.0), (0.25, 0.1)).complete
+        )
+
+    def test_parent_artifact_round_trip_detects_tampering(self):
+        zone = RootCoverageZone(
+            kind="tube", center=(0.0,), guard_radii=(0.2,),
+            collected_reach=(0.1,), enclosure_radii=(0.01,),
+            handoff_complete=True, grade=CertificateGrade.RIGOROUS,
+        )
+        witness = SweepCoverageWitness(
+            zones=(zone,), global_sweep_complete=True,
+            arithmetic_grade=CertificateGrade.RIGOROUS,
+            boxes_processed=10, parameter_center=(1.0,),
+            parameter_half_widths=(0.5,),
+        )
+        encoded = json.loads(json.dumps(witness.artifact().as_dict()))
+        self.assertEqual(ParentCoverageArtifact.from_dict(encoded),
+                         witness.artifact())
+        encoded["witness"]["boxes_processed"] = 11
+        with self.assertRaisesRegex(ValueError, "digest mismatch"):
+            ParentCoverageArtifact.from_dict(encoded)
+
+    def test_fully_rigorous_tile_reuses_contained_parent_coverage(self):
+        pair = CertificateResult.from_evidence(
+            True, [Evidence("pair", CertificateGrade.RIGOROUS)],
+            metadata={"pair_marker": 1},
+        )
+        artifact = self._three_dimensional_artifact()
+        with patch("rigor_tile.rigorous_signed_tile", return_value=pair) as run:
+            from rigor_tile import fully_rigorous_signed_tile
+            result = fully_rigorous_signed_tile(
+                0.9, 1.1, 2.0, 3.0, 0.1,
+                coverage_artifact=artifact,
+            )
+
+        self.assertTrue(result)
+        self.assertTrue(result.metadata["coverage_reused"])
+        self.assertEqual(result.metadata["coverage_seconds"], 0.0)
+        self.assertEqual(result.metadata["coverage_artifact_id"],
+                         artifact.artifact_id)
+        restricted = run.call_args.kwargs["coverage_witness"]
+        self.assertTrue(restricted.complete)
+
+    def test_fully_rigorous_tile_rejects_protruding_child_before_pairs(self):
+        artifact = self._three_dimensional_artifact()
+        with patch("rigor_tile.rigorous_signed_tile") as run:
+            from rigor_tile import fully_rigorous_signed_tile
+            result = fully_rigorous_signed_tile(
+                1.45, 1.65, 2.0, 3.0, 0.1,
+                coverage_artifact=artifact,
+            )
+
+        self.assertFalse(result)
+        self.assertIn("not contained", result.reason)
+        run.assert_not_called()
 
     def test_tube_zone_requires_final_enclosure(self):
         with self.assertRaisesRegex(ValueError, "require final enclosure"):

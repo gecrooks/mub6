@@ -118,6 +118,11 @@ class TestTiles(unittest.TestCase):
         self.assertEqual(result["grade"], CertificateGrade.RIGOROUS.name)
         self.assertEqual(result["coverage_grade"],
                          CertificateGrade.RIGOROUS.name)
+        self.assertTrue(result["coverage_artifact"].complete)
+        self.assertEqual(
+            result["coverage_artifact_data"]["artifact_id"],
+            result["coverage_artifact"].artifact_id,
+        )
 
     def test_fully_rigorous_tile_with_global_coverage(self):
         from certificate_result import CertificateGrade

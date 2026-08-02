@@ -985,11 +985,14 @@ def certify_tile(beta, h, verbose=True, fold_cut=0.03, use_certified=False):
     if verbose:
         print(f"  ==> {'TILE OK' if ok else 'FAILED at coloring'}"
               f"[{result.grade.name}] at h={h:g}  [{dt:.0f} s]", flush=True)
+    coverage_artifact = coverage_witness.artifact()
     return dict(ok=ok, h=h, n_roots=n, n_folds=len(fold_certs),
                 n_conflicts=n_conf, seconds=dt,
                 result=result, grade=result.grade.name,
                 coverage_witness=coverage_witness,
+                coverage_artifact=coverage_artifact,
                 coverage=coverage_witness.as_dict(),
+                coverage_artifact_data=coverage_artifact.as_dict(),
                 coverage_grade=coverage_witness.evidence().grade.name)
 
 

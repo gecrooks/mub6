@@ -12,6 +12,8 @@ this module never invents a universal localization radius.
 """
 
 from dataclasses import dataclass
+import hashlib
+import json
 from enum import Enum
 
 import numpy as np
@@ -206,6 +208,10 @@ class SweepCoverageWitness:
             "zones": [zone.as_dict() for zone in self.zones],
         }
 
+    def artifact(self):
+        """Freeze this sweep witness as a reusable parent artifact."""
+        return ParentCoverageArtifact(self)
+
     @classmethod
     def from_dict(cls, value):
         return cls(
@@ -218,6 +224,123 @@ class SweepCoverageWitness:
             parameter_center=tuple(value["parameter_center"]),
             parameter_half_widths=tuple(value["parameter_half_widths"]),
         )
+
+
+def _closed_box_inside(child_center, child_half_widths,
+                       parent_center, parent_half_widths):
+    """Fail-closed containment of one ordinary (unwrapped) closed box."""
+    cc = np.asarray(child_center, dtype=float)
+    ch = np.asarray(child_half_widths, dtype=float)
+    pc = np.asarray(parent_center, dtype=float)
+    ph = np.asarray(parent_half_widths, dtype=float)
+    if cc.ndim != 1 or cc.shape != ch.shape or cc.shape != pc.shape \
+            or cc.shape != ph.shape or cc.size == 0:
+        return False
+    if not all(np.isfinite(x).all() for x in (cc, ch, pc, ph)):
+        return False
+    if (ch < 0).any() or (ph < 0).any():
+        return False
+    # No tolerance: rounding may reject a boundary child, never admit one
+    # whose represented closed box protrudes beyond the parent.
+    return bool(np.all(np.abs(cc - pc) + ch <= ph))
+
+
+@dataclass(frozen=True)
+class RestrictedCoverageWitness:
+    """A parent sweep witness restricted to one proved-contained child."""
+
+    parent: SweepCoverageWitness
+    child_center: tuple[float, ...]
+    child_half_widths: tuple[float, ...]
+    artifact_id: str
+
+    @property
+    def zones(self):
+        return self.parent.zones
+
+    @property
+    def boxes_processed(self):
+        return self.parent.boxes_processed
+
+    @property
+    def phantom_count(self):
+        return self.parent.phantom_count
+
+    @property
+    def complete(self):
+        return (self.parent.complete and _closed_box_inside(
+            self.child_center, self.child_half_widths,
+            self.parent.parameter_center, self.parent.parameter_half_widths
+        ))
+
+    def evidence(self):
+        parent_ev = self.parent.evidence()
+        detail = (f"parent artifact {self.artifact_id[:12]}; closed child "
+                  f"box {'contained' if self.complete else 'not contained'}")
+        return Evidence("enumeration-coverage:parent-restriction",
+                        parent_ev.grade, detail)
+
+    def matches(self, parameter_center, parameter_half_widths, roots):
+        """Bind use to this exact child box and the parent's structures."""
+        center = np.asarray(parameter_center, dtype=float)
+        widths = np.asarray(parameter_half_widths, dtype=float)
+        if not np.array_equal(center, np.asarray(self.child_center)) \
+                or not np.array_equal(widths,
+                                      np.asarray(self.child_half_widths)):
+            return False
+        roots = np.asarray(roots, dtype=float)
+        parent_roots = np.asarray([zone.center for zone in self.zones],
+                                  dtype=float)
+        return (self.complete and roots.shape == parent_roots.shape
+                and np.array_equal(roots, parent_roots))
+
+    def as_dict(self):
+        return {
+            "artifact_id": self.artifact_id,
+            "child_center": list(self.child_center),
+            "child_half_widths": list(self.child_half_widths),
+            "complete": self.complete,
+        }
+
+
+@dataclass(frozen=True)
+class ParentCoverageArtifact:
+    """Content-addressed global coverage proof reusable by child boxes."""
+
+    witness: SweepCoverageWitness
+
+    @property
+    def artifact_id(self):
+        payload = json.dumps(self.witness.as_dict(), sort_keys=True,
+                             separators=(",", ":"), allow_nan=False)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    @property
+    def complete(self):
+        return self.witness.complete
+
+    def restrict(self, child_center, child_half_widths):
+        center = tuple(float(x) for x in child_center)
+        widths = tuple(float(x) for x in child_half_widths)
+        return RestrictedCoverageWitness(
+            self.witness, center, widths, self.artifact_id
+        )
+
+    def as_dict(self):
+        return {
+            "schema": "mub6-parent-coverage-v1",
+            "artifact_id": self.artifact_id,
+            "witness": self.witness.as_dict(),
+        }
+
+    @classmethod
+    def from_dict(cls, value):
+        if value.get("schema") != "mub6-parent-coverage-v1":
+            raise ValueError("unknown parent coverage artifact schema")
+        artifact = cls(SweepCoverageWitness.from_dict(value["witness"]))
+        if value.get("artifact_id") != artifact.artifact_id:
+            raise ValueError("parent coverage artifact digest mismatch")
+        return artifact
 
 
 def _box_array(value, name, dimension=None):

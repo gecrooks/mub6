@@ -41,6 +41,16 @@ structure, not inferred by nearest-root polishing.
 legs. The saving approaches the number of children per parent only when
 coverage dominates; pair work remains and must be chained/batched separately.
 
+The first reuse contract is implemented by
+`coverage_contract.ParentCoverageArtifact`. `certify_tile` exports a
+content-addressed artifact, and `fully_rigorous_signed_tile` accepts it only
+when the child's complete closed parameter box is componentwise contained in
+the parent box. The restricted witness is bound to the parent's root
+structures. Child tube containment, pair bounds, and coloring are recomputed;
+none of those claims are inherited from the parent. Serialized artifacts are
+digest-checked on load, and an incomplete parent or protruding child fails
+closed.
+
 ### 3. Use anisotropic boxes aligned with special strata
 
 The fine scale near an ordinary wall is normal to a codimension-one
