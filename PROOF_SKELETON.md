@@ -351,3 +351,17 @@ This is the artifact that moves the proof from "trust our stack"
 to "audit this data" — the Hales/Tucker standard, with a clean
 path to later formalization (the lemma skeleton is elementary;
 only the certificate format needs encoding).
+
+Addendum §9 (standing constraint, 2026-08-02): the re-checker will
+be written in LEAN 4 — the independent implementation and the
+formal artifact are the same object, executed compiled over the
+ledger. Everything the machine emits must stay compatible with
+that goal: certificate schemas are explicit datatypes; floats are
+serialized as IEEE-754 bit patterns (never decimal strings);
+multiples of pi are symbolic in the schema; the sweep's splitting
+rule is fully specified data (no check-time adaptivity); certified
+paths trust no library transcendentals beyond what the formal
+interval layer will reproduce (the in-repo trig kernel's
+coefficient-algebra bound is the template). Known formalization
+debts: Karlsson's parametrization theorem (must be proven, not
+assumed) and the transcendental enclosure library.
