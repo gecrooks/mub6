@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from certificate_result import CertificateGrade
+from ledger_bits import decode_box_record, float_bits
 
 
 @dataclass(frozen=True)
@@ -46,22 +47,13 @@ def grade_accepted(record, required=CertificateGrade.RIGOROUS):
     return bool(record.get("ok")) and grade >= CertificateGrade(required)
 
 
-def _record_interval(record):
-    beta = record["beta"]
-    hv = record["hv"]
-    if len(beta) != 3 or len(hv) != 3:
-        raise ValueError("beta and hv must have three components")
-    center = float(beta[0])
-    radius = float(hv[0])
-    phi = round(float(beta[1]), 9)
-    lam = round(float(beta[2]), 9)
-    if radius < 0:
-        raise ValueError("negative tile half-width")
-    values = (center, radius, phi, lam)
-    if not all(value == value and abs(value) != float("inf")
-               for value in values):
-        raise ValueError("non-finite tile record")
-    return (phi, lam), (center - radius, center + radius)
+def _record_interval(record, *, require_bits):
+    beta, _widths, interval, token = decode_box_record(
+        record, require_bits=require_bits
+    )
+    key = (beta[1], beta[2])
+    key_bits = (float_bits(beta[1]), float_bits(beta[2]))
+    return key, key_bits, interval, token
 
 
 def _merge(intervals, atol):
@@ -76,7 +68,7 @@ def _merge(intervals, atol):
 
 def analyze_ledger_records(records, theta_lo, theta_hi,
                            required_grade=CertificateGrade.RIGOROUS,
-                           *, atol=1e-12):
+                           *, atol=None):
     """Return per-line coverage connected to ``theta_lo``.
 
     Accepted tiles beyond a gap are retained as disconnected islands but
@@ -84,39 +76,52 @@ def analyze_ledger_records(records, theta_lo, theta_hi,
     """
     if theta_hi < theta_lo:
         raise ValueError("theta_hi must be at least theta_lo")
+    rigorous = CertificateGrade(required_grade) >= CertificateGrade.RIGOROUS
+    if rigorous and atol not in (None, 0, 0.0):
+        raise ValueError("rigorous resume forbids gap-bridging tolerance")
+    atol = 0.0 if rigorous else (1e-12 if atol is None else float(atol))
     grouped = {}
     rejected = {}
     invalid = {}
     seen = {}
     duplicates = {}
+    display_keys = {}
     for record in records:
+        accepted = grade_accepted(record, required_grade)
         try:
-            key, interval = _record_interval(record)
+            key, key_bits, interval, token = _record_interval(
+                record,
+                require_bits=(accepted and rigorous),
+            )
         except (KeyError, TypeError, ValueError, OverflowError):
             raw_beta = record.get("beta", [None, None, None]) \
                 if isinstance(record, dict) else [None, None, None]
             try:
-                key = (round(float(raw_beta[1]), 9),
-                       round(float(raw_beta[2]), 9))
-            except (TypeError, ValueError, IndexError):
+                key = (float(raw_beta[1]), float(raw_beta[2]))
+                key_bits = (float_bits(key[0]), float_bits(key[1]))
+                display_keys[key_bits] = key
+            except (TypeError, ValueError, IndexError, OverflowError):
                 key = (float("nan"), float("nan"))
-            invalid[key] = invalid.get(key, 0) + 1
+                key_bits = ("invalid", "invalid")
+                display_keys[key_bits] = key
+            invalid[key_bits] = invalid.get(key_bits, 0) + 1
             continue
-        if not grade_accepted(record, required_grade):
-            rejected[key] = rejected.get(key, 0) + 1
+        display_keys[key_bits] = key
+        if not accepted:
+            rejected[key_bits] = rejected.get(key_bits, 0) + 1
             continue
-        token = (round(interval[0], 15), round(interval[1], 15))
-        key_seen = seen.setdefault(key, set())
+        key_seen = seen.setdefault(key_bits, set())
         if token in key_seen:
-            duplicates[key] = duplicates.get(key, 0) + 1
+            duplicates[key_bits] = duplicates.get(key_bits, 0) + 1
         else:
             key_seen.add(token)
-            grouped.setdefault(key, []).append(interval)
+            grouped.setdefault(key_bits, []).append(interval)
 
     keys = set(grouped) | set(rejected) | set(invalid)
     reports = {}
-    for key in keys:
-        merged = _merge(grouped.get(key, ()), atol)
+    for key_bits in keys:
+        key = display_keys.get(key_bits, key_bits)
+        merged = _merge(grouped.get(key_bits, ()), atol)
         frontier = float(theta_lo)
         for lo, hi in merged:
             if lo <= frontier + atol and hi >= frontier - atol:
@@ -146,9 +151,9 @@ def analyze_ledger_records(records, theta_lo, theta_hi,
             merged_intervals=merged,
             gaps=tuple(gaps),
             islands=islands,
-            accepted_records=len(grouped.get(key, ())),
-            rejected_records=rejected.get(key, 0),
-            invalid_records=invalid.get(key, 0),
-            duplicate_records=duplicates.get(key, 0),
+            accepted_records=len(grouped.get(key_bits, ())),
+            rejected_records=rejected.get(key_bits, 0),
+            invalid_records=invalid.get(key_bits, 0),
+            duplicate_records=duplicates.get(key_bits, 0),
         )
     return reports

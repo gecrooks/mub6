@@ -13,6 +13,7 @@ from parent_coverage_campaign import (
     partition_children,
     run_children,
 )
+from ledger_bits import box_record
 
 
 def artifact(half_widths=(1.0, 1.0, 1.0)):
@@ -65,10 +66,10 @@ class ParentCoverageCampaignTests(unittest.TestCase):
 
     def test_resume_requires_same_artifact_grade_and_success(self):
         parent = artifact()
-        base = {"mode": "parent-coverage-child",
+        base = box_record({"mode": "parent-coverage-child",
                 "coverage_artifact_id": parent.artifact_id,
-                "beta": [1.0, 2.0, 3.0], "hv": [1.0, 1.0, 1.0],
-                "ok": True, "grade": "RIGOROUS"}
+                "ok": True, "grade": "RIGOROUS"},
+                (1.0, 2.0, 3.0), (1.0, 1.0, 1.0))
         records = [base, dict(base, coverage_artifact_id="0" * 64),
                    dict(base, grade="SAMPLED_BOUND"), dict(base, ok=False)]
         self.assertEqual(len(completed_child_keys(

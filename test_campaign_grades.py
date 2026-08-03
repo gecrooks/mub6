@@ -6,6 +6,11 @@ from pathlib import Path
 from campaign import grade_accepted, load_frontiers
 from campaign_coverage import analyze_ledger_records
 from certificate_result import CertificateGrade
+from ledger_bits import box_record
+
+
+def rigorous(beta, hv):
+    return box_record({"ok": True, "grade": "RIGOROUS"}, beta, hv)
 
 
 class CampaignGradeTests(unittest.TestCase):
@@ -27,8 +32,7 @@ class CampaignGradeTests(unittest.TestCase):
         records = [
             {"ok": True, "grade": "SAMPLED_BOUND",
              "beta": [0.2, 1.0, 2.0], "hv": [0.1, 0.1, 0.1]},
-            {"ok": True, "grade": "RIGOROUS",
-             "beta": [0.05, 1.0, 2.0], "hv": [0.05, 0.1, 0.1]},
+            rigorous((0.05, 1.0, 2.0), (0.05, 0.1, 0.1)),
         ]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "ledger.jsonl"
@@ -39,10 +43,8 @@ class CampaignGradeTests(unittest.TestCase):
 
     def test_disconnected_success_cannot_jump_frontier(self):
         records = [
-            {"ok": True, "grade": "RIGOROUS",
-             "beta": [0.05, 1.0, 2.0], "hv": [0.05, 0.1, 0.1]},
-            {"ok": True, "grade": "RIGOROUS",
-             "beta": [0.35, 1.0, 2.0], "hv": [0.05, 0.1, 0.1]},
+            rigorous((0.05, 1.0, 2.0), (0.05, 0.1, 0.1)),
+            rigorous((0.35, 1.0, 2.0), (0.05, 0.1, 0.1)),
         ]
         report = analyze_ledger_records(records, 0.0, 0.5)[(1.0, 2.0)]
 
@@ -58,10 +60,8 @@ class CampaignGradeTests(unittest.TestCase):
 
     def test_out_of_order_overlaps_form_one_component(self):
         records = [
-            {"ok": True, "grade": "RIGOROUS",
-             "beta": [0.25, 1.0, 2.0], "hv": [0.1, 0.1, 0.1]},
-            {"ok": True, "grade": "RIGOROUS",
-             "beta": [0.075, 1.0, 2.0], "hv": [0.075, 0.1, 0.1]},
+            rigorous((0.25, 1.0, 2.0), (0.1, 0.1, 0.1)),
+            rigorous((0.075, 1.0, 2.0), (0.075, 0.1, 0.1)),
         ]
         report = analyze_ledger_records(records, 0.0, 0.5)[(1.0, 2.0)]
 
@@ -69,16 +69,14 @@ class CampaignGradeTests(unittest.TestCase):
         self.assertEqual(report.islands, ())
 
     def test_duplicates_are_counted_but_do_not_change_union(self):
-        record = {"ok": True, "grade": "RIGOROUS",
-                  "beta": [0.05, 1.0, 2.0], "hv": [0.05, 0.1, 0.1]}
+        record = rigorous((0.05, 1.0, 2.0), (0.05, 0.1, 0.1))
         report = analyze_ledger_records([record, record], 0.0, 0.2)[(1.0, 2.0)]
 
         self.assertEqual(report.accepted_records, 1)
         self.assertEqual(report.duplicate_records, 1)
 
     def test_boundary_overhang_connects_to_domain_start(self):
-        record = {"ok": True, "grade": "RIGOROUS",
-                  "beta": [0.01, 1.0, 2.0], "hv": [0.02, 0.1, 0.1]}
+        record = rigorous((0.01, 1.0, 2.0), (0.02, 0.1, 0.1))
         report = analyze_ledger_records([record], 0.0, 0.1)[(1.0, 2.0)]
 
         self.assertAlmostEqual(report.frontier, 0.03)
@@ -92,6 +90,24 @@ class CampaignGradeTests(unittest.TestCase):
 
         self.assertEqual(report.frontier, 0.0)
         self.assertEqual(report.rejected_records, 1)
+
+    def test_decimal_only_rigorous_record_cannot_advance_resume(self):
+        record = {"ok": True, "grade": "RIGOROUS",
+                  "beta": [0.05, 1.0, 2.0], "hv": [0.05, 0.1, 0.1]}
+        report = analyze_ledger_records([record], 0.0, 0.1)[(1.0, 2.0)]
+        self.assertEqual(report.frontier, 0.0)
+        self.assertEqual(report.invalid_records, 1)
+
+    def test_rigorous_resume_does_not_bridge_a_sub_picosecond_gap(self):
+        left = rigorous((0.05, 1.0, 2.0), (0.05, 0.1, 0.1))
+        gap_lo = 0.1 + 5e-13
+        right = rigorous(((gap_lo + 0.2) / 2, 1.0, 2.0),
+                         ((0.2 - gap_lo) / 2, 0.1, 0.1))
+        report = analyze_ledger_records([left, right], 0.0, 0.2)[(1.0, 2.0)]
+        self.assertEqual(report.frontier, left["beta"][0] + left["hv"][0])
+        self.assertTrue(report.gaps)
+        with self.assertRaisesRegex(ValueError, "forbids"):
+            analyze_ledger_records([left], 0.0, 0.2, atol=1e-12)
 
 
 if __name__ == "__main__":

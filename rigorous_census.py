@@ -6,6 +6,7 @@ import time
 
 from certificate_result import CertificateGrade
 from rigor_tile import fully_rigorous_signed_tile
+from ledger_bits import box_record
 
 
 DEFAULT_POINTS = (
@@ -29,15 +30,13 @@ def run_point(beta, half_widths):
         theta - h_theta, theta + h_theta, phi, lam,
         hf=h_phi, hf3=h_lam, verbose=False,
     )
-    return {
-        "beta": list(beta),
-        "hv": list(half_widths),
+    return box_record({
         "ok": result.ok,
         "grade": result.grade.name,
         "accepted_rigorous": result.accepted_at(CertificateGrade.RIGOROUS),
         "seconds": time.time() - started,
         "result": result.as_dict(),
-    }
+    }, beta, half_widths)
 
 
 def main():

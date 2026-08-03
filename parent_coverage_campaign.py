@@ -13,6 +13,7 @@ import numpy as np
 from campaign_coverage import grade_accepted
 from certificate_result import CertificateGrade
 from coverage_contract import ParentCoverageArtifact
+from ledger_bits import box_record, decode_box_record
 
 
 class CoverageArtifactStore:
@@ -176,7 +177,12 @@ def completed_child_keys(records, artifact_id,
                 or not grade_accepted(record, required_grade):
             continue
         try:
-            completed.add(child_key(record["beta"], record["hv"]))
+            beta, widths, _interval, _token = decode_box_record(
+                record,
+                require_bits=(CertificateGrade(required_grade) >=
+                              CertificateGrade.RIGOROUS),
+            )
+            completed.add(child_key(beta, widths))
         except (KeyError, TypeError, ValueError):
             continue
     return completed
@@ -204,17 +210,15 @@ def run_children(artifact, child_half_width, ledger, *, prior_records=(),
             center[0] - h, center[0] + h, center[1], center[2],
             hf=h, hf3=h, coverage_artifact=artifact, verbose=False,
         )
-        record = {
+        record = box_record({
             "mode": "parent-coverage-child",
             "coverage_artifact_id": artifact.artifact_id,
-            "beta": list(center),
-            "hv": list(widths),
             "ok": bool(result.ok),
             "grade": result.grade.name,
             "seconds": time.time() - started,
             "reason": result.reason,
             "result": result.as_dict(),
-        }
+        }, center, widths)
         ledger.write(json.dumps(record, sort_keys=True) + "\n")
         ledger.flush()
         written += 1

@@ -74,6 +74,13 @@ v2 only when independently complete parent coverage and typed continuation
 payloads are supplied; it never fills missing fields with sampled or dummy
 values.
 
+The planned Lean rechecker constrains ledger serialization now. Rigorous
+resume geometry follows `LEDGER_SCHEMA.md`: canonical binary64 bit patterns
+for centers, half-widths, and theta endpoints; decimal values are checked
+display mirrors only. Rigorous line grouping and interval connectivity use
+exact bits and zero gap tolerance. Decimal-only historical records cannot
+advance a rigorous frontier.
+
 The first real paired measurement is recorded in
 `PARENT_REUSE_BENCHMARK.md`. It found that box restriction is sound but parent
 root coordinates alone do not initialize offset child tubes: three of three

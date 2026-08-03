@@ -39,6 +39,7 @@ from cache import anchored_tile, chain_step
 from campaign_coverage import analyze_ledger_records, grade_accepted
 from certificate_result import CertificateGrade
 from karlsson import karlsson_map
+from ledger_bits import box_record
 from mub import find_mu_vectors
 from parametric import _g_and_J, certify_tile, dg_dbeta, polish_root
 
@@ -81,14 +82,13 @@ def adaptive_tile(beta, h_base, ledger, verbose=True,
         result = r.get("result")
         grade = (CertificateGrade.EXPERIMENTAL if result is None
                  else result.grade)
-        rec = dict(mode="tile", beta=list(map(float, beta)),
-                   hv=[float(x) for x in hv], ok=bool(r["ok"]),
+        rec = box_record(dict(mode="tile", ok=bool(r["ok"]),
                    grade=grade.name,
                    seconds=float(r["seconds"]), n_flag=n_flag,
                    reason=(None if r["ok"] else
                            str(r.get("reason", "certificate failed"))),
                    evidence=(None if result is None else
-                             result.as_dict()["dependencies"]))
+                             result.as_dict()["dependencies"])), beta, hv)
         ledger.write(json.dumps(rec) + "\n")
         ledger.flush()
         if grade_accepted(rec, required_grade):
@@ -117,11 +117,11 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
         if state is not None:
             res = chain_step(state, (th, phi, lam), verbose=verbose)
             if res.get("ok"):
-                ledger.write(json.dumps(dict(
-                    mode="chain", beta=[float(th), float(phi), float(lam)],
-                    hv=[h_base] * 3, ok=True,
+                ledger.write(json.dumps(box_record(dict(
+                    mode="chain", ok=True,
                     grade=CertificateGrade.EXPERIMENTAL.name,
-                    seconds=float(res["seconds"]))) + "\n")
+                    seconds=float(res["seconds"])),
+                    (th, phi, lam), (h_base,) * 3)) + "\n")
                 ledger.flush()
                 n_tiles += 1
                 th += 1.6 * h_base
@@ -135,11 +135,11 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
             try:
                 state = anchored_tile((th, phi, lam), h_base,
                                       verbose=verbose, use_certified=True)
-                ledger.write(json.dumps(dict(
-                    mode="anchor", beta=[float(th), float(phi), float(lam)],
-                    hv=[h_base] * 3, ok=True,
+                ledger.write(json.dumps(box_record(dict(
+                    mode="anchor", ok=True,
                     grade=CertificateGrade.EXPERIMENTAL.name,
-                    seconds=float(state["anchor_seconds"]))) + "\n")
+                    seconds=float(state["anchor_seconds"])),
+                    (th, phi, lam), (h_base,) * 3)) + "\n")
                 ledger.flush()
                 n_tiles += 1
                 th += 1.6 * h_base
@@ -208,7 +208,7 @@ def main():
         for il in range(args.n_lines):
             phi = phi0 + (il % 1) * spacing        # v1: vary lam only
             lam = lam0 + il * spacing
-            key = (round(phi, 9), round(lam, 9))
+            key = (float(phi), float(lam))
             start = frontiers.get(key)
             if start is not None and start >= th_hi:
                 print(f"line (phi={phi:.6f}, lam={lam:.6f}): already done")
