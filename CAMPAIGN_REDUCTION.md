@@ -67,6 +67,13 @@ Restricted regular payloads produce only `proposed_seed` values explicitly
 marked `requires_krawczyk`; serialization cannot promote them to certified
 child roots.
 
+The landed fat-tile output is audited in `FAT_TILE_V2_GAP.md` and through
+`fat_tile_continuation_adapter.py`. The adapter refuses the current aggregate
+`SAMPLED_BOUND` result and reports five missing proof classes. It will produce
+v2 only when independently complete parent coverage and typed continuation
+payloads are supplied; it never fills missing fields with sampled or dummy
+values.
+
 The first real paired measurement is recorded in
 `PARENT_REUSE_BENCHMARK.md`. It found that box restriction is sound but parent
 root coordinates alone do not initialize offset child tubes: three of three
