@@ -1925,3 +1925,38 @@ artifact's independently derived grade. Implemented:
     (v1.1), exceptions-only vs full association (decide on the
     guarded-probe numbers), kernel-side promotion of the sweep
     arithmetic grade.
+
+## 4.82 Fat-h VERDICT: guarded sweeps do not scale past h ~ 3e-3 (task 21 CLOSED)
+
+Both detached guarded probes (coarse_chain.anchor at the README
+anchor) died on the fail-closed box cap:
+  h = 0.01:  zoned sweep exceeded 4e8 boxes (~33 CPU-min)
+  h = 5e-3:  zoned sweep exceeded 4e8 boxes (~41 min elapsed)
+  h = 3e-3:  134-160 s (measured, 4.80a) — the working point.
+The box count explodes super-cubically somewhere in (3e-3, 5e-3):
+the R_LOC collection zones stop absorbing the frontier once the
+tile's drift budget fattens the guard shells. The fail-closed cap
+did its job (loud raise, no silent truncation).
+
+ECONOMICS (CPU-s per unit parameter volume, T/h^3):
+  ball route, guarded, h = 3e-3:   150/2.7e-8  ~ 5.6e9
+  certify_tile mv, h = 7e-4-1e-3:  35/3.4e-10 - 40/1e-9
+                                   ~ 4e10-1e11
+So the ball route AT ITS WORKING POINT is ~7-18x cheaper per
+volume than the certify_tile bulk baseline — the win survives,
+it just comes from h = 3e-3 guarded sweeps, not from fat h.
+The 300-1500 GPU-hr chained target is REFUTED as stated (its
+gate (a), guarded sweeps at fat h, failed); the surviving chain
+(41x GPU port + segment amortization 4-17x on 3e-3 ball tiles)
+lands at ~2-10k GPU-hr — overlapping the certify_tile baseline
+(3-12k, 4.78a) rather than beating it by 10x.
+CAMPAIGN ESTIMATE STANDS: ~3-12k GPU-hr / $3-10k / 2-5 weeks at
+the 10-GPU cap, with the route choice (ball vs certify_tile per
+stratum) now a per-territory measurement question — the ball
+route's real advantage is the SIMPLER LEAN KERNEL (payload
+replay vs S/Q continuation), which is worth a constant factor of
+proof-engineering, not compute.
+Convention note: the coverage-verifier's mub6-ledger-v2-binary64
+(4c43f64) adopts the 16-hex binary64 encoding matching
+BALL_COVERAGE_SCHEMA.md — the serialization layer is now unified
+across both artifact families ahead of the joint freeze.
