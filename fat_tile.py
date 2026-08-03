@@ -41,7 +41,15 @@ def _pair_lo(ti, tj, w):
     return max(a2.lo, 0.0) ** 0.5 / 6.0
 
 
-def fat_tile(beta, h, R_LOC=0.06, n_starts=4000):
+def fat_tile(beta, h, R_LOC=0.06, n_starts=4000, artifact_out=None):
+    """Run one coverage-only fat tile.
+
+    ``artifact_out``: optional dict; on non-empty pool it receives
+    ``artifact_out["artifact"] = BallCoverageArtifact`` — the honest
+    ball-coverage-v1 proof payload (never continuation-v2 fields;
+    see FAT_TILE_V2_GAP.md) — and ``artifact_out["report"]``, the
+    fail-closed BallReadinessReport.
+    """
     import rates as _rates
     from starve import fat_sweep_hulls
     t0 = time.time()
@@ -72,12 +80,17 @@ def fat_tile(beta, h, R_LOC=0.06, n_starts=4000):
     C_h = np.atleast_2d(cen_h)
     r_h = np.atleast_2d(rad_h)
     uncovered = 0
+    uncovered_cells = ()
     if len(C_h) and n:
         R = np.asarray(ph0)
         d = np.abs((C_h[:, None, :] - R[None, :, :] + np.pi)
                    % (2 * np.pi) - np.pi).max(axis=2)
         inside = (d.min(axis=1) + r_h.max(axis=1)) <= R_LOC
         uncovered = int((~inside).sum())
+        uncovered_cells = tuple(
+            (tuple(float(x) for x in C_h[k]),
+             tuple(float(x) for x in r_h[k]))
+            for k in np.flatnonzero(~inside))
     t_cov = time.time() - t1
     deps.append(Evidence(
         "coverage", CertificateGrade.SAMPLED_BOUND,
@@ -87,17 +100,20 @@ def fat_tile(beta, h, R_LOC=0.06, n_starts=4000):
     # pair layer: interval phasor bounds
     t2 = time.time()
     adj = np.zeros((n, n), dtype=bool)
-    n_del = 0
+    nonorth = []
     for i in range(n):
         for j in range(i + 1, n):
-            if _pair_lo(ph0[i], ph0[j], w) > 0.0:
-                n_del += 1
+            lo = _pair_lo(ph0[i], ph0[j], w)
+            if lo > 0.0:
+                nonorth.append((i, j, lo))
             else:
                 adj[i, j] = adj[j, i] = True
+    n_del = len(nonorth)
     deps.append(Evidence("pairs", CertificateGrade.RIGOROUS,
                          f"{n_del} pairs non-orthogonal by "
                          f"interval phasor sum, budget w={w:.3f}"))
-    best = n
+    best = n + 1
+    best_col = None
     rng = np.random.default_rng(1)
     for t in range(400):
         order = (np.argsort(-adj.sum(axis=1)) if t == 0
@@ -109,7 +125,9 @@ def fat_tile(beta, h, R_LOC=0.06, n_starts=4000):
             while c in used:
                 c += 1
             col[v] = c
-        best = min(best, int(col.max()) + 1)
+        if int(col.max()) + 1 < best:
+            best = int(col.max()) + 1
+            best_col = col.copy()
         if best <= 5:
             break
     ok = best <= 5 and uncovered == 0
@@ -126,6 +144,37 @@ def fat_tile(beta, h, R_LOC=0.06, n_starts=4000):
           f"{drift:.3f}, sweep {swept/1e6:.1f}M boxes "
           f"(cov {t_cov:.0f}s, total {time.time()-t0:.0f}s)",
           flush=True)
+    if artifact_out is not None:
+        from ball_coverage_artifact import (BallCoverageArtifact,
+                                            DriftBoundClaim,
+                                            SweepReplaySpec,
+                                            ball_readiness)
+        artifact = BallCoverageArtifact(
+            parameter_center=beta,
+            parameter_half_widths=(h, h, h),
+            r_loc=float(R_LOC),
+            balls=tuple(tuple(float(x) for x in p) for p in ph0),
+            drift=DriftBoundClaim(
+                derivation="rates.certified_rates(beta, (h,h,h), "
+                           "mv=True)['beta_unit_vec'] sup",
+                beta=beta, half_widths=(h, h, h),
+                bu_max=BU, drift=drift),
+            sweep=SweepReplaySpec(
+                sweep="starve.fat_sweep_hulls",
+                wmin=0.025, cell=0.025,
+                tax_derivation="rates.certified_rates(mv=True) "
+                               "tax constants",
+                boxes_swept=int(swept),
+                hull_cells=int(len(C_h)),
+                uncovered=uncovered_cells,
+                frontier_complete=False),
+            budget_w=float(w),
+            nonorth_pairs=tuple(nonorth),
+            coloring=tuple(int(c) for c in best_col),
+            chi_bound=int(best),
+        )
+        artifact_out["artifact"] = artifact
+        artifact_out["report"] = ball_readiness(res, artifact)
     return res
 
 
