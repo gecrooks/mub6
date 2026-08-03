@@ -37,6 +37,7 @@ import numpy as np
 
 from cache import anchored_tile, chain_step
 from campaign_coverage import analyze_ledger_records, grade_accepted
+from campaign_artifacts import TileArtifactStore, verified_resume_records
 from certificate_result import CertificateGrade
 from karlsson import karlsson_map
 from ledger_bits import box_record
@@ -159,7 +160,7 @@ def run_line(phi, lam, th_lo, th_hi, h_base, ledger, start_at=None,
 
 
 def load_frontiers(path, required_grade=CertificateGrade.RIGOROUS,
-                   theta_lo=0.0, theta_hi=PI / 2):
+                   theta_lo=0.0, theta_hi=PI / 2, artifact_store=None):
     """Resume support: per-(phi,lam) certified theta frontier from the
     ledger (max certified theta+hv_t of contiguously-OK records; the
     conservative re-check is one overlapping tile at resume)."""
@@ -172,6 +173,13 @@ def load_frontiers(path, required_grade=CertificateGrade.RIGOROUS,
                 records.append(json.loads(line))
             except json.JSONDecodeError:
                 records.append({"invalid_json": line.rstrip("\n")})
+    if CertificateGrade(required_grade) >= CertificateGrade.RIGOROUS:
+        store = (artifact_store if isinstance(artifact_store, TileArtifactStore)
+                 else (None if artifact_store is None else
+                       TileArtifactStore(artifact_store)))
+        records, _binding_reports = verified_resume_records(
+            records, store, required_grade
+        )
     reports = analyze_ledger_records(
         records, theta_lo, theta_hi, required_grade
     )
@@ -188,6 +196,7 @@ def main():
     ap.add_argument("--th-hi", type=float, default=None)
     ap.add_argument("--n-lines", type=int, default=1)
     ap.add_argument("--ledger", default="campaign_ledger.jsonl")
+    ap.add_argument("--artifact-store", default="certificate_artifacts")
     ap.add_argument("--required-grade",
                     choices=[grade.name for grade in CertificateGrade],
                     default=CertificateGrade.RIGOROUS.name)
@@ -201,7 +210,8 @@ def main():
     th_hi = args.th_hi if args.th_hi is not None else DOMAIN[0][1]
 
     required_grade = CertificateGrade[args.required_grade]
-    frontiers = load_frontiers(args.ledger, required_grade, th_lo, th_hi)
+    frontiers = load_frontiers(args.ledger, required_grade, th_lo, th_hi,
+                               args.artifact_store)
     t0 = time.time()
     total = 0
     with open(args.ledger, "a") as ledger:

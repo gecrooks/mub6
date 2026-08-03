@@ -4,6 +4,7 @@ import argparse
 import json
 
 from campaign_coverage import analyze_ledger_records
+from campaign_artifacts import TileArtifactStore, verified_resume_records
 from certificate_result import CertificateGrade
 
 
@@ -24,8 +25,16 @@ def read_ledger(path):
     return records, malformed
 
 
-def audit(path, theta_lo, theta_hi, required_grade):
+def audit(path, theta_lo, theta_hi, required_grade, artifact_store=None):
     records, malformed = read_ledger(path)
+    binding_reports = ()
+    if CertificateGrade(required_grade) >= CertificateGrade.RIGOROUS:
+        store = (artifact_store if isinstance(artifact_store, TileArtifactStore)
+                 else (None if artifact_store is None else
+                       TileArtifactStore(artifact_store)))
+        records, binding_reports = verified_resume_records(
+            records, store, required_grade
+        )
     reports = analyze_ledger_records(
         records, theta_lo, theta_hi, required_grade
     )
@@ -36,6 +45,9 @@ def audit(path, theta_lo, theta_hi, required_grade):
         "theta_domain": [theta_lo, theta_hi],
         "records": len(records),
         "malformed_records": malformed,
+        "artifact_records_checked": len(binding_reports),
+        "artifact_records_rejected": sum(not item.accepted
+                                         for item in binding_reports),
         "line_count": len(lines),
         "complete_lines": sum(line["complete"] for line in lines),
         "lines_with_islands": sum(bool(line["islands"]) for line in lines),
@@ -52,10 +64,11 @@ def main():
                         choices=[grade.name for grade in CertificateGrade],
                         default=CertificateGrade.RIGOROUS.name)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--artifact-store", default="certificate_artifacts")
     args = parser.parse_args()
     result = audit(
         args.ledger, args.theta_lo, args.theta_hi,
-        CertificateGrade[args.required_grade],
+        CertificateGrade[args.required_grade], args.artifact_store,
     )
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))

@@ -4,6 +4,9 @@ import unittest
 from pathlib import Path
 
 from campaign import grade_accepted, load_frontiers
+from campaign_artifacts import TileArtifactStore, bind_tile_artifact
+from ball_coverage_artifact import (BallCoverageArtifact, DriftBoundClaim,
+                                    SweepReplaySpec)
 from campaign_coverage import analyze_ledger_records
 from certificate_result import CertificateGrade
 from ledger_bits import box_record
@@ -11,6 +14,18 @@ from ledger_bits import box_record
 
 def rigorous(beta, hv):
     return box_record({"ok": True, "grade": "RIGOROUS"}, beta, hv)
+
+
+def rigorous_artifact(beta, hv):
+    drift = DriftBoundClaim("test certified rate", beta, hv, 0.0, 0.0)
+    sweep = SweepReplaySpec(
+        "test deterministic sweep", 0.1, 0.1, "test interval taxes",
+        1, 1, frontier_complete=True,
+        arithmetic_grade=CertificateGrade.RIGOROUS,
+    )
+    return BallCoverageArtifact(
+        beta, hv, 0.01, ((0.0,) * 5,), drift, sweep, 0.01, (), (0,), 1
+    )
 
 
 class CampaignGradeTests(unittest.TestCase):
@@ -36,10 +51,24 @@ class CampaignGradeTests(unittest.TestCase):
         ]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "ledger.jsonl"
+            store = TileArtifactStore(Path(directory) / "artifacts")
+            artifact = rigorous_artifact((0.05, 1.0, 2.0),
+                                         (0.05, 0.1, 0.1))
+            store.save(artifact)
+            records[1] = bind_tile_artifact(records[1], artifact)
             path.write_text("".join(json.dumps(r) + "\n" for r in records))
-            frontiers = load_frontiers(path, CertificateGrade.RIGOROUS)
+            frontiers = load_frontiers(
+                path, CertificateGrade.RIGOROUS, artifact_store=store
+            )
 
         self.assertAlmostEqual(frontiers[(1.0, 2.0)], 0.1)
+
+    def test_rigorous_resume_rejects_unbound_record(self):
+        record = rigorous((0.05, 1.0, 2.0), (0.05, 0.1, 0.1))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "ledger.jsonl"
+            path.write_text(json.dumps(record) + "\n")
+            self.assertEqual(load_frontiers(path), {})
 
     def test_disconnected_success_cannot_jump_frontier(self):
         records = [

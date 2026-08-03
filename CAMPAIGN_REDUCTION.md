@@ -169,3 +169,7 @@ as the fallback.
 - Parent-witness reuse must bind the parameter box and root structures;
   polishing may suggest associations but may not certify them.
 - Every cost survey must retain failed and downgraded records.
+- Per `ARTIFACT_BINDING.md`, rigorous resume also requires a content-addressed
+  full-tile artifact whose digest, box bits, grade, completeness, and kernel
+  replay all verify. The campaign manifest commits to domain and symmetry
+  metadata plus the ordered SHA-256 list of ledger shards.
