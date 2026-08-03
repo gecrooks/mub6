@@ -4,8 +4,8 @@ Rigorous resume records use schema `mub6-ledger-v2-binary64`.
 
 Every parameter box records:
 
-- `beta_bits`: three IEEE-754 binary64 values, each encoded as `0x` followed
-  by exactly 16 lowercase hexadecimal digits;
+- `beta_bits`: three IEEE-754 binary64 values, each encoded as exactly 16
+  lowercase hexadecimal digits, matching `BALL_COVERAGE_SCHEMA.md`;
 - `hv_bits`: the three half-widths in the same encoding;
 - `theta_interval_bits`: the two binary64 results actually used for
   `beta[0] - hv[0]` and `beta[0] + hv[0]`;

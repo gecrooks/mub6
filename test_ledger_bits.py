@@ -1,5 +1,6 @@
 import unittest
 
+from ball_coverage_artifact import float_hex, hex_float
 from ledger_bits import (
     LEDGER_SCHEMA,
     bits_float,
@@ -15,6 +16,9 @@ class LedgerBitsTests(unittest.TestCase):
             self.assertEqual(float_bits(bits_float(float_bits(value))),
                              float_bits(value))
         self.assertNotEqual(float_bits(0.0), float_bits(-0.0))
+        self.assertEqual(float_bits(0.1), float_hex(0.1))
+        self.assertEqual(bits_float(float_bits(0.1)),
+                         hex_float(float_hex(0.1)))
 
     def test_box_record_includes_exact_interval_bits(self):
         record = box_record({"ok": True}, (0.1, 1.0, 2.0),

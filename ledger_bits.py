@@ -6,7 +6,7 @@ import struct
 
 
 LEDGER_SCHEMA = "mub6-ledger-v2-binary64"
-_BITS = re.compile(r"^0x[0-9a-f]{16}$")
+_BITS = re.compile(r"^[0-9a-f]{16}$")
 
 
 def float_bits(value):
@@ -14,13 +14,13 @@ def float_bits(value):
     if not math.isfinite(value):
         raise ValueError("ledger floats must be finite")
     bits = struct.unpack(">Q", struct.pack(">d", value))[0]
-    return f"0x{bits:016x}"
+    return f"{bits:016x}"
 
 
 def bits_float(value):
     if not isinstance(value, str) or _BITS.fullmatch(value) is None:
-        raise ValueError("binary64 value must be 0x plus 16 lowercase hex digits")
-    result = struct.unpack(">d", struct.pack(">Q", int(value[2:], 16)))[0]
+        raise ValueError("binary64 value must be 16 lowercase hex digits")
+    result = struct.unpack(">d", struct.pack(">Q", int(value, 16)))[0]
     if not math.isfinite(result):
         raise ValueError("ledger floats must be finite")
     return result
@@ -37,7 +37,7 @@ def box_record(record, beta, half_widths):
     """Return a record with exact bits and matching decimal display mirrors."""
     beta, beta_bits = _vector_bits(beta, "beta")
     widths, width_bits = _vector_bits(half_widths, "hv")
-    if any(width < 0 or float_bits(width) == "0x8000000000000000"
+    if any(width < 0 or float_bits(width) == "8000000000000000"
            for width in widths):
         raise ValueError("half-widths must be nonnegative")
     theta_interval = (beta[0] - widths[0], beta[0] + widths[0])
@@ -70,7 +70,7 @@ def decode_box_record(record, *, require_bits=True):
             raise ValueError("beta and hv must have three components")
         if not all(math.isfinite(value) for value in beta + widths) \
                 or any(width < 0 or
-                       float_bits(width) == "0x8000000000000000"
+                       float_bits(width) == "8000000000000000"
                        for width in widths):
             raise ValueError("invalid legacy box")
         interval = (beta[0] - widths[0], beta[0] + widths[0])
@@ -87,7 +87,7 @@ def decode_box_record(record, *, require_bits=True):
     beta = tuple(bits_float(value) for value in beta_bits)
     widths = tuple(bits_float(value) for value in width_bits)
     interval = tuple(bits_float(value) for value in interval_bits)
-    if any(width < 0 or float_bits(width) == "0x8000000000000000"
+    if any(width < 0 or float_bits(width) == "8000000000000000"
            for width in widths):
         raise ValueError("half-widths must be nonnegative")
     if [float_bits(value) for value in record.get("beta", ())] != beta_bits:
