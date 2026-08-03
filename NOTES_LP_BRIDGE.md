@@ -1889,3 +1889,39 @@ therefore GATED on:
   (c) the 41x GPU port.
 Chained estimate if all three land at measured values: 300-1500
 GPU-hr. Baseline without them stands at ~3-12k GPU-hr (4.78).
+
+## 4.81 Ball-coverage artifact v1 (answer to FAT_TILE_V2_GAP.md)
+
+The coverage-verifier's audit is adopted in full: the ball route
+gets its OWN versioned artifact (mub6-ball-coverage-v1), never
+dummy-filled continuation-v2 fields, and the fat tile's
+CertificateResult grade is reported but never substituted for the
+artifact's independently derived grade. Implemented:
+  - ball_coverage_artifact.py: DriftBoundClaim (bu_max stored
+    with rederive obligation — a claim, never trusted),
+    SweepReplaySpec (deterministic replay spec + EXPLICIT
+    exception list of uncovered cells; surviving geometry is
+    replayed, not stored), BallCoverageArtifact (balls, budget,
+    certified non-orth pairs, exhibited coloring, chi bound;
+    content-addressed digest a la ParentCoverageArtifact),
+    check() = Python model of the Lean kernel (pair-layer replay
+    from payload refutes inflated claims; coloring properness;
+    budget arithmetic), ball_readiness() fail-closed report
+    mirroring ContinuationAdapterReport.
+  - Serialization is the Lean-constraint form (SKELETON 9):
+    every canonical float is an IEEE-754 binary64 bit pattern
+    (16 hex, big-endian); decimals are pretty-print only and
+    never enter the digest.
+  - fat_tile.py now emits the artifact via artifact_out=dict;
+    frontier_complete is HARD-CODED False until the emitter can
+    consume the coverage-verifier's resume-frontier ledger, so
+    every artifact today honestly reports OPEN /
+    SAMPLED_BOUND. Tests: 12 new (round-trip, digest tamper,
+    kernel refutations, fail-closed validation, monkeypatched
+    end-to-end emission); colleague's adapter + contract suites
+    still green (31/31).
+  - BALL_COVERAGE_SCHEMA.md: field-by-field proposal for joint
+    freeze; open questions = frontier ledger by artifact id
+    (v1.1), exceptions-only vs full association (decide on the
+    guarded-probe numbers), kernel-side promotion of the sweep
+    arithmetic grade.
