@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from campaign_manifest import CampaignManifest, build_manifest
+from campaign_manifest import CampaignManifest, TransverseCell, build_manifest
 from certificate_result import CertificateGrade
 
 
@@ -44,6 +44,26 @@ class CampaignManifestTests(unittest.TestCase):
             )
             shard.write_text("after\n")
             self.assertIn("digest mismatch", manifest.verify_shards(base)[0])
+
+    def test_transverse_cells_must_be_exact_cartesian_partition(self):
+        domain = ((0.0, 1.0), (0.0, 2.0), (0.0, 2.0))
+        cells = tuple(
+            TransverseCell((phi + 0.5, lam + 0.5),
+                           (phi, phi + 1.0), (lam, lam + 1.0))
+            for phi in (0.0, 1.0) for lam in (0.0, 1.0)
+        )
+        manifest = CampaignManifest(domain, "test", 1,
+                                    CertificateGrade.RIGOROUS, (), cells)
+        self.assertEqual(len(manifest.transverse_cells), 4)
+        with self.assertRaisesRegex(ValueError, "Cartesian grid"):
+            CampaignManifest(domain, "test", 1,
+                             CertificateGrade.RIGOROUS, (), cells[:-1])
+        with self.assertRaisesRegex(ValueError, "gap or overlap"):
+            CampaignManifest(
+                domain, "test", 1, CertificateGrade.RIGOROUS, (),
+                (TransverseCell((0.25, 1.0), (0.0, 0.5), (0.0, 2.0)),
+                 TransverseCell((1.25, 1.0), (1.0, 2.0), (0.0, 2.0))),
+            )
 
 
 if __name__ == "__main__":

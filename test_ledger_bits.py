@@ -28,6 +28,8 @@ class LedgerBitsTests(unittest.TestCase):
         self.assertEqual(beta, (0.1, 1.0, 2.0))
         self.assertEqual(widths, (0.03, 0.04, 0.05))
         self.assertEqual(token, tuple(record["theta_interval_bits"]))
+        self.assertEqual(record["theta_interval_bits"],
+                         record["box_bounds_bits"][0])
         self.assertEqual(interval, (0.1 - 0.03, 0.1 + 0.03))
 
     def test_decimal_mirror_or_endpoint_tampering_is_rejected(self):
@@ -37,7 +39,7 @@ class LedgerBitsTests(unittest.TestCase):
             decode_box_record(record)
         record = box_record({}, (0.1, 1.0, 2.0), (0.03, 0.04, 0.05))
         record["theta_interval_bits"][0] = float_bits(0.0)
-        with self.assertRaisesRegex(ValueError, "interval bits"):
+        with self.assertRaisesRegex(ValueError, "box bounds bits"):
             decode_box_record(record)
 
     def test_noncanonical_hex_and_legacy_rigorous_input_are_rejected(self):

@@ -172,4 +172,7 @@ as the fallback.
 - Per `ARTIFACT_BINDING.md`, rigorous resume also requires a content-addressed
   full-tile artifact whose digest, box bits, grade, completeness, and kernel
   replay all verify. The campaign manifest commits to domain and symmetry
-  metadata plus the ordered SHA-256 list of ledger shards.
+  metadata, an exact Cartesian transverse-cell partition, and the ordered
+  SHA-256 list of ledger shards. `campaign_bundle_verify.py` then requires
+  artifact-backed full-box coverage of every cell; line samples alone cannot
+  establish campaign completion.

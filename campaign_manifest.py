@@ -9,7 +9,7 @@ from certificate_result import CertificateGrade
 from ledger_bits import bits_float, float_bits
 
 
-SCHEMA = "mub6-campaign-manifest-v1"
+SCHEMA = "mub6-campaign-manifest-v2-cells"
 
 
 def file_sha256(path):
@@ -37,12 +37,48 @@ class LedgerShard:
 
 
 @dataclass(frozen=True)
+class TransverseCell:
+    line: tuple[float, float]
+    phi_bounds: tuple[float, float]
+    lambda_bounds: tuple[float, float]
+
+    def __post_init__(self):
+        if len(self.line) != 2 or len(self.phi_bounds) != 2 \
+                or len(self.lambda_bounds) != 2:
+            raise ValueError("transverse cell fields must be pairs")
+        if self.phi_bounds[0] > self.phi_bounds[1] \
+                or self.lambda_bounds[0] > self.lambda_bounds[1]:
+            raise ValueError("transverse cell bounds are reversed")
+        if not (self.phi_bounds[0] <= self.line[0] <= self.phi_bounds[1]) \
+                or not (self.lambda_bounds[0] <= self.line[1]
+                        <= self.lambda_bounds[1]):
+            raise ValueError("transverse line lies outside its cell")
+
+    def as_dict(self):
+        return {
+            "line_bits": [float_bits(value) for value in self.line],
+            "phi_bounds_bits": [float_bits(value)
+                                for value in self.phi_bounds],
+            "lambda_bounds_bits": [float_bits(value)
+                                   for value in self.lambda_bounds],
+        }
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(tuple(bits_float(x) for x in value["line_bits"]),
+                   tuple(bits_float(x) for x in value["phi_bounds_bits"]),
+                   tuple(bits_float(x)
+                         for x in value["lambda_bounds_bits"]))
+
+
+@dataclass(frozen=True)
 class CampaignManifest:
     domain: tuple[tuple[float, float], ...]
     symmetry: str
     symmetry_factor: int
     required_grade: CertificateGrade
     ledger_shards: tuple[LedgerShard, ...]
+    transverse_cells: tuple[TransverseCell, ...] = ()
 
     def __post_init__(self):
         if len(self.domain) != 3 or any(len(axis) != 2 for axis in self.domain):
@@ -57,6 +93,28 @@ class CampaignManifest:
         names = [shard.name for shard in self.ledger_shards]
         if len(names) != len(set(names)):
             raise ValueError("campaign ledger shard names must be unique")
+        cells = tuple(self.transverse_cells)
+        object.__setattr__(self, "transverse_cells", cells)
+        lines = [cell.line for cell in cells]
+        if len(lines) != len(set(lines)):
+            raise ValueError("transverse cell lines must be unique")
+        if cells:
+            phi_parts = sorted(set(cell.phi_bounds for cell in cells))
+            lam_parts = sorted(set(cell.lambda_bounds for cell in cells))
+            self._check_axis_partition(phi_parts, self.domain[1], "phi")
+            self._check_axis_partition(lam_parts, self.domain[2], "lambda")
+            actual = {(cell.phi_bounds, cell.lambda_bounds) for cell in cells}
+            expected = {(phi, lam) for phi in phi_parts for lam in lam_parts}
+            if actual != expected or len(cells) != len(expected):
+                raise ValueError("transverse cells must form a Cartesian grid")
+
+    @staticmethod
+    def _check_axis_partition(parts, domain, name):
+        if not parts or parts[0][0] != domain[0] \
+                or parts[-1][1] != domain[1]:
+            raise ValueError(f"{name} cells do not reach domain boundary")
+        if any(left[1] != right[0] for left, right in zip(parts, parts[1:])):
+            raise ValueError(f"{name} cells have a gap or overlap")
 
     def _unsigned_dict(self):
         return {
@@ -67,6 +125,8 @@ class CampaignManifest:
             "symmetry_factor": self.symmetry_factor,
             "required_grade": self.required_grade.name,
             "ledger_shards": [shard.as_dict() for shard in self.ledger_shards],
+            "transverse_cells": [cell.as_dict()
+                                 for cell in self.transverse_cells],
         }
 
     @property
@@ -90,6 +150,8 @@ class CampaignManifest:
             required_grade=CertificateGrade[value["required_grade"]],
             ledger_shards=tuple(LedgerShard(item["name"], item["sha256"])
                                 for item in value["ledger_shards"]),
+            transverse_cells=tuple(TransverseCell.from_dict(item)
+                                   for item in value.get("transverse_cells", ())),
         )
         if value.get("manifest_id") != manifest.manifest_id:
             raise ValueError("campaign manifest digest mismatch")
@@ -111,7 +173,7 @@ class CampaignManifest:
 
 
 def build_manifest(domain, symmetry, symmetry_factor, required_grade,
-                   shard_paths, *, base_directory):
+                   shard_paths, *, base_directory, transverse_cells=()):
     base = Path(base_directory)
     shards = []
     for path in shard_paths:
@@ -119,4 +181,5 @@ def build_manifest(domain, symmetry, symmetry_factor, required_grade,
         relative = path.relative_to(base)
         shards.append(LedgerShard(relative.as_posix(), file_sha256(path)))
     return CampaignManifest(tuple(tuple(axis) for axis in domain), symmetry,
-                            int(symmetry_factor), required_grade, tuple(shards))
+                            int(symmetry_factor), required_grade, tuple(shards),
+                            tuple(transverse_cells))

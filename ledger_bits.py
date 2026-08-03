@@ -5,7 +5,7 @@ import re
 import struct
 
 
-LEDGER_SCHEMA = "mub6-ledger-v2-binary64"
+LEDGER_SCHEMA = "mub6-ledger-v3-binary64-box"
 _BITS = re.compile(r"^[0-9a-f]{16}$")
 
 
@@ -40,7 +40,8 @@ def box_record(record, beta, half_widths):
     if any(width < 0 or float_bits(width) == "8000000000000000"
            for width in widths):
         raise ValueError("half-widths must be nonnegative")
-    theta_interval = (beta[0] - widths[0], beta[0] + widths[0])
+    bounds = tuple((center - width, center + width)
+                   for center, width in zip(beta, widths))
     return {
         **record,
         "ledger_schema": LEDGER_SCHEMA,
@@ -48,8 +49,9 @@ def box_record(record, beta, half_widths):
         "beta_bits": beta_bits,
         "hv": list(widths),
         "hv_bits": width_bits,
-        "theta_interval_bits": [float_bits(value)
-                                for value in theta_interval],
+        "box_bounds_bits": [[float_bits(lo), float_bits(hi)]
+                            for lo, hi in bounds],
+        "theta_interval_bits": [float_bits(value) for value in bounds[0]],
     }
 
 
@@ -79,14 +81,19 @@ def decode_box_record(record, *, require_bits=True):
     beta_bits = record.get("beta_bits")
     width_bits = record.get("hv_bits")
     interval_bits = record.get("theta_interval_bits")
+    bounds_bits = record.get("box_bounds_bits")
     if not all(isinstance(values, list) for values in
-               (beta_bits, width_bits, interval_bits)) \
+               (beta_bits, width_bits, interval_bits, bounds_bits)) \
             or len(beta_bits) != 3 or len(width_bits) != 3 \
-            or len(interval_bits) != 2:
+            or len(interval_bits) != 2 or len(bounds_bits) != 3 \
+            or any(not isinstance(axis, list) or len(axis) != 2
+                   for axis in bounds_bits):
         raise ValueError("incomplete binary64 box fields")
     beta = tuple(bits_float(value) for value in beta_bits)
     widths = tuple(bits_float(value) for value in width_bits)
     interval = tuple(bits_float(value) for value in interval_bits)
+    bounds = tuple(tuple(bits_float(value) for value in axis)
+                   for axis in bounds_bits)
     if any(width < 0 or float_bits(width) == "8000000000000000"
            for width in widths):
         raise ValueError("half-widths must be nonnegative")
@@ -94,8 +101,21 @@ def decode_box_record(record, *, require_bits=True):
         raise ValueError("beta decimal mirror does not match beta_bits")
     if [float_bits(value) for value in record.get("hv", ())] != width_bits:
         raise ValueError("hv decimal mirror does not match hv_bits")
-    computed = [float_bits(beta[0] - widths[0]),
-                float_bits(beta[0] + widths[0])]
-    if computed != interval_bits:
-        raise ValueError("theta interval bits do not match beta/hv bits")
+    computed_bounds = [[float_bits(center - width),
+                        float_bits(center + width)]
+                       for center, width in zip(beta, widths)]
+    if computed_bounds != bounds_bits or bounds_bits[0] != interval_bits:
+        raise ValueError("box bounds bits do not match beta/hv bits")
     return beta, widths, interval, tuple(interval_bits)
+
+
+def decode_box_bounds(record, *, require_bits=True):
+    """Return all three exact stored box-bound pairs after validation."""
+    decode_box_record(record, require_bits=require_bits)
+    if record.get("ledger_schema") != LEDGER_SCHEMA:
+        beta = tuple(float(value) for value in record["beta"])
+        widths = tuple(float(value) for value in record["hv"])
+        return tuple((center - width, center + width)
+                     for center, width in zip(beta, widths))
+    return tuple(tuple(bits_float(value) for value in axis)
+                 for axis in record["box_bounds_bits"])
